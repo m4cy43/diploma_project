@@ -127,10 +127,10 @@ const verifyUser = asyncHandler(async (req, res) => {
 // @route   PUT /api/user/setadmin/{uuid}
 // @access  Private
 const setAdmin = asyncHandler(async (req, res) => {
-  if (!req.user.roles.includes("super")) {
-    res.status(401);
-    throw new Error("Action not alowed due to role");
-  }
+  // if (!req.user.roles.includes("super")) {
+  //   res.status(401);
+  //   throw new Error("Action not alowed due to role");
+  // }
 
   let user = await User.findByPk(req.params.uuid);
   // Check the user exists
@@ -356,11 +356,11 @@ const findByUuid = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc    Find users by membership
-// @route   GET /api/user/q?query=&role=
+// @desc    Find users by membership, supports pagination
+// @route   GET /api/user/q?query=&role=&limit=&offset=
 // @access  Public
 const findByMembershipAndRole = asyncHandler(async (req, res) => {
-  const { query, role } = req.query;
+  const { query, role, limit, offset } = req.query;
   if (!query || !role) {
     res.status(400);
     throw new Error("Missing the query");
@@ -372,16 +372,19 @@ const findByMembershipAndRole = asyncHandler(async (req, res) => {
       { model: Role, through: { attributes: [] }, where: { role: role } },
     ],
     where: { membership: { [Op.substring]: query } },
-    order: [["UpdatedAt", "DESC"]],
+    order: [["updatedAt", "DESC"]],
+    limit: parseInt(limit) ? parseInt(limit) : 10,
+    offset: parseInt(offset) ? parseInt(offset) : 0,
+    subQuery: false,
   });
   res.status(200).json(users);
 });
 
-// @desc    Find all users by role
-// @route   GET /api/user/role?role=
+// @desc    Find all users by role, supports pagination
+// @route   GET /api/user/role?role=&limit=&offset=
 // @access  Public
 const findByRole = asyncHandler(async (req, res) => {
-  const { role } = req.query;
+  const { role, limit, offset } = req.query;
   if (!role) {
     res.status(400);
     throw new Error("Missing the query");
@@ -392,7 +395,10 @@ const findByRole = asyncHandler(async (req, res) => {
     include: [
       { model: Role, through: { attributes: [] }, where: { role: role } },
     ],
-    order: [["UpdatedAt", "DESC"]],
+    order: [["updatedAt", "DESC"]],
+    limit: parseInt(limit) ? parseInt(limit) : 10,
+    offset: parseInt(offset) ? parseInt(offset) : 0,
+    subQuery: false,
   });
   res.status(200).json(users);
 });

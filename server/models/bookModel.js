@@ -13,15 +13,18 @@ const Book = db.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    originalTitle: {
+      type: DataTypes.STRING,
+    },
     yearPublish: {
       type: DataTypes.INTEGER(4),
-      validator: {
+      validate: {
         is: /(1[0-9]{3})|(20[0-9]{2})/,
       },
     },
     yearAuthor: {
       type: DataTypes.INTEGER(4),
-      validator: {
+      validate: {
         is: /(1[0-9]{3})|(20[0-9]{2})/,
       },
     },

@@ -17,7 +17,8 @@ const Isbn = db.define(
   },
   {
     freezeTableName: true,
-    timestamps: false,
+    timestamps: true,
+    updatedAt: false,
   }
 );
 

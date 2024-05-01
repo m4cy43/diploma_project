@@ -18,6 +18,7 @@ app.use(express.urlencoded({ extended: false }));
 
 // Routes
 app.use("/api/user", require("./routes/userRoute"));
+app.use("/api/headings", require("./routes/headingsRoute"));
 
 // END OF MIDDLEWARE
 app.use(errorHandler);

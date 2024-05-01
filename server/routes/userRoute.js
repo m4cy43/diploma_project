@@ -40,9 +40,9 @@ router.put("/", authorization, updateMe);
 router.put("/:uuid", updateUser);
 // GET /api/user/{uuid}
 router.get("/get/:uuid", findByUuid);
-// GET /api/user/q?query=&role=
+// GET /api/user/q?query=&role=&limit=&offset=
 router.get("/q", findByMembershipAndRole);
-// GET /api/user/role?role=
+// GET /api/user/role?role=&limit=&offset=
 router.get("/role", findByRole);
 
 // GET /api/user/me
