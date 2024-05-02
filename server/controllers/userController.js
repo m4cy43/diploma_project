@@ -367,7 +367,7 @@ const findByMembershipAndRole = asyncHandler(async (req, res) => {
   }
 
   const users = await User.findAll({
-    attributes: { exclude: ["password", "createdAt", "updatedAt"] },
+    attributes: { exclude: ["password", "createdAt"] },
     include: [
       { model: Role, through: { attributes: [] }, where: { role: role } },
     ],
@@ -375,7 +375,7 @@ const findByMembershipAndRole = asyncHandler(async (req, res) => {
     order: [["updatedAt", "DESC"]],
     limit: parseInt(limit) ? parseInt(limit) : 10,
     offset: parseInt(offset) ? parseInt(offset) : 0,
-    subQuery: false,
+    subQuery: true,
   });
   res.status(200).json(users);
 });
@@ -391,14 +391,14 @@ const findByRole = asyncHandler(async (req, res) => {
   }
 
   const users = await User.findAll({
-    attributes: { exclude: ["password", "createdAt", "updatedAt"] },
+    attributes: { exclude: ["password", "createdAt"] },
     include: [
       { model: Role, through: { attributes: [] }, where: { role: role } },
     ],
     order: [["updatedAt", "DESC"]],
     limit: parseInt(limit) ? parseInt(limit) : 10,
     offset: parseInt(offset) ? parseInt(offset) : 0,
-    subQuery: false,
+    subQuery: true,
   });
   res.status(200).json(users);
 });

@@ -8,7 +8,7 @@ const Isbn = require("../models/isbnModel");
 const { Op } = require("sequelize");
 
 // @desc    Get latest books
-// @route   GET /api/book/{uuid}
+// @route   GET /api/book/one/{uuid}
 // @access  Public
 const getBookByUuid = asyncHandler(async (req, res) => {
   if (!req.params.uuid) {
@@ -30,12 +30,17 @@ const getBookByUuid = asyncHandler(async (req, res) => {
       {
         model: Isbn,
         attributes: { exclude: ["createdAt"] },
-        through: { attributes: [] },
       },
-      { model: Publisher, attributes: { exclude: ["createdAt"] } },
-      { model: Section, attributes: { exclude: ["createdAt"] } },
+      {
+        model: Publisher,
+        attributes: { exclude: ["createdAt"] },
+      },
+      {
+        model: Section,
+        attributes: { exclude: ["createdAt"] },
+      },
     ],
-    attributes: { exclude: ["createdAt"] },
+    attributes: { exclude: ["createdAt", "updatedAt"] },
   });
   if (book) {
     res.status(200).json(book);
@@ -62,7 +67,10 @@ const getLatest = asyncHandler(async (req, res) => {
         attributes: ["uuid", "name", "surname", "middlename"],
         through: { attributes: [] },
       },
-      { model: Publisher, attributes: ["uuid", "publisher"] },
+      {
+        model: Publisher,
+        attributes: ["uuid", "publisher"],
+      },
     ],
     attributes: [
       "uuid",
@@ -71,11 +79,12 @@ const getLatest = asyncHandler(async (req, res) => {
       "yearPublish",
       "yearAuthor",
       "number",
+      "createdAt",
     ],
     order: [["createdAt", "DESC"]],
     limit: parseInt(limit) ? parseInt(limit) : 10,
     offset: parseInt(offset) ? parseInt(offset) : 0,
-    subQuery: false,
+    subQuery: true,
   });
   res.status(200).json(books);
 });
@@ -92,16 +101,18 @@ const getFlex = asyncHandler(async (req, res) => {
   const books = await Book.findAll({
     include: [
       {
-        model: Genre,
-        attributes: ["uuid", "genre"],
-        through: { attributes: [] },
-      },
-      {
         model: Author,
         attributes: ["uuid", "name", "surname", "middlename"],
         through: { attributes: [] },
+        required: false,
       },
-      { model: Publisher, attributes: ["uuid", "publisher"] },
+      {
+        model: Genre,
+        attributes: ["uuid", "genre"],
+        through: { attributes: [] },
+        required: false,
+      },
+      { model: Publisher, attributes: ["uuid", "publisher"], required: false },
     ],
     attributes: [
       "uuid",
@@ -110,6 +121,7 @@ const getFlex = asyncHandler(async (req, res) => {
       "yearPublish",
       "yearAuthor",
       "number",
+      "createdAt",
     ],
     where: {
       [Op.or]: [
@@ -123,7 +135,9 @@ const getFlex = asyncHandler(async (req, res) => {
     order: [["createdAt", "DESC"]],
     limit: parseInt(limit) ? parseInt(limit) : 10,
     offset: parseInt(offset) ? parseInt(offset) : 0,
-    subQuery: false,
+
+    // Only one thing that can fix $nested.column$ BUG in Sequelize with limit, but than gives wrong number of objs
+    subQuery: true,
   });
   res.status(200).json(books);
 });
@@ -179,8 +193,10 @@ const createBook = asyncHandler(async (req, res) => {
     for (genre of genres) {
       genresArr.push(
         await Genre.findOrCreate({
-          genre: genre.genre,
-        })[0]
+          where: {
+            genre: genre.genre,
+          },
+        })
       );
     }
   }
@@ -190,10 +206,12 @@ const createBook = asyncHandler(async (req, res) => {
     for (author of authors) {
       authorsArr.push(
         await Author.findOrCreate({
-          name: author.name,
-          surname: authors.surname,
-          middlename: authors.middlename,
-        })[0]
+          where: {
+            name: author.name,
+            surname: author.surname ? author.surname : null,
+            middlename: author.middlename ? author.middlename : null,
+          },
+        })
       );
     }
   }
@@ -203,8 +221,10 @@ const createBook = asyncHandler(async (req, res) => {
     for (isbn of isbns) {
       isbnsArr.push(
         await Isbn.findOrCreate({
-          isbn: isbn.isbn,
-        })[0]
+          where: {
+            isbn: isbn.isbn,
+          },
+        })
       );
     }
   }
@@ -212,22 +232,26 @@ const createBook = asyncHandler(async (req, res) => {
   let publisherFOC;
   if (publisher) {
     publisherFOC = await Publisher.findOrCreate({
-      publisher: publisher.publisher,
-    })[0];
+      where: {
+        publisher: publisher.publisher,
+      },
+    });
   }
 
   let sectionFOC;
   if (section) {
     sectionFOC = await Section.findOrCreate({
-      section: section.section,
-    })[0];
+      where: {
+        section: section.section,
+      },
+    });
   }
 
-  await book.addGenres(genresArr);
-  await book.addAuthors(authorsArr);
-  await book.addIsbns(isbnsArr);
-  await book.addPublisher(publisherFOC);
-  await book.addSection(sectionFOC);
+  if (genresArr.length > 0) await book.addGenres(genresArr.map((x) => x[0]));
+  if (authorsArr.length > 0) await book.addAuthors(authorsArr.map((x) => x[0]));
+  if (isbnsArr.length > 0) await book.addIsbns(isbnsArr.map((x) => x[0]));
+  if (publisherFOC) await publisherFOC[0].addBook(book);
+  if (sectionFOC) await sectionFOC[0].addBook(book);
 
   if (book) {
     res.status(201).json({ uuid: book.uuid });

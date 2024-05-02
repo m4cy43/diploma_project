@@ -14,7 +14,7 @@ const getGenres = asyncHandler(async (req, res) => {
     order: [["createdAt", "DESC"]],
     limit: parseInt(limit) ? parseInt(limit) : 10,
     offset: parseInt(offset) ? parseInt(offset) : 0,
-    subQuery: false,
+    subQuery: true,
   });
   res.status(200).json(genres);
 });
@@ -28,7 +28,7 @@ const getAuthors = asyncHandler(async (req, res) => {
     order: [["createdAt", "DESC"]],
     limit: parseInt(limit) ? parseInt(limit) : 10,
     offset: parseInt(offset) ? parseInt(offset) : 0,
-    subQuery: false,
+    subQuery: true,
   });
   res.status(200).json(authors);
 });
@@ -42,7 +42,7 @@ const getSections = asyncHandler(async (req, res) => {
     order: [["createdAt", "DESC"]],
     limit: parseInt(limit) ? parseInt(limit) : 10,
     offset: parseInt(offset) ? parseInt(offset) : 0,
-    subQuery: false,
+    subQuery: true,
   });
   res.status(200).json(sections);
 });
@@ -56,7 +56,7 @@ const getPublishers = asyncHandler(async (req, res) => {
     order: [["createdAt", "DESC"]],
     limit: parseInt(limit) ? parseInt(limit) : 10,
     offset: parseInt(offset) ? parseInt(offset) : 0,
-    subQuery: false,
+    subQuery: true,
   });
   res.status(200).json(publishers);
 });
@@ -70,7 +70,7 @@ const getIsbn = asyncHandler(async (req, res) => {
     order: [["createdAt", "DESC"]],
     limit: parseInt(limit) ? parseInt(limit) : 10,
     offset: parseInt(offset) ? parseInt(offset) : 0,
-    subQuery: false,
+    subQuery: true,
   });
   res.status(200).json(isbns);
 });

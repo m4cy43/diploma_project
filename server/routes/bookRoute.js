@@ -11,8 +11,8 @@ const {
 // Routes protection
 const { authorization } = require("../middleware/authMiddleware");
 
-// GET /api/book/{uuid}
-router.get("/:uuid", getBookByUuid);
+// GET /api/book/one/{uuid}
+router.get("/one/:uuid", getBookByUuid);
 // GET /api/book/latest?limit=&offset=
 router.get("/latest", getLatest);
 // GET /api/book/flex?query=&limit=&offset=
