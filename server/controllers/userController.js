@@ -127,10 +127,10 @@ const verifyUser = asyncHandler(async (req, res) => {
 // @route   PUT /api/user/setadmin/{uuid}
 // @access  Private
 const setAdmin = asyncHandler(async (req, res) => {
-  // if (!req.user.roles.includes("super")) {
-  //   res.status(401);
-  //   throw new Error("Action not alowed due to role");
-  // }
+  if (!req.user.roles.includes("super")) {
+    res.status(401);
+    throw new Error("Action not alowed due to role");
+  }
 
   let user = await User.findByPk(req.params.uuid);
   // Check the user exists

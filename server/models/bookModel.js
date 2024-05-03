@@ -17,15 +17,17 @@ const Book = db.define(
       type: DataTypes.STRING,
     },
     yearPublish: {
-      type: DataTypes.INTEGER(4),
+      type: DataTypes.STRING,
+      // type: DataTypes.INTEGER(4),
       validate: {
-        is: /(1[0-9]{3})|(20[0-9]{2})/,
+        is: /(1[0-9]{3})|(20[0-9]{2})|(_)/,
       },
     },
     yearAuthor: {
-      type: DataTypes.INTEGER(4),
+      type: DataTypes.STRING,
+      // type: DataTypes.INTEGER(4),
       validate: {
-        is: /(1[0-9]{3})|(20[0-9]{2})/,
+        is: /(1[0-9]{3})|(20[0-9]{2})|(_)/,
       },
     },
     bibliography: {

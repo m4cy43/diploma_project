@@ -4,6 +4,7 @@ const {
   getBookByUuid,
   getLatest,
   getFlex,
+  getAdvanced,
   createBook,
 } = require("../controllers/bookController");
 
@@ -17,6 +18,8 @@ router.get("/one/:uuid", getBookByUuid);
 router.get("/latest", getLatest);
 // GET /api/book/flex?query=&limit=&offset=
 router.get("/flex", getFlex);
+
+router.get("/advanced", getAdvanced);
 // GET /api/book/create
 router.post("/create", authorization, createBook);
 

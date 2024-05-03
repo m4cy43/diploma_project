@@ -128,15 +128,102 @@ const getFlex = asyncHandler(async (req, res) => {
         { title: { [Op.substring]: query } },
         { originalTitle: { [Op.substring]: query } },
         { annotation: { [Op.substring]: query } },
-        { "$authors.name$": { [Op.substring]: query } },
-        { "$authors.surname$": { [Op.substring]: query } },
+        { bibliography: { [Op.substring]: query } },
       ],
     },
     order: [["createdAt", "DESC"]],
     limit: parseInt(limit) ? parseInt(limit) : 10,
     offset: parseInt(offset) ? parseInt(offset) : 0,
+    subQuery: true,
+  });
+  res.status(200).json(books);
+});
 
-    // Only one thing that can fix $nested.column$ BUG in Sequelize with limit, but than gives wrong number of objs
+// @desc    Get books by one and more (different) fields
+// @route   GET /api/book/advanced?limit=&offset=
+// @access  Public
+const getAdvanced = asyncHandler(async (req, res) => {
+  const { limit, offset } = req.query;
+  const {
+    title,
+    original,
+    authorname,
+    authorsurname,
+    genres,
+    section,
+    publisher,
+    yearStart,
+    yearEnd,
+    isbn,
+    udk,
+    bbk,
+  } = req.body;
+
+  const books = await Book.findAll({
+    include: [
+      {
+        model: Author,
+        attributes: ["uuid", "name", "surname", "middlename"],
+        through: { attributes: [] },
+        where: {
+          name: { [Op.substring]: authorname },
+          surname: { [Op.substring]: authorsurname },
+        },
+      },
+      {
+        model: Genre,
+        attributes: ["uuid", "genre"],
+        through: { attributes: [] },
+        where: { genre: { [Op.substring]: genres } },
+      },
+      {
+        model: Publisher,
+        attributes: ["uuid", "publisher"],
+        where: { publisher: { [Op.substring]: publisher } },
+      },
+      {
+        model: Isbn,
+        attributes: ["isbn"],
+        where: { isbn: { [Op.substring]: isbn } },
+      },
+      {
+        model: Section,
+        attributes: ["section"],
+        where: { section: { [Op.substring]: section } },
+      },
+    ],
+    attributes: [
+      "uuid",
+      "title",
+      "originalTitle",
+      "yearPublish",
+      "yearAuthor",
+      "number",
+      "createdAt",
+    ],
+    where: {
+      title: { [Op.substring]: title },
+      originalTitle: { [Op.substring]: original },
+      [Op.or]: [
+        {
+          yearAuthor: {
+            [Op.gte]: yearStart,
+            [Op.lte]: yearEnd,
+          },
+        },
+        {
+          yearPublish: {
+            [Op.gte]: yearStart,
+            [Op.lte]: yearEnd,
+          },
+        },
+      ],
+      udk: { [Op.substring]: udk },
+      bbk: { [Op.substring]: bbk },
+    },
+    order: [["createdAt", "DESC"]],
+    limit: parseInt(limit) ? parseInt(limit) : 10,
+    offset: parseInt(offset) ? parseInt(offset) : 0,
     subQuery: true,
   });
   res.status(200).json(books);
@@ -265,5 +352,6 @@ module.exports = {
   getBookByUuid,
   getLatest,
   getFlex,
+  getAdvanced,
   createBook,
 };

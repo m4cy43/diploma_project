@@ -4,13 +4,15 @@ const Author = require("../models/authorModel");
 const Section = require("../models/sectionModel");
 const Publisher = require("../models/publisherModel");
 const Isbn = require("../models/isbnModel");
+const { Op } = require("sequelize");
 
 // @desc    Get all genres
-// @route   GET /api/headings/genre?limit=&offset=
+// @route   GET /api/headings/genre?query=&limit=&offset=
 // @access  Public
 const getGenres = asyncHandler(async (req, res) => {
-  const { limit, offset } = req.query;
+  const { query, limit, offset } = req.query;
   const genres = await Genre.findAll({
+    where: { genre: { [Op.substring]: query } },
     order: [["createdAt", "DESC"]],
     limit: parseInt(limit) ? parseInt(limit) : 10,
     offset: parseInt(offset) ? parseInt(offset) : 0,
@@ -20,11 +22,12 @@ const getGenres = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get all authors
-// @route   GET /api/headings/author?limit=&offset=
+// @route   GET /api/headings/author?query=&limit=&offset=
 // @access  Public
 const getAuthors = asyncHandler(async (req, res) => {
-  const { limit, offset } = req.query;
+  const { query, limit, offset } = req.query;
   const authors = await Author.findAll({
+    where: { name: { [Op.substring]: query } },
     order: [["createdAt", "DESC"]],
     limit: parseInt(limit) ? parseInt(limit) : 10,
     offset: parseInt(offset) ? parseInt(offset) : 0,
@@ -34,11 +37,12 @@ const getAuthors = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get all sections
-// @route   GET /api/headings/section?limit=&offset=
+// @route   GET /api/headings/section?query=&limit=&offset=
 // @access  Public
 const getSections = asyncHandler(async (req, res) => {
-  const { limit, offset } = req.query;
+  const { query, limit, offset } = req.query;
   const sections = await Section.findAll({
+    where: { section: { [Op.substring]: query } },
     order: [["createdAt", "DESC"]],
     limit: parseInt(limit) ? parseInt(limit) : 10,
     offset: parseInt(offset) ? parseInt(offset) : 0,
@@ -48,11 +52,12 @@ const getSections = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get all publisher
-// @route   GET /api/headings/publisher?limit=&offset=
+// @route   GET /api/headings/publisher?query=&limit=&offset=
 // @access  Public
 const getPublishers = asyncHandler(async (req, res) => {
-  const { limit, offset } = req.query;
+  const { query, limit, offset } = req.query;
   const publishers = await Publisher.findAll({
+    where: { publisher: { [Op.substring]: query } },
     order: [["createdAt", "DESC"]],
     limit: parseInt(limit) ? parseInt(limit) : 10,
     offset: parseInt(offset) ? parseInt(offset) : 0,
@@ -62,11 +67,12 @@ const getPublishers = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get all isbn
-// @route   GET /api/headings/isbn?limit=&offset=
+// @route   GET /api/headings/isbn?query=&limit=&offset=
 // @access  Public
 const getIsbn = asyncHandler(async (req, res) => {
-  const { limit, offset } = req.query;
+  const { query, limit, offset } = req.query;
   const isbns = await Isbn.findAll({
+    where: { isbn: { [Op.substring]: query } },
     order: [["createdAt", "DESC"]],
     limit: parseInt(limit) ? parseInt(limit) : 10,
     offset: parseInt(offset) ? parseInt(offset) : 0,
