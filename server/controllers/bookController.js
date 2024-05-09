@@ -90,13 +90,36 @@ const getLatest = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get books by simple (flex) search
-// @route   GET /api/book/flex?query=&limit=&offset=
+// @route   GET /api/book/flex?query=&limit=&offset=&logic=
 // @access  Public
 const getFlex = asyncHandler(async (req, res) => {
-  const { query, limit, offset } = req.query;
+  const { query, limit, offset, logic } = req.query;
+  let newquery = query;
   if (!query) {
-    res.status(400);
-    throw new Error("Missing query");
+    // res.status(400);
+    // throw new Error("Missing query");
+    newquery = "_";
+  }
+  // Replace "AND, OR, (), *" and convert the string to regex
+  if (logic) {
+    let arr = query.split(/(\s|\(|\)|AND|OR)/g);
+    arr = arr.filter((x) => x !== "" && x !== " ");
+    arr = arr.map((x) => {
+      if (x.includes("*")) {
+        x = x.replace("*", "(.*?)");
+      }
+      if (!(x === "(" || x === ")" || x === "AND" || x === "OR")) {
+        x = "(?=(.*?)" + x + "(.*?))";
+      }
+      if (x === "AND") {
+        x = "";
+      }
+      if (x === "OR") {
+        x = "|";
+      }
+      return x;
+    });
+    newquery = arr.join("");
   }
   const books = await Book.findAll({
     include: [
@@ -125,10 +148,10 @@ const getFlex = asyncHandler(async (req, res) => {
     ],
     where: {
       [Op.or]: [
-        { title: { [Op.substring]: query } },
-        { originalTitle: { [Op.substring]: query } },
-        { annotation: { [Op.substring]: query } },
-        { bibliography: { [Op.substring]: query } },
+        { title: { [Op.regexp]: newquery } },
+        { originalTitle: { [Op.regexp]: newquery } },
+        { annotation: { [Op.regexp]: newquery } },
+        { bibliography: { [Op.regexp]: newquery } },
       ],
     },
     order: [["createdAt", "DESC"]],
