@@ -348,10 +348,150 @@ const createBook = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    Update the book
+// @route   UPDATE /api/book/upd
+// @access  Private
+const updateBook = asyncHandler(async (req, res) => {
+  const {
+    title,
+    originalTitle,
+    yearPublish,
+    yearAuthor,
+    bibliography,
+    annotation,
+    physicalDescription,
+    note,
+    udk,
+    bbk,
+    number,
+    genres,
+    authors,
+    section,
+    publisher,
+    isbns,
+  } = req.body;
+
+  if (!title) {
+    res.status(400);
+    throw new Error("Required values are missing");
+  }
+  if (!req.user.roles.includes("admin")) {
+    res.status(401);
+    throw new Error("Action not alowed due to role");
+  }
+
+  const book = await Book.set({
+    title,
+    originalTitle,
+    yearPublish,
+    yearAuthor,
+    bibliography,
+    annotation,
+    physicalDescription,
+    note,
+    udk,
+    bbk,
+    number,
+  });
+  await book.save();
+
+  const genresArr = [];
+  if (genres) {
+    for (genre of genres) {
+      genresArr.push(
+        await Genre.findOrCreate({
+          where: {
+            genre: genre.genre,
+          },
+        })
+      );
+    }
+  }
+
+  const authorsArr = [];
+  if (authors) {
+    for (author of authors) {
+      authorsArr.push(
+        await Author.findOrCreate({
+          where: {
+            name: author.name,
+            surname: author.surname ? author.surname : null,
+            middlename: author.middlename ? author.middlename : null,
+          },
+        })
+      );
+    }
+  }
+
+  const isbnsArr = [];
+  if (isbns) {
+    for (isbn of isbns) {
+      isbnsArr.push(
+        await Isbn.findOrCreate({
+          where: {
+            isbn: isbn.isbn,
+          },
+        })
+      );
+    }
+  }
+
+  let publisherFOC;
+  if (publisher) {
+    publisherFOC = await Publisher.findOrCreate({
+      where: {
+        publisher: publisher.publisher,
+      },
+    });
+  }
+
+  let sectionFOC;
+  if (section) {
+    sectionFOC = await Section.findOrCreate({
+      where: {
+        section: section.section,
+      },
+    });
+  }
+
+  if (genresArr.length > 0) await book.setGenres(genresArr.map((x) => x[0]));
+  if (authorsArr.length > 0) await book.setAuthors(authorsArr.map((x) => x[0]));
+  if (isbnsArr.length > 0) await book.setIsbns(isbnsArr.map((x) => x[0]));
+  if (publisherFOC) await publisherFOC[0].setBooks(book);
+  if (sectionFOC) await sectionFOC[0].setBooks(book);
+
+  if (book) {
+    res.status(201).json({ uuid: book.uuid });
+  } else {
+    res.status(400);
+    throw new Error("Invalid data");
+  }
+});
+
+// @desc    Delete the book
+// @route   DELETE /api/book/del/{uuid}
+// @access  Private
+const deleteBook = asyncHandler(async (req, res) => {
+  const book = await Book.findByPk(req.params.uuid);
+  // Check the book exists
+  if (!book) {
+    res.status(400);
+    throw new Error("There is no such book");
+  }
+  if (!req.user.roles.includes("admin")) {
+    res.status(401);
+    throw new Error("Action not alowed due to role");
+  }
+  await book.destroy();
+  res.status(204).json();
+});
+
 module.exports = {
   getBookByUuid,
   getLatest,
   getFlex,
   getAdvanced,
   createBook,
+  updateBook,
+  deleteBook,
 };

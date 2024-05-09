@@ -37,23 +37,15 @@ const syncAllTables = async () => {
   const AuthorRef = require("../models/authorRefModel");
   const Genre = require("../models/genreModel");
   const GenreRef = require("../models/genreRefModel");
-  const Debt = require("../models/debtModel");
-  const Reserve = require("../models/reserveModel");
-  const Bookmark = require("../models/bookmarkModel");
+  const Userbook = require("../models/userBookModel");
   const Isbn = require("../models/isbnModel");
 
   // Associations
   User.belongsToMany(Role, { through: RoleRef });
   Role.belongsToMany(User, { through: RoleRef });
 
-  User.belongsToMany(Book, { through: Debt });
-  Book.belongsToMany(User, { through: Debt });
-
-  User.belongsToMany(Book, { through: Reserve });
-  Book.belongsToMany(User, { through: Reserve });
-
-  User.belongsToMany(Book, { through: Bookmark });
-  Book.belongsToMany(User, { through: Bookmark });
+  User.belongsToMany(Book, { through: Userbook });
+  Book.belongsToMany(User, { through: Userbook });
 
   Author.belongsToMany(Book, { through: AuthorRef });
   Book.belongsToMany(Author, { through: AuthorRef });

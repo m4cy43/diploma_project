@@ -4,13 +4,22 @@ const { db } = require("../config/db");
 const User = require("./userModel");
 const Book = require("./bookModel");
 
-const Bookmark = db.define(
-  "bookmark",
+const Userbook = db.define(
+  "userbook",
   {
     uuid: {
       type: DataTypes.UUID,
       primaryKey: true,
       defaultValue: DataTypes.UUIDV4,
+    },
+    type: {
+      type: DataTypes.STRING,
+    },
+    deadline: {
+      type: DataTypes.DATEONLY,
+      validate: {
+        is: /(20[0-9]{2})-([0-1][0-9])-([0-3][0-9])/,
+      },
     },
     note: {
       type: DataTypes.STRING,
@@ -35,8 +44,7 @@ const Bookmark = db.define(
   {
     freezeTableName: true,
     timestamps: true,
-    updatedAt: false,
   }
 );
 
-module.exports = Bookmark;
+module.exports = Userbook;

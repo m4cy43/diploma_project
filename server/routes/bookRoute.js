@@ -6,6 +6,8 @@ const {
   getFlex,
   getAdvanced,
   createBook,
+  updateBook,
+  deleteBook,
 } = require("../controllers/bookController");
 
 // Auth middleware
@@ -18,9 +20,13 @@ router.get("/one/:uuid", getBookByUuid);
 router.get("/latest", getLatest);
 // GET /api/book/flex?query=&limit=&offset=
 router.get("/flex", getFlex);
-
+// GET /api/book/advanced?limit=&offset=
 router.get("/advanced", getAdvanced);
 // GET /api/book/create
 router.post("/create", authorization, createBook);
+// GET /api/book/upd
+router.post("/upd", authorization, updateBook);
+// GET /api/book/del/:uuid
+router.post("/del/:uuid", authorization, deleteBook);
 
 module.exports = router;

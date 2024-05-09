@@ -20,6 +20,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use("/api/user", require("./routes/userRoute"));
 app.use("/api/headings", require("./routes/headingsRoute"));
 app.use("/api/book", require("./routes/bookRoute"));
+app.use("/api/debt", require("./routes/debtRoute"));
+app.use("/api/reserve", require("./routes/reserveRoute"));
+app.use("/api/bookmark", require("./routes/bookmarkRoute"));
 
 // END OF MIDDLEWARE
 app.use(errorHandler);
