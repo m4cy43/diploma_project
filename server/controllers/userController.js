@@ -234,6 +234,16 @@ const updateMe = asyncHandler(async (req, res) => {
   const salt = await bcrypt.genSalt(10);
   const hash = await bcrypt.hash(password.toString(), salt);
 
+  // Remove verified role if name/surnam/middlename is changed
+  if (
+    (name && user.name !== name) ||
+    (surname && user.surname !== surname) ||
+    (middlename && user.middlename !== middlename)
+  ) {
+    const roleToDel = await Role.findOne({ where: { role: "verified" } });
+    await user.removeRole(roleToDel);
+  }
+
   user.set({
     email: email,
     password: hash,

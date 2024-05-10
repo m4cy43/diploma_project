@@ -7,7 +7,7 @@ const Publisher = require("../models/publisherModel");
 const Isbn = require("../models/isbnModel");
 const { Op } = require("sequelize");
 
-// @desc    Get latest books
+// @desc    Get book by uuid
 // @route   GET /api/book/one/{uuid}
 // @access  Public
 const getBookByUuid = asyncHandler(async (req, res) => {
@@ -51,10 +51,16 @@ const getBookByUuid = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get latest books
-// @route   GET /api/book/latest?limit=&offset=
+// @route   GET /api/book/latest?limit=&offset=&sort=
 // @access  Public
 const getLatest = asyncHandler(async (req, res) => {
-  const { limit, offset } = req.query;
+  const { limit, offset, sort } = req.query;
+
+  let sortBy = sortParams[sort];
+  if (!sortBy) {
+    sortBy = sortParams.createdAtDESC;
+  }
+
   const books = await Book.findAll({
     include: [
       {
@@ -81,7 +87,7 @@ const getLatest = asyncHandler(async (req, res) => {
       "number",
       "createdAt",
     ],
-    order: [["createdAt", "DESC"]],
+    order: sortBy,
     limit: parseInt(limit) ? parseInt(limit) : 10,
     offset: parseInt(offset) ? parseInt(offset) : 0,
     subQuery: true,
@@ -89,17 +95,23 @@ const getLatest = asyncHandler(async (req, res) => {
   res.status(200).json(books);
 });
 
-// @desc    Get books by simple (flex) search
-// @route   GET /api/book/flex?query=&limit=&offset=&logic=
+// @desc    Get books by simple (flex) search + logic
+// @route   GET /api/book/flex?query=&limit=&offset=&sort=&logic=
 // @access  Public
 const getFlex = asyncHandler(async (req, res) => {
-  const { query, limit, offset, logic } = req.query;
+  const { query, limit, offset, sort, logic } = req.query;
   let newquery = query;
   if (!query) {
     // res.status(400);
     // throw new Error("Missing query");
     newquery = "_";
   }
+
+  let sortBy = sortParams[sort];
+  if (!sortBy) {
+    sortBy = sortParams.createdAtDESC;
+  }
+
   // Replace "AND, OR, (), *" and convert the string to regex
   if (logic) {
     let arr = query.split(/(\s|\(|\)|AND|OR)/g);
@@ -154,7 +166,7 @@ const getFlex = asyncHandler(async (req, res) => {
         { bibliography: { [Op.regexp]: newquery } },
       ],
     },
-    order: [["createdAt", "DESC"]],
+    order: sortBy,
     limit: parseInt(limit) ? parseInt(limit) : 10,
     offset: parseInt(offset) ? parseInt(offset) : 0,
     subQuery: true,
@@ -163,10 +175,10 @@ const getFlex = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get books by one and more (different) fields
-// @route   GET /api/book/advanced?limit=&offset=
+// @route   GET /api/book/advanced?limit=&offset=&sort=
 // @access  Public
 const getAdvanced = asyncHandler(async (req, res) => {
-  const { limit, offset } = req.query;
+  const { limit, offset, sort } = req.query;
   const {
     title,
     original,
@@ -181,6 +193,11 @@ const getAdvanced = asyncHandler(async (req, res) => {
     udk,
     bbk,
   } = req.body;
+
+  let sortBy = sortParams[sort];
+  if (!sortBy) {
+    sortBy = sortParams.createdAtDESC;
+  }
 
   const books = await Book.findAll({
     include: [
@@ -244,7 +261,7 @@ const getAdvanced = asyncHandler(async (req, res) => {
       udk: { [Op.substring]: udk },
       bbk: { [Op.substring]: bbk },
     },
-    order: [["createdAt", "DESC"]],
+    order: sortBy,
     limit: parseInt(limit) ? parseInt(limit) : 10,
     offset: parseInt(offset) ? parseInt(offset) : 0,
     subQuery: true,
@@ -508,6 +525,45 @@ const deleteBook = asyncHandler(async (req, res) => {
   await book.destroy();
   res.status(204).json();
 });
+
+// @desc    Get all books by author
+// @route   GET /api/book/author?uuid=&limit=&offset=
+// @access  Public
+// const getAllAuthor = asyncHandler(async (req, res) => {});
+
+// @desc    Get all books by genre
+// @route   GET /api/book/genre?uuid=&limit=&offset=
+// @access  Public
+// const getAllGenre = asyncHandler(async (req, res) => {});
+
+// @desc    Get all books by section
+// @route   GET /api/book/section?uuid=&limit=&offset=
+// @access  Public
+// const getAllSection = asyncHandler(async (req, res) => {});
+
+// @desc    Get all books by publisher
+// @route   GET /api/book/publisher?uuid=&limit=&offset=
+// @access  Public
+// const getAllPublisher = asyncHandler(async (req, res) => {});
+
+const sortParams = {
+  createdAtDESC: [["createdAt", "DESC"]],
+  createdAtASC: [["createdAt", "ASC"]],
+  yearAuthorDESC: [["yearAuthor", "DESC"]],
+  yearAuthorASC: [["yearAuthor", "ASC"]],
+  yearPublishDESC: [["yearPublish", "DESC"]],
+  yearPublishASC: [["yearPublish", "ASC"]],
+  authorNameDESC: [[Author, "name", "DESC"]],
+  authorNameASC: [[Author, "name", "ASC"]],
+  authorSurnameDESC: [[Author, "surname", "DESC"]],
+  authorSurnameASC: [[Author, "surname", "ASC"]],
+  genreDESC: [[Genre, "genre", "DESC"]],
+  genreASC: [[Genre, "genre", "ASC"]],
+  sectionDESC: [[Section, "section", "DESC"]],
+  sectionASC: [[Section, "section", "ASC"]],
+  publisherDESC: [[Publisher, "publicher", "DESC"]],
+  publisherASC: [[Publisher, "publicher", "ASC"]],
+};
 
 module.exports = {
   getBookByUuid,
