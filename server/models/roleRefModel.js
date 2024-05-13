@@ -4,7 +4,7 @@ const User = require("./userModel");
 const Role = require("./roleModel");
 
 const RoleRef = db.define(
-  "RoleRef",
+  "roleRef",
   {
     uuid: {
       type: DataTypes.UUID,
