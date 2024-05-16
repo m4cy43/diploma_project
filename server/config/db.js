@@ -1,18 +1,19 @@
 const { Sequelize, DataTypes, where } = require("sequelize");
 
-const [database, user, password, host, port] = [
+const [database, user, password, host, port, dialect] = [
   process.env.DB_NAME,
   process.env.DB_USER,
   process.env.DB_PASSWORD,
   process.env.DB_HOST,
   process.env.DB_PORT,
+  process.env.DB_DIALECT,
 ];
 
 // Sequelize bd connection
 const db = new Sequelize(database, user, password, {
   host: host,
   port: port,
-  dialect: "mysql",
+  dialect: dialect,
   operatorsAliases: 0,
   logging: false,
   pool: {

@@ -8,6 +8,7 @@ const {
   createBook,
   updateBook,
   deleteBook,
+  getSimilarBooks,
 } = require("../controllers/bookController");
 
 // Auth middleware
@@ -28,5 +29,7 @@ router.post("/create", authorization, createBook);
 router.post("/upd", authorization, updateBook);
 // GET /api/book/del/:uuid
 router.post("/del/:uuid", authorization, deleteBook);
+// GET /api/book/similar
+router.get("/similar", getSimilarBooks);
 
 module.exports = router;

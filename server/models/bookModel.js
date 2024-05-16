@@ -48,6 +48,9 @@ const Book = db.define(
     bbk: {
       type: DataTypes.STRING,
     },
+    rate: {
+      type: DataTypes.DOUBLE,
+    },
     number: {
       type: DataTypes.INTEGER(2),
       allowNull: false,

@@ -6,6 +6,9 @@ const Section = require("../models/sectionModel");
 const Publisher = require("../models/publisherModel");
 const Isbn = require("../models/isbnModel");
 const { Op } = require("sequelize");
+const {
+  returnOrderedSimilarities,
+} = require("../calculations/sentenceEncoding");
 
 // @desc    Get book by uuid
 // @route   GET /api/book/one/{uuid}
@@ -546,6 +549,41 @@ const deleteBook = asyncHandler(async (req, res) => {
 // @access  Public
 // const getAllPublisher = asyncHandler(async (req, res) => {});
 
+// @desc    Get similar books
+// @route   GET /api/book/similar
+// @access  Public
+const getSimilarBooks = asyncHandler(async (req, res) => {
+  const books = await Book.findAll({
+    include: [
+      {
+        model: Author,
+        attributes: ["name", "surname", "middlename"],
+        through: { attributes: [] },
+      },
+      {
+        model: Genre,
+        attributes: ["genre"],
+        through: { attributes: [] },
+        where: { genre: req.body.genres },
+      },
+    ],
+    attributes: ["uuid", "title", "originalTitle", "annotation"],
+    order: rateDESC,
+    limit: 20,
+    subQuery: true,
+  });
+
+  const subject = JSON.stringify(req.body);
+  const similarities = books.map((x) => JSON.stringify(x));
+
+  const recommendations = await returnOrderedSimilarities(
+    subject,
+    similarities
+  );
+
+  res.status(200).json(recommendations);
+});
+
 const sortParams = {
   createdAtDESC: [["createdAt", "DESC"]],
   createdAtASC: [["createdAt", "ASC"]],
@@ -563,6 +601,8 @@ const sortParams = {
   sectionASC: [[Section, "section", "ASC"]],
   publisherDESC: [[Publisher, "publicher", "DESC"]],
   publisherASC: [[Publisher, "publicher", "ASC"]],
+  rateDESC: [["rate", "DESC"]],
+  rateASC: [["rate", "ASC"]],
 };
 
 module.exports = {
@@ -573,4 +613,5 @@ module.exports = {
   createBook,
   updateBook,
   deleteBook,
+  getSimilarBooks,
 };

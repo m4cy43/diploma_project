@@ -3,6 +3,7 @@ const User = require("../models/userModel");
 const Userbook = require("../models/userBookModel");
 const Book = require("../models/bookModel");
 const { Op } = require("sequelize");
+const nodemailer = require("nodemailer");
 
 // @desc    Get all debts
 // @route   GET /api/debt/all?query=&limit=&offset=
@@ -181,10 +182,77 @@ const deleteDebt = asyncHandler(async (req, res) => {
   res.status(204).json();
 });
 
+// @desc    Send email for notification
+// @route   POST /api/debt/mail/{uuid}
+// @access  Private
+const sendEmail = asyncHandler(async (req, res) => {
+  // Check if auth user has admin rights
+  if (!req.user.roles.includes("admin")) {
+    res.status(401);
+    throw new Error("Action not alowed due to role");
+  }
+
+  const user = User.findByPk(req.params.uuid, {
+    include: {
+      model: Book,
+      attributes: ["uuid", "title"],
+      through: {
+        attributes: ["uuid", "type", "deadline", "updatedAt"],
+        where: { type: "debt" },
+      },
+    },
+  });
+
+  if (!user) {
+    res.status(400);
+    throw new Error("There is no such user");
+  }
+
+  if (!user.books) {
+    res.status(418);
+    throw new Error("User have no debts :/");
+  }
+
+  const debts = user.books.filter(
+    (book) => Date.now() - Date.parse(book.userbook.deadline) > 0
+  );
+
+  let message = "Шановний читачу! Нагадуємо вам про заборгованості:\n";
+  debts.map(
+    (book) =>
+      (message += `Книга: ${book.title} - Дедлайн: ${book.userbook.deadline}\n`)
+  );
+
+  const [mail, pass, host] = [
+    process.env.MAIL_USER,
+    process.env.MAIL_PASS,
+    process.env.MAIL_SERVICE,
+  ];
+
+  let transporter = nodemailer.createTransport({
+    service: host,
+    auth: {
+      user: mail,
+      pass: pass,
+    },
+  });
+
+  const mailOptions = {
+    from: user_mail,
+    to: user,
+    subject: "Нагадування про борг",
+    text: message,
+  };
+
+  let info = await transporter.sendMail(mailOptions);
+  res.status(200).json(info);
+});
+
 module.exports = {
   getAllDebts,
   getUserDebts,
   createDebt,
   reservationToDebt,
   deleteDebt,
+  sendEmail,
 };
