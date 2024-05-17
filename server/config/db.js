@@ -73,6 +73,26 @@ const syncAllTables = async () => {
       console.log(`Tables sync error`);
       throw err;
     });
+
+  // const fs = require("fs").promises;
+  // const { loadUserDataset, loadBookDataset } = require("./loadDataset");
+  // await fs
+  //   .readFile("__dirname/../datasets/userdataset.json", "utf8")
+  //   .then((data) => {
+  //     cleanData = data.replace(/^\uFEFF/, "");
+  //     return JSON.parse(cleanData);
+  //   })
+  //   .then((data) => loadUserDataset(data))
+  //   .then((mes) => console.log(mes));
+
+  // await fs
+  //   .readFile("__dirname/../datasets/bookdataset.json", "utf8")
+  //   .then((data) => {
+  //     cleanData = data.replace(/^\uFEFF/, "");
+  //     return JSON.parse(cleanData);
+  //   })
+  //   .then((data) => loadBookDataset(data))
+  //   .then((mes) => console.log(mes));
 };
 
 module.exports = { db, syncAllTables };
