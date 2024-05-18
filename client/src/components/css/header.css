@@ -1,0 +1,90 @@
+@import "./tags.css";
+
+.logo {
+  font-size: 40px;
+  color: #e8f92e;
+}
+
+.navigation,
+.center,
+.auth {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-left: 1em;
+  margin-right: 1em;
+  gap: 10px;
+}
+
+.auth h4 {
+  color: white;
+  font-size: 20px;
+}
+
+.drop-menu,
+.admin-drop-menu {
+  position: relative;
+  display: inline-block;
+}
+
+.advanced-search-box,
+.admin-panel-box {
+  display: none;
+  position: absolute;
+  min-width: 900%;
+  border: 2px #17344f solid;
+  background-color: #688eb1;
+  z-index: 1;
+}
+
+.advanced-search-box input,
+.admin-panel-box input {
+  margin: 8px;
+  padding: 4px;
+  border: 2px #17344f solid;
+  width: 80%;
+}
+
+#search {
+  margin: 0px;
+  padding: 2px;
+  border: 2px #d9d9d9 solid;
+}
+
+#search:focus,
+.advanced-search-box input:focus {
+  outline: none !important;
+  border: 2px #e8f92e solid;
+}
+
+.advanced-search-box h4,
+.admin-panel-box h4 {
+  font-size: 24px;
+  margin: 10px;
+  color: #e8f92e;
+}
+
+.advanced-search-box input[type="submit"],
+.admin-panel-box input[type="submit"] {
+  background-color: #17344f;
+  border: 2px #d9d9d9 solid;
+  color: #e8f92e;
+}
+
+.advanced-search-box input[type="submit"]:hover,
+.admin-panel-box input[type="submit"]:hover {
+  background-color: #68b16f;
+}
+
+.drop-menu:hover .advanced-search-box,
+.admin-drop-menu:hover .admin-panel-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.admin-panel-box {
+  right: 0px;
+}

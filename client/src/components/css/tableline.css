@@ -1,0 +1,26 @@
+@import "./tags.css";
+
+td a:nth-child(2n) {
+  color: #000000;
+  text-decoration: underline solid #000000 1.25px;
+  text-underline-offset: 2px;
+}
+
+td a {
+  margin: 0px 3px 0px 3px;
+}
+
+.plusBut:hover {
+  background-color: #68b16f;
+}
+
+.minusBut:hover {
+  background-color: #ff0000;
+}
+
+.plusBut,
+.minusBut {
+  margin-left: 5px;
+  margin-right: 5px;
+  background-color: #688eb1;
+}

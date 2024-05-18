@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { reset, login } from "../features/authentication/authSlice";
+import { reset, login } from "../features/auth/authSlice";
 import { toast } from "react-toastify";
 import "./css/form.css";
 
@@ -61,10 +61,9 @@ function Login() {
 
   return (
     <>
-      <h2>LogIn</h2>
       <main>
         <div className="form-box">
-          <h4>SignIn</h4>
+          <h4>LogIn</h4>
           <form onSubmit={onSubmit}>
             <input
               type="email"

@@ -1,8 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
 import Login from "./pages/Login";
-// import Register from "./pages/Register";
-// import Shelf from "./pages/Shelf";
+import Register from "./pages/Register";
+import Shelf from "./pages/Shelf";
 // import Book from "./pages/Book";
 // import Author from "./pages/Author";
 // import NewBookForm from "./pages/NewBookForm";
@@ -18,8 +18,8 @@ import Login from "./pages/Login";
 // import CreateNewGenre from "./pages/CreateNewGenre";
 // import SectionsList from "./pages/SectionsList";
 // import CreateNewSection from "./pages/CreateNewSection";
-// import { ToastContainer } from "react-toastify";
-// import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
@@ -27,7 +27,7 @@ function App() {
       <Router>
         <div className="container">
           <Header />
-          {/* <ToastContainer
+          <ToastContainer
             position="top-right"
             autoClose={5000}
             hideProgressBar={false}
@@ -38,12 +38,12 @@ function App() {
             draggable
             pauseOnHover
             theme="dark"
-          /> */}
+          />
           <Routes>
             <Route path="/login" element={<Login />} />
-            {/* <Route path="/register" element={<Register />} /> */}
-            {/* <Route path="/" element={<Shelf />} />
-            <Route path="/book/:uuid" element={<Book />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/" element={<Shelf />} />
+            {/* <Route path="/book/:uuid" element={<Book />} />
             <Route path="/author/:uuid" element={<Author />} />
             <Route path="/newbook" element={<NewBookForm />} />
             <Route path="/verifylist" element={<VerifyList />} />

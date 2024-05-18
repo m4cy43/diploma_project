@@ -1,24 +1,27 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaSignInAlt, FaSignOutAlt, FaUser } from "react-icons/fa";
 import { HiMagnifyingGlass } from "react-icons/hi2";
 import { FiMenu } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import { IconContext } from "react-icons";
 import { useSelector, useDispatch } from "react-redux";
-import { reset, logout } from "../features/authentication/authSlice";
-// import {
-//   simpleFind,
-//   advancedFind,
-//   resetBooks,
-// } from "../features/book/bookSlice";
+import { reset, logout } from "../features/auth/authSlice";
+import {
+  simpleFind,
+  advancedFind,
+  resetBooks,
+} from "../features/book/bookSlice";
+import { setLimit, getRoles } from "../features/other/otherSlice";
 import "./css/header.css";
 
 function Header() {
   const [searchData, setSearchData] = useState({
+    flex: "_",
+    limit: 10,
+    offset: 0,
+    sort: "",
     title: "_",
-    original: "_",
-    authorname: "_",
-    authorsurname: "_",
+    authors: "_",
     genres: "_",
     section: "_",
     publisher: "_",
@@ -30,10 +33,9 @@ function Header() {
   });
 
   const {
+    flex,
     title,
-    original,
-    authorname,
-    authorsurname,
+    authors,
     genres,
     section,
     publisher,
@@ -47,6 +49,14 @@ function Header() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
+  const { books, isError, message } = useSelector((state) => state.books);
+  const { roles, limit, sort } = useSelector((state) => state.other);
+
+  useEffect(() => {
+    if (user && roles.lenght === 0) {
+      dispatch(getRoles());
+    }
+  }, [user, roles, dispatch]);
 
   const onLogout = () => {
     dispatch(logout());
@@ -54,23 +64,22 @@ function Header() {
     navigate("/");
   };
 
-  const { books, isError, message } = useSelector((state) => state.books);
-
-  const onSimpleFind = () => {
+  const onFlexFind = () => {
     if (isError) {
       console.log(message);
     }
 
-    if (!user) {
-      navigate("/login");
-    }
+    // if (!user) {
+    //   navigate("/login");
+    // }
+
+    dispatch(simpleFind(flex));
 
     let inputEl = document.getElementById("search");
-    // dispatch(simpleFind(inputEl.value));
     inputEl.value = "";
 
     return () => {
-      // dispatch(resetBooks());
+      dispatch(resetBooks());
     };
   };
 
@@ -86,9 +95,7 @@ function Header() {
 
     const advancedSearchData = {
       title,
-      original,
-      authorname,
-      authorsurname,
+      authors,
       genres,
       section,
       publisher,
@@ -98,7 +105,7 @@ function Header() {
       udk,
       bbk,
     };
-    // dispatch(advancedFind(advancedSearchData));
+    dispatch(advancedFind(advancedSearchData));
 
     let inputEl = document.getElementsByTagName("input");
     for (let el of inputEl) {
@@ -107,14 +114,19 @@ function Header() {
 
     setSearchData((previousState) => ({
       title: "_",
-      author: "_",
-      year: "_",
-      genre: "_",
+      authors: "_",
+      genres: "_",
       section: "_",
+      publisher: "_",
+      yearStart: "_",
+      yearEnd: "_",
+      isbn: "_",
+      udk: "_",
+      bbk: "_",
     }));
 
     return () => {
-      // dispatch(resetBooks());
+      dispatch(resetBooks());
     };
   };
 
@@ -161,14 +173,30 @@ function Header() {
               type="submit"
               name="button"
               value="Search"
-              // onClick={advancedSearch}
+              onClick={advancedSearch}
             />
           </div>
         </div>
-        <input id="search" type="text" placeholder="Search..." />
+        <input
+          id="search"
+          type="text"
+          placeholder="Search..."
+          onChange={onChange}
+        />
         <IconContext.Provider value={{ color: "#e8f92e", size: "1.5em" }}>
-          <HiMagnifyingGlass onClick={onSimpleFind} />
+          <HiMagnifyingGlass onClick={onFlexFind} />
         </IconContext.Provider>
+        <select
+          name="limit"
+          id="limit"
+          onChange={(e) => dispatch(setLimit(e.target.value))}
+        >
+          <option value={10}>limit</option>
+          <option value={5}>5</option>
+          <option value={10}>10</option>
+          <option value={15}>15</option>
+          <option value={20}>20</option>
+        </select>
       </div>
       <div className="center">
         <Link id="react-link" to="/">
@@ -187,7 +215,7 @@ function Header() {
             <Link to="/me">
               <h4>({user.email})</h4>
             </Link>
-            {user.isAdmin ? (
+            {user.roles && user.roles.includes("admin") ? (
               <div className="admin-drop-menu">
                 <IconContext.Provider
                   value={{ color: "#ff0000", size: "1.5em" }}

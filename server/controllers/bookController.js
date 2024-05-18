@@ -184,9 +184,7 @@ const getAdvanced = asyncHandler(async (req, res) => {
   const { limit, offset, sort } = req.query;
   const {
     title,
-    original,
-    authorname,
-    authorsurname,
+    authors,
     genres,
     section,
     publisher,
@@ -196,6 +194,16 @@ const getAdvanced = asyncHandler(async (req, res) => {
     udk,
     bbk,
   } = req.body;
+
+  let genresArr = genres.split(";").map((x) => x.trim());
+  let authorsArr = authors.split(";").map((x) => {
+    const arr = x.split(" ").filter((x) => x != "");
+    if (arr.length == 0) return { name: "_", middlename: "_", surname: "_" };
+    if (arr.length == 1) return { name: x[0], middlename: "_", surname: "_" };
+    if (arr.length == 2) return { name: x[0], middlename: "_", surname: x[1] };
+    if (arr.length == 3) return { name: x[0], middlename: x[2], surname: x[1] };
+    if (arr.length > 3) return { name: x[0], middlename: "_", surname: "_" };
+  });
 
   let sortBy = sortParams[sort];
   if (!sortBy) {
@@ -209,15 +217,16 @@ const getAdvanced = asyncHandler(async (req, res) => {
         attributes: ["uuid", "name", "surname", "middlename"],
         through: { attributes: [] },
         where: {
-          name: { [Op.substring]: authorname },
-          surname: { [Op.substring]: authorsurname },
+          name: { [Op.substring]: authorsArr.map((x) => x.name) },
+          surname: { [Op.substring]: authorsArr.map((x) => x.surname) },
+          middlename: { [Op.substring]: authorsArr.map((x) => x.middlename) },
         },
       },
       {
         model: Genre,
         attributes: ["uuid", "genre"],
         through: { attributes: [] },
-        where: { genre: { [Op.substring]: genres } },
+        where: { genre: { [Op.substring]: genresArr } },
       },
       {
         model: Publisher,
@@ -245,8 +254,10 @@ const getAdvanced = asyncHandler(async (req, res) => {
       "createdAt",
     ],
     where: {
-      title: { [Op.substring]: title },
-      originalTitle: { [Op.substring]: original },
+      [Op.or]: [
+        { title: { [Op.substring]: title } },
+        { originalTitle: { [Op.substring]: title } },
+      ],
       [Op.or]: [
         {
           yearAuthor: {

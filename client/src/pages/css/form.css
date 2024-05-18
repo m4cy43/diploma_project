@@ -1,0 +1,53 @@
+@import "../../components/css/tags.css";
+
+.form-box,
+.form-box form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: auto;
+  padding: 0px 35px 0px 35px;
+}
+
+.form-box {
+  background-color: #688eb1;
+  padding: 5px;
+  width: auto;
+  padding: 20px 0px 10px 0px;
+  margin: 100px auto;
+  border: 2px #17344f solid;
+  position: relative;
+  max-width: 50%;
+}
+
+.form-box form input {
+  margin: 10px;
+  padding: 8px;
+  border: 2px #17344f solid;
+  width: 100%;
+}
+
+.form-box h4 {
+  font-size: 32px;
+  margin-bottom: 10px;
+  color: #e8f92e;
+  text-decoration: underline;
+}
+
+.form-box form input[type="submit"] {
+  background-color: #17344f;
+  border: 2px #d9d9d9 solid;
+  color: #e8f92e;
+}
+
+.form-box form input[type="submit"]:hover {
+  background-color: #68b16f;
+}
+
+textarea {
+  margin: 10px;
+  padding: 8px;
+  border: 2px #17344f solid;
+  width: 100%;
+  background-color: #d9d9d9;
+}
