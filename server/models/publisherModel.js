@@ -14,6 +14,9 @@ const Publisher = db.define(
       allowNull: false,
       unique: true,
     },
+    createdAt: {
+      type: DataTypes.DATE(6),
+    },
   },
   {
     freezeTableName: true,

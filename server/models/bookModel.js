@@ -61,6 +61,12 @@ const Book = db.define(
       allowNull: false,
       defaultValue: 0,
     },
+    createdAt: {
+      type: DataTypes.DATE(6),
+    },
+    updatedAt: {
+      type: DataTypes.DATE(6),
+    },
   },
   {
     freezeTableName: true,

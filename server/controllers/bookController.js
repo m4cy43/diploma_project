@@ -88,6 +88,7 @@ const getLatest = asyncHandler(async (req, res) => {
       "yearPublish",
       "yearAuthor",
       "number",
+      "rate",
       "createdAt",
     ],
     order: sortBy,
@@ -159,6 +160,7 @@ const getFlex = asyncHandler(async (req, res) => {
       "yearPublish",
       "yearAuthor",
       "number",
+      "rate",
       "createdAt",
     ],
     where: {
@@ -181,8 +183,10 @@ const getFlex = asyncHandler(async (req, res) => {
 // @route   GET /api/book/advanced?limit=&offset=&sort=
 // @access  Public
 const getAdvanced = asyncHandler(async (req, res) => {
-  const { limit, offset, sort } = req.query;
   const {
+    limit,
+    offset,
+    sort,
     title,
     authors,
     genres,
@@ -193,17 +197,23 @@ const getAdvanced = asyncHandler(async (req, res) => {
     isbn,
     udk,
     bbk,
-  } = req.body;
+  } = req.query;
 
+  let setYearStart = yearStart == "_" ? 0 : yearStart;
+  let setYearEnd = yearEnd == "_" ? 3000 : yearEnd;
   let genresArr = genres.split(";").map((x) => x.trim());
-  let authorsArr = authors.split(";").map((x) => {
-    const arr = x.split(" ").filter((x) => x != "");
-    if (arr.length == 0) return { name: "_", middlename: "_", surname: "_" };
-    if (arr.length == 1) return { name: x[0], middlename: "_", surname: "_" };
-    if (arr.length == 2) return { name: x[0], middlename: "_", surname: x[1] };
-    if (arr.length == 3) return { name: x[0], middlename: x[2], surname: x[1] };
-    if (arr.length > 3) return { name: x[0], middlename: "_", surname: "_" };
-  });
+  let authorsArr = authors
+    .split(";")
+    .map((x) => x.trim())
+    .map((x) => x.split(" "))
+    .map((x) => x.filter((y) => y != ""))
+    .map((x) => {
+      if (x.length == 0) return { name: "_", middlename: "_", surname: "_" };
+      if (x.length == 1) return { name: x[0], middlename: "_", surname: "_" };
+      if (x.length == 2) return { name: x[0], middlename: "_", surname: x[1] };
+      if (x.length == 3) return { name: x[0], middlename: x[2], surname: x[1] };
+      if (x.length > 3) return { name: x[0], middlename: "_", surname: "_" };
+    });
 
   let sortBy = sortParams[sort];
   if (!sortBy) {
@@ -251,6 +261,7 @@ const getAdvanced = asyncHandler(async (req, res) => {
       "yearPublish",
       "yearAuthor",
       "number",
+      "rate",
       "createdAt",
     ],
     where: {
@@ -261,14 +272,14 @@ const getAdvanced = asyncHandler(async (req, res) => {
       [Op.or]: [
         {
           yearAuthor: {
-            [Op.gte]: yearStart,
-            [Op.lte]: yearEnd,
+            [Op.gte]: setYearStart,
+            [Op.lte]: setYearEnd,
           },
         },
         {
           yearPublish: {
-            [Op.gte]: yearStart,
-            [Op.lte]: yearEnd,
+            [Op.gte]: setYearStart,
+            [Op.lte]: setYearEnd,
           },
         },
       ],
@@ -541,24 +552,151 @@ const deleteBook = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get all books by author
-// @route   GET /api/book/author?uuid=&limit=&offset=
+// @route   GET /api/book/heading/author?uuid=&limit=&offset=&sort=
 // @access  Public
-// const getAllAuthor = asyncHandler(async (req, res) => {});
+const getAllAuthor = asyncHandler(async (req, res) => {
+  const { uuid, limit, offset, sort } = req.query;
+
+  let sortBy = sortParams[sort];
+  if (!sortBy) {
+    sortBy = sortParams.createdAtDESC;
+  }
+
+  const books = await Book.findAll({
+    include: [
+      {
+        model: Genre,
+        attributes: ["uuid", "genre"],
+        through: { attributes: [] },
+      },
+      {
+        model: Author,
+        attributes: ["uuid", "name", "surname", "middlename"],
+        through: { attributes: [] },
+        where: {
+          uuid: uuid,
+        },
+      },
+      {
+        model: Publisher,
+        attributes: ["uuid", "publisher"],
+      },
+    ],
+    attributes: [
+      "uuid",
+      "title",
+      "originalTitle",
+      "yearPublish",
+      "yearAuthor",
+      "number",
+      "rate",
+      "createdAt",
+    ],
+    order: sortBy,
+    limit: parseInt(limit) ? parseInt(limit) : 10,
+    offset: parseInt(offset) ? parseInt(offset) : 0,
+    subQuery: true,
+  });
+  res.status(200).json(books);
+});
 
 // @desc    Get all books by genre
-// @route   GET /api/book/genre?uuid=&limit=&offset=
+// @route   GET /api/book/heading/genre?uuid=&limit=&offset=&sort=
 // @access  Public
-// const getAllGenre = asyncHandler(async (req, res) => {});
+const getAllGenre = asyncHandler(async (req, res) => {
+  const { uuid, limit, offset, sort } = req.query;
 
-// @desc    Get all books by section
-// @route   GET /api/book/section?uuid=&limit=&offset=
-// @access  Public
-// const getAllSection = asyncHandler(async (req, res) => {});
+  let sortBy = sortParams[sort];
+  if (!sortBy) {
+    sortBy = sortParams.createdAtDESC;
+  }
+
+  const books = await Book.findAll({
+    include: [
+      {
+        model: Genre,
+        attributes: ["uuid", "genre"],
+        through: { attributes: [] },
+        where: {
+          uuid: uuid,
+        },
+      },
+      {
+        model: Author,
+        attributes: ["uuid", "name", "surname", "middlename"],
+        through: { attributes: [] },
+      },
+      {
+        model: Publisher,
+        attributes: ["uuid", "publisher"],
+      },
+    ],
+    attributes: [
+      "uuid",
+      "title",
+      "originalTitle",
+      "yearPublish",
+      "yearAuthor",
+      "number",
+      "rate",
+      "createdAt",
+    ],
+    order: sortBy,
+    limit: parseInt(limit) ? parseInt(limit) : 10,
+    offset: parseInt(offset) ? parseInt(offset) : 0,
+    subQuery: true,
+  });
+  res.status(200).json(books);
+});
 
 // @desc    Get all books by publisher
-// @route   GET /api/book/publisher?uuid=&limit=&offset=
+// @route   GET /api/book/heading/publisher?uuid=&limit=&offset=&sort=
 // @access  Public
-// const getAllPublisher = asyncHandler(async (req, res) => {});
+const getAllPublisher = asyncHandler(async (req, res) => {
+  const { uuid, limit, offset, sort } = req.query;
+
+  let sortBy = sortParams[sort];
+  if (!sortBy) {
+    sortBy = sortParams.createdAtDESC;
+  }
+
+  const books = await Book.findAll({
+    include: [
+      {
+        model: Genre,
+        attributes: ["uuid", "genre"],
+        through: { attributes: [] },
+      },
+      {
+        model: Author,
+        attributes: ["uuid", "name", "surname", "middlename"],
+        through: { attributes: [] },
+      },
+      {
+        model: Publisher,
+        attributes: ["uuid", "publisher"],
+        where: {
+          uuid: uuid,
+        },
+      },
+    ],
+    attributes: [
+      "uuid",
+      "title",
+      "originalTitle",
+      "yearPublish",
+      "yearAuthor",
+      "number",
+      "rate",
+      "createdAt",
+    ],
+    order: sortBy,
+    limit: parseInt(limit) ? parseInt(limit) : 10,
+    offset: parseInt(offset) ? parseInt(offset) : 0,
+    subQuery: true,
+  });
+  res.status(200).json(books);
+});
 
 // @desc    Get similar books
 // @route   GET /api/book/similar
@@ -598,22 +736,52 @@ const getSimilarBooks = asyncHandler(async (req, res) => {
 const sortParams = {
   createdAtDESC: [["createdAt", "DESC"]],
   createdAtASC: [["createdAt", "ASC"]],
-  yearAuthorDESC: [["yearAuthor", "DESC"]],
-  yearAuthorASC: [["yearAuthor", "ASC"]],
-  yearPublishDESC: [["yearPublish", "DESC"]],
-  yearPublishASC: [["yearPublish", "ASC"]],
-  authorNameDESC: [[Author, "name", "DESC"]],
-  authorNameASC: [[Author, "name", "ASC"]],
-  authorSurnameDESC: [[Author, "surname", "DESC"]],
-  authorSurnameASC: [[Author, "surname", "ASC"]],
-  genreDESC: [[Genre, "genre", "DESC"]],
-  genreASC: [[Genre, "genre", "ASC"]],
-  sectionDESC: [[Section, "section", "DESC"]],
-  sectionASC: [[Section, "section", "ASC"]],
-  publisherDESC: [[Publisher, "publicher", "DESC"]],
-  publisherASC: [[Publisher, "publicher", "ASC"]],
-  rateDESC: [["rate", "DESC"]],
-  rateASC: [["rate", "ASC"]],
+  titleDESC: [["title", "DESC"]],
+  titleASC: [["title", "ASC"]],
+  yearDESC: [
+    ["yearPublish", "DESC"],
+    ["createdAt", "DESC"],
+  ],
+  yearASC: [
+    ["yearPublish", "ASC"],
+    ["createdAt", "DESC"],
+  ],
+  authorDESC: [
+    [Author, "name", "DESC"],
+    [Author, "surname", "DESC"],
+    [Author, "middlename", "DESC"],
+    ["createdAt", "DESC"],
+  ],
+  authorASC: [
+    [Author, "name", "ASC"],
+    [Author, "surname", "ASC"],
+    [Author, "middlename", "ASC"],
+    ["createdAt", "DESC"],
+  ],
+  genreDESC: [
+    [Genre, "genre", "DESC"],
+    ["createdAt", "DESC"],
+  ],
+  genreASC: [
+    [Genre, "genre", "ASC"],
+    ["createdAt", "DESC"],
+  ],
+  publisherDESC: [
+    [Publisher, "publisher", "DESC"],
+    ["createdAt", "DESC"],
+  ],
+  publisherASC: [
+    [Publisher, "publisher", "ASC"],
+    ["createdAt", "DESC"],
+  ],
+  rateDESC: [
+    ["rate", "DESC"],
+    ["createdAt", "DESC"],
+  ],
+  rateASC: [
+    ["rate", "ASC"],
+    ["createdAt", "DESC"],
+  ],
 };
 
 module.exports = {
@@ -624,5 +792,8 @@ module.exports = {
   createBook,
   updateBook,
   deleteBook,
+  getAllAuthor,
+  getAllGenre,
+  getAllPublisher,
   getSimilarBooks,
 };

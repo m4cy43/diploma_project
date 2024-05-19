@@ -8,6 +8,9 @@ const {
   createBook,
   updateBook,
   deleteBook,
+  getAllAuthor,
+  getAllGenre,
+  getAllPublisher,
   getSimilarBooks,
 } = require("../controllers/bookController");
 
@@ -29,6 +32,14 @@ router.post("/create", authorization, createBook);
 router.post("/upd", authorization, updateBook);
 // GET /api/book/del/:uuid
 router.post("/del/:uuid", authorization, deleteBook);
+
+// GET /api/book/heading/author?uuid=&limit=&offset=&sort=
+router.get("/heading/author", getAllAuthor);
+// GET /api/book/heading/genre?uuid=&limit=&offset=&sort=
+router.get("/heading/genre", getAllGenre);
+// GET /api/book/heading/publisher?uuid=&limit=&offset=&sort=
+router.get("/heading/publisher", getAllPublisher);
+
 // GET /api/book/similar
 router.get("/similar", getSimilarBooks);
 

@@ -5,18 +5,20 @@ import { FiMenu } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import { IconContext } from "react-icons";
 import { useSelector, useDispatch } from "react-redux";
-import { reset, logout } from "../features/auth/authSlice";
+import { reset, getRoles, logout } from "../features/auth/authSlice";
 import {
-  simpleFind,
-  advancedFind,
-  resetBooks,
-} from "../features/book/bookSlice";
-import { setLimit, getRoles } from "../features/other/otherSlice";
+  setSearchType,
+  setFlexData,
+  setAdvancedData,
+  setLimit,
+  setSort,
+  setPage,
+} from "../features/search/searchSlice";
 import "./css/header.css";
 
 function Header() {
   const [searchData, setSearchData] = useState({
-    flex: "_",
+    search: "_",
     limit: 10,
     offset: 0,
     sort: "",
@@ -33,7 +35,7 @@ function Header() {
   });
 
   const {
-    flex,
+    search,
     title,
     authors,
     genres,
@@ -48,12 +50,11 @@ function Header() {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.auth);
+  const { user, roles } = useSelector((state) => state.auth);
   const { books, isError, message } = useSelector((state) => state.books);
-  const { roles, limit, sort } = useSelector((state) => state.other);
 
   useEffect(() => {
-    if (user && roles.lenght === 0) {
+    if (user && roles.length === 0) {
       dispatch(getRoles());
     }
   }, [user, roles, dispatch]);
@@ -64,30 +65,20 @@ function Header() {
     navigate("/");
   };
 
-  const onFlexFind = () => {
-    if (isError) {
-      console.log(message);
-    }
-
-    // if (!user) {
-    //   navigate("/login");
-    // }
-
-    dispatch(simpleFind(flex));
-
-    let inputEl = document.getElementById("search");
-    inputEl.value = "";
-
-    return () => {
-      dispatch(resetBooks());
-    };
-  };
-
   const onChange = (e) => {
     setSearchData((previousState) => ({
       ...previousState,
       [e.target.name]: e.target.value,
     }));
+  };
+
+  const onFlexFind = () => {
+    dispatch(setSearchType("flex"));
+    dispatch(setPage(1));
+    dispatch(setFlexData(search));
+
+    let inputEl = document.getElementById("search");
+    inputEl.value = "";
   };
 
   const advancedSearch = (e) => {
@@ -105,13 +96,15 @@ function Header() {
       udk,
       bbk,
     };
-    dispatch(advancedFind(advancedSearchData));
+    dispatch(setSearchType("advanced"));
+    dispatch(setPage(1));
+    dispatch(setAdvancedData(advancedSearchData));
+    navigate("/");
 
     let inputEl = document.getElementsByTagName("input");
     for (let el of inputEl) {
       el.value = "";
     }
-
     setSearchData((previousState) => ({
       title: "_",
       authors: "_",
@@ -124,10 +117,6 @@ function Header() {
       udk: "_",
       bbk: "_",
     }));
-
-    return () => {
-      dispatch(resetBooks());
-    };
   };
 
   return (
@@ -147,26 +136,56 @@ function Header() {
             />
             <input
               type="text"
-              name="author"
-              placeholder="Author surname..."
+              name="publisher"
+              placeholder="Publisher..."
               onChange={onChange}
             />
             <input
               type="text"
-              name="year"
-              placeholder="Year..."
+              name="authors"
+              placeholder="Authors..."
               onChange={onChange}
             />
             <input
               type="text"
-              name="genre"
-              placeholder="Genre..."
+              name="yearStart"
+              placeholder="Year start..."
+              onChange={onChange}
+            />
+            <input
+              type="text"
+              name="yearEnd"
+              placeholder="Year end..."
+              onChange={onChange}
+            />
+            <input
+              type="text"
+              name="genres"
+              placeholder="Genres..."
               onChange={onChange}
             />
             <input
               type="text"
               name="section"
               placeholder="Section..."
+              onChange={onChange}
+            />
+            <input
+              type="text"
+              name="udk"
+              placeholder="UDK..."
+              onChange={onChange}
+            />
+            <input
+              type="text"
+              name="bbk"
+              placeholder="BBK..."
+              onChange={onChange}
+            />
+            <input
+              type="text"
+              name="isbn"
+              placeholder="ISBN..."
               onChange={onChange}
             />
             <input
@@ -179,6 +198,7 @@ function Header() {
         </div>
         <input
           id="search"
+          name="search"
           type="text"
           placeholder="Search..."
           onChange={onChange}
@@ -197,10 +217,39 @@ function Header() {
           <option value={15}>15</option>
           <option value={20}>20</option>
         </select>
+        <select
+          name="sort"
+          id="sort"
+          onChange={(e) => dispatch(setSort(e.target.value))}
+        >
+          <option value={"createdAtDESC"}>sort option</option>
+          <option value={"createdAtDESC"}>created ⬇</option>
+          <option value={"createdAtASC"}>created ⬆</option>
+          <option value={"titleDESC"}>title ⬇</option>
+          <option value={"titleASC"}>title ⬆</option>
+          <option value={"yearDESC"}>year ⬇</option>
+          <option value={"yearASC"}>year ⬆</option>
+          {/* <option value={"authorDESC"}>author ⬇</option>
+          <option value={"authorASC"}>author ⬆</option>
+          <option value={"genreDESC"}>genre ⬇</option>
+          <option value={"genreASC"}>genre ⬆</option>
+          <option value={"publisherDESC"}>publisher ⬇</option>
+          <option value={"publisherASC"}>publisher ⬆</option> */}
+          <option value={"rateDESC"}>rate ⬇</option>
+          <option value={"rateASC"}>rate ⬆</option>
+        </select>
       </div>
       <div className="center">
         <Link id="react-link" to="/">
-          <div className="logo">EShelf</div>
+          <div
+            className="logo"
+            onClick={() => {
+              dispatch(setSearchType("latest"));
+              dispatch(setPage(1));
+            }}
+          >
+            EShelf
+          </div>
         </Link>
       </div>
       <div className="auth">
@@ -215,7 +264,7 @@ function Header() {
             <Link to="/me">
               <h4>({user.email})</h4>
             </Link>
-            {user.roles && user.roles.includes("admin") ? (
+            {user && roles.includes("admin") ? (
               <div className="admin-drop-menu">
                 <IconContext.Provider
                   value={{ color: "#ff0000", size: "1.5em" }}

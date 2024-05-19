@@ -15,8 +15,8 @@ const initialState = {
         middlename: "",
         phone: "",
         token: "",
-        roles: [],
       },
+  roles: [],
   isLoading: false,
   isError: false,
   isSuccess: false,
@@ -54,6 +54,19 @@ export const login = createAsyncThunk("auth/login", async (user, thunkAPI) => {
 
 export const logout = createAsyncThunk("auth/logout", async () => {
   await authService.logout(user);
+});
+
+export const getRoles = createAsyncThunk("auth/roles", async (_, thunkAPI) => {
+  try {
+    const token = thunkAPI.getState().auth.user.token;
+    return await authService.getAuthUser(token);
+  } catch (error) {
+    const message =
+      (error.response && error.response.data && error.response.data.message) ||
+      error.message ||
+      error.toString();
+    return thunkAPI.rejectWithValue(message);
+  }
 });
 
 export const authSlice = createSlice({
@@ -96,6 +109,20 @@ export const authSlice = createSlice({
         state.isError = true;
         state.message = action.payload;
         state.user = null;
+      })
+      .addCase(getRoles.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getRoles.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.roles = action.payload.roles;
+      })
+      .addCase(getRoles.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+        state.roles = [];
       })
       .addCase(logout.fulfilled, (state) => {
         state.user = null;

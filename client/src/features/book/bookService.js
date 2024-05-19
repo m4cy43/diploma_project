@@ -11,19 +11,24 @@ const getLatest = async (query) => {
 };
 
 const simpleFind = async (query) => {
-  if (query === "") query = "_";
-  const res = await axios.get(URL + `flex?title=${query}`);
+  if (query.query === "") {
+    query.query = "_";
+  }
+  const res = await axios.get(
+    URL +
+      `flex?query=${query.query}&limit=${query.limit}&offset=${query.offset}&sort=${query.sort}&logic=${query.logic}`
+  );
   return res.data;
 };
 
 const advancedFind = async (query) => {
-  for (let el in query) {
-    if (query[el] === "") query[el] = "_";
+  const b = query.body;
+  const q = query.query;
+  for (let el in b) {
+    if (b[el] === "") b[el] = "_";
   }
-  const res = await axios.get(
-    URL +
-      `afind?title=${query.title}&author=${query.author}&year=${query.year}&genre=${query.genre}&section=${query.section}`
-  );
+  const longquery = `advanced?limit=${q.limit}&offset=${q.offset}&sort=${q.sort}&title=${b.title}&authors=${b.authors}&genres=${b.genres}&section=${b.section}&publisher=${b.publisher}&yearStart=${b.yearStart}&yearEnd=${b.yearEnd}&isbn=${b.isbn}&udk=${b.udk}&bbk=${b.bbk}`;
+  const res = await axios.get(URL + longquery);
   return res.data;
 };
 
@@ -32,8 +37,11 @@ const oneBook = async (query) => {
   return res.data;
 };
 
-const getAuthorBooks = async (query) => {
-  const res = await axios.get(URL + `authorall/${query}`);
+const getByHeading = async (query) => {
+  const res = await axios.get(
+    URL +
+      `heading/${query.heading}?uuid=${query.uuid}&limit=${query.limit}&offset=${query.offset}&sort=${query.sort}`
+  );
   return res.data;
 };
 
@@ -82,7 +90,7 @@ const bookService = {
   simpleFind,
   advancedFind,
   oneBook,
-  getAuthorBooks,
+  getByHeading,
   deleteBook,
   createBook,
   incBookNum,

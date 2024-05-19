@@ -10,6 +10,7 @@ const initialState = {
       yearPublish: "",
       yearAuthor: "",
       number: 0,
+      rate: 0,
       createdAt: "",
       genres: [
         {
@@ -33,13 +34,27 @@ const initialState = {
   ],
   book: {
     uuid: "",
-    number: 0,
     title: "",
-    year: 0,
-    section: {
-      uuid: "",
-      sectionName: "",
-    },
+    originalTitle: "",
+    yearPublish: "",
+    yearAuthor: "",
+    bibliography: "",
+    annotation: "",
+    physicalDescription: "",
+    note: "",
+    udk: "",
+    bbk: "",
+    rate: 0,
+    number: 0,
+    debtedNumber: 0,
+    sectionUuid: "",
+    publisherUuid: "",
+    genres: [
+      {
+        uuid: "",
+        genre: "",
+      },
+    ],
     authors: [
       {
         uuid: "",
@@ -48,15 +63,22 @@ const initialState = {
         middlename: "",
       },
     ],
-    genres: [
+    isbns: [
       {
         uuid: "",
-        genreName: "",
+        isbn: "",
+        bookUuid: "",
       },
     ],
+    publisher: {
+      uuid: "",
+      publisher: "",
+    },
+    section: {
+      uuid: "",
+      section: "",
+    },
   },
-  limit: 10,
-  sort: "",
   isError: false,
   isSuccess: false,
   isLoading: false,
@@ -131,11 +153,11 @@ export const oneBook = createAsyncThunk(
   }
 );
 
-export const getAuthorBooks = createAsyncThunk(
-  "books/getAuthorBooks",
+export const getByHeading = createAsyncThunk(
+  "books/getByHeading",
   async (query, thunkAPI) => {
     try {
-      return await bookService.getAuthorBooks(query);
+      return await bookService.getByHeading(query);
     } catch (error) {
       const message =
         (error.response &&
@@ -280,15 +302,15 @@ export const bookSlice = createSlice({
         state.isError = true;
         state.message = action.payload;
       })
-      .addCase(getAuthorBooks.pending, (state) => {
+      .addCase(getByHeading.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(getAuthorBooks.fulfilled, (state, action) => {
+      .addCase(getByHeading.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
         state.books = action.payload;
       })
-      .addCase(getAuthorBooks.rejected, (state, action) => {
+      .addCase(getByHeading.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;

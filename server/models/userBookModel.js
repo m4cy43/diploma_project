@@ -40,6 +40,12 @@ const Userbook = db.define(
         key: "uuid",
       },
     },
+    createdAt: {
+      type: DataTypes.DATE(6),
+    },
+    updatedAt: {
+      type: DataTypes.DATE(6),
+    },
   },
   {
     freezeTableName: true,

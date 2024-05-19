@@ -42,6 +42,12 @@ const User = db.define(
         is: /^\+(380)[0-9]{9}$/,
       },
     },
+    createdAt: {
+      type: DataTypes.DATE(6),
+    },
+    updatedAt: {
+      type: DataTypes.DATE(6),
+    },
   },
   {
     freezeTableName: true,

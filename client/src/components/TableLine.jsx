@@ -1,7 +1,22 @@
 import { Link } from "react-router-dom";
 import "./css/tableline.css";
+import {
+  setPage,
+  setSearchType,
+  setHeadingData,
+  setHeadingType,
+} from "../features/search/searchSlice";
+import { useDispatch } from "react-redux";
 
 function TableLine({ book }) {
+  const dispatch = useDispatch();
+  const headingFinder = (uuid, type) => {
+    dispatch(setPage(1));
+    dispatch(setSearchType("heading"));
+    dispatch(setHeadingType(type));
+    dispatch(setHeadingData(uuid));
+  };
+
   return (
     <tr>
       <td>{book.number}</td>
@@ -14,7 +29,11 @@ function TableLine({ book }) {
           const ElMiddle = el.middlename === "_" ? "" : el.middlename;
           const ElSur = el.surname === "_" ? "" : el.surname;
           return (
-            <Link to={`/author/${el.uuid}`} key={el.uuid}>
+            <Link
+              to={`../`}
+              key={el.uuid}
+              onClick={() => headingFinder(el.uuid, "author")}
+            >
               {ElName} {ElMiddle} {ElSur}
             </Link>
           );
@@ -24,13 +43,26 @@ function TableLine({ book }) {
       <td>
         {book.genres.map((el) => {
           return (
-            <Link to={`/genre/${el.uuid}`} key={el.uuid}>
+            <Link
+              to={`../`}
+              key={el.uuid}
+              onClick={() => headingFinder(el.uuid, "genre")}
+            >
               {el.genre}
             </Link>
           );
         })}
       </td>
-      <td>{book.publisher ? book.publisher.publisher : ""}</td>
+      <td>
+        <Link
+          to={`../`}
+          key={book.publisher.uuid}
+          onClick={() => headingFinder(book.publisher.uuid, "publisher")}
+        >
+          {book.publisher.publisher}
+        </Link>
+      </td>
+      <td>{book.rate}</td>
     </tr>
   );
 }

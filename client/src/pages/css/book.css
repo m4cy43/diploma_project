@@ -1,0 +1,78 @@
+@import "../../components/css/tags.css";
+
+.book-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.add-info {
+  width: 95%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.add-info h5 {
+  margin: 5px;
+}
+
+.book-info {
+  width: 95%;
+  background-color: #688eb1;
+  border: 2px #17344f solid;
+  padding: 10px;
+}
+
+.book-info span {
+  color: #e8f92e;
+}
+
+.book-bottom-panel {
+  width: 95%;
+  align-items: flex-start;
+}
+
+.book-bottom-panel input[type="submit"] {
+  background-color: #17344f;
+  border: 2px #d9d9d9 solid;
+  color: #e8f92e;
+  margin-top: 10px;
+  padding: 8px;
+  align-self: flex-start;
+}
+
+.book-bottom-panel input[type="submit"]:hover {
+  background-color: #68b16f;
+}
+
+h6 a:nth-child(2n) {
+  color: #000000;
+  text-decoration: underline solid #000000 1.25px;
+  text-underline-offset: 2px;
+}
+
+h6 a {
+  margin: 0px 3px 0px 3px;
+}
+
+.book-info h6 {
+  margin-bottom: 5px;
+}
+
+.number-buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.number-buttons input {
+  padding: 3px;
+  margin-right: 5px;
+  margin-left: 5px;
+  height: 75%;
+  color: #e8f92e;
+  background-color: #17344f;
+}

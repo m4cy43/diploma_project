@@ -19,6 +19,9 @@ const Author = db.define(
     middlename: {
       type: DataTypes.STRING,
     },
+    createdAt: {
+      type: DataTypes.DATE(6),
+    },
   },
   {
     freezeTableName: true,
