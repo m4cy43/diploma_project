@@ -18,6 +18,7 @@ const getAllDebts = asyncHandler(async (req, res) => {
   const debts = await User.findAll({
     include: {
       model: Book,
+      required: true,
       attributes: [
         "uuid",
         "title",
@@ -49,6 +50,7 @@ const getUserDebts = asyncHandler(async (req, res) => {
   const debts = await User.findOne({
     include: {
       model: Book,
+      required: true,
       attributes: [
         "uuid",
         "title",

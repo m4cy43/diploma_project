@@ -6,23 +6,26 @@ import {
   oneBook,
   getByHeading,
   resetBooks,
+  getSimilar,
   // incBookNum,
   // decBookNum,
 } from "../features/book/bookSlice";
 import Spinner from "../components/Spinner";
 import "./css/book.css";
-// import {
-//   bookTheBook,
-//   oneBookDebt,
-//   resetDebts,
-//   unbookTheBook,
-// } from "../features/debt/debtSlice";
+import // bookmark,
+// bookTheBook,
+// oneBookDebt,
+// resetDebts,
+// unbookTheBook,
+"../features/debt/debtSlice";
 import {
   setPage,
   setSearchType,
   setHeadingData,
   setHeadingType,
 } from "../features/search/searchSlice";
+import TableLine from "../components/TableLine";
+import "./css/tables.css";
 
 function Book() {
   const { uuid } = useParams();
@@ -30,13 +33,9 @@ function Book() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { user } = useSelector((state) => state.auth);
-  const { book, isLoading, isError, message } = useSelector(
-    (state) => state.books
-  );
-  const { searchType, page, limit, sort, logic } = useSelector(
-    (state) => state.search
-  );
+  const { user, roles } = useSelector((state) => state.auth);
+  const { book, books, isLoading, similarLoading, isError, message } =
+    useSelector((state) => state.books);
   // const { debts } = useSelector((state) => state.debts);
 
   useEffect(() => {
@@ -51,7 +50,7 @@ function Book() {
       // dispatch(resetDebts());
       dispatch(resetBooks());
     };
-  }, [isError, message, dispatch]);
+  }, [isError, uuid, message, dispatch]);
 
   if (isLoading) {
     return <Spinner />;
@@ -86,6 +85,10 @@ function Book() {
   // const decNum = () => {
   //   dispatch(decBookNum(uuid));
   // };
+
+  const loadSimilar = () => {
+    dispatch(getSimilar(uuid));
+  };
 
   const headingFinder = (uuid, type) => {
     dispatch(setPage(1));
@@ -140,7 +143,7 @@ function Book() {
                     key={el.uuid}
                     onClick={() => headingFinder(el.uuid, "author")}
                   >
-                    {el.name} {el.surname} {el.middlename}
+                    {el.name} {el.middlename} {el.surname}
                   </Link>
                 );
               })}
@@ -190,14 +193,18 @@ function Book() {
               })}
             </h6>
           </div>
-          {/* <div className="book-bottom-panel">
-            {user.roles && user.roles.includes("admin") ? (
+          <div className="book-bottom-panel">
+            {user && roles.includes("admin") ? (
               <input
                 type="submit"
                 value="Delete the book"
-                onClick={delTheBook}
+                // onClick={delTheBook}
               />
-            ) : user.isVerified ? (
+            ) : (
+              <></>
+            )}
+            {/* {
+              user && roles.includes("verified") ? (
               debts.user[0] ? (
                 debts.user[0].books[0].debt.isBooked ? (
                   <input
@@ -210,11 +217,54 @@ function Book() {
                 )
               ) : (
                 <input type="submit" value="Take the book" onClick={takeBook} />
-              )
+              ))
+            :{}} */}
+            {/* {user && roles.includes("verified") ? (
+              <input type="submit" value="Bookmark" onClick={() => {}} />
             ) : (
-              <input type="submit" value="Verify account first" />
+              {}
+            )} */}
+          </div>
+          <div className="similar">
+            {similarLoading ? (
+              <Spinner />
+            ) : (
+              <p>
+                *It may take 20-30 sec to generate. Please do not refresh the
+                page, or it will load longer.
+              </p>
             )}
-          </div> */}
+            <button onClick={loadSimilar}>Get similar books</button>
+            <table>
+              <tbody>
+                <tr>
+                  <th>N</th>
+                  <th>Title</th>
+                  <th>Author</th>
+                  <th>Year</th>
+                  <th>Genres</th>
+                  <th>Publisher</th>
+                  <th>Rate</th>
+                </tr>
+                {books ? (
+                  books.map((book) => <TableLine book={book} key={book.uuid} />)
+                ) : (
+                  <TableLine
+                    book={{
+                      number: "",
+                      title: "",
+                      authors: [{ name: "", surname: "", middlename: "" }],
+                      year: "",
+                      genres: [{ genre: "" }],
+                      publisher: { publisher: "" },
+                      rate: "",
+                    }}
+                    key={""}
+                  />
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </main>
     </>

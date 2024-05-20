@@ -16,7 +16,7 @@ const simpleFind = async (query) => {
   }
   const res = await axios.get(
     URL +
-      `flex?query=${query.query}&limit=${query.limit}&offset=${query.offset}&sort=${query.sort}&logic=${query.logic}`
+      `flex?query=${query.query}&limit=${query.limit}&offset=${query.offset}&sort=${query.sort}`
   );
   return res.data;
 };
@@ -42,6 +42,11 @@ const getByHeading = async (query) => {
     URL +
       `heading/${query.heading}?uuid=${query.uuid}&limit=${query.limit}&offset=${query.offset}&sort=${query.sort}`
   );
+  return res.data;
+};
+
+const similarBooks = async (query) => {
+  const res = await axios.get(URL + `similar?uuid=${query}`);
   return res.data;
 };
 
@@ -91,6 +96,7 @@ const bookService = {
   advancedFind,
   oneBook,
   getByHeading,
+  similarBooks,
   deleteBook,
   createBook,
   incBookNum,

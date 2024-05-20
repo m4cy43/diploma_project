@@ -38,6 +38,7 @@ const returnOrderedSimilarities = async (subject, similarities) => {
     return {
       scores: sortedScores,
       similarities: sortedSimilarities,
+      order: keys,
       analyseTime: timeEnd - timeStart,
     };
   });

@@ -30,7 +30,6 @@ function Shelf() {
     page,
     limit,
     sort,
-    logic,
   } = useSelector((state) => state.search);
 
   useEffect(() => {
@@ -50,7 +49,6 @@ function Shelf() {
           limit,
           offset,
           sort,
-          logic,
         })
       );
     }
@@ -82,7 +80,6 @@ function Shelf() {
     limit,
     page,
     sort,
-    logic,
     navigate,
     isError,
     message,

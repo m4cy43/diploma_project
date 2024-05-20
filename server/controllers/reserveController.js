@@ -17,6 +17,7 @@ const getAllReservations = asyncHandler(async (req, res) => {
   const reserv = await User.findAll({
     include: {
       model: Book,
+      required: true,
       attributes: [
         "uuid",
         "title",
@@ -48,6 +49,7 @@ const getUserReservations = asyncHandler(async (req, res) => {
   const reserv = await User.findOne({
     include: {
       model: Book,
+      required: true,
       attributes: [
         "uuid",
         "title",

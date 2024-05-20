@@ -100,15 +100,22 @@ const getLatest = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get books by simple (flex) search + logic
-// @route   GET /api/book/flex?query=&limit=&offset=&sort=&logic=
+// @route   GET /api/book/flex?query=&limit=&offset=&sort=
 // @access  Public
 const getFlex = asyncHandler(async (req, res) => {
-  const { query, limit, offset, sort, logic } = req.query;
+  const { query, limit, offset, sort } = req.query;
   let newquery = query;
-  if (!query) {
+  if (!query || query == "_") {
     // res.status(400);
     // throw new Error("Missing query");
-    newquery = "_";
+    newquery = ".";
+  } else {
+    newquery = newquery
+      .split(";")
+      .map((x) => x.trim())
+      .map((x) => `\\b${x}\\b`)
+      .join("|");
+    newquery = newquery.replace("*", ".*");
   }
 
   let sortBy = sortParams[sort];
@@ -117,26 +124,27 @@ const getFlex = asyncHandler(async (req, res) => {
   }
 
   // Replace "AND, OR, (), *" and convert the string to regex
-  if (logic) {
-    let arr = query.split(/(\s|\(|\)|AND|OR)/g);
-    arr = arr.filter((x) => x !== "" && x !== " ");
-    arr = arr.map((x) => {
-      if (x.includes("*")) {
-        x = x.replace("*", "(.*?)");
-      }
-      if (!(x === "(" || x === ")" || x === "AND" || x === "OR")) {
-        x = "(?=(.*?)" + x + "(.*?))";
-      }
-      if (x === "AND") {
-        x = "";
-      }
-      if (x === "OR") {
-        x = "|";
-      }
-      return x;
-    });
-    newquery = arr.join("");
-  }
+  // if (logic == "on") {
+  //   let arr = query.split(/(\s|\(|\)|AND|OR)/g);
+  //   arr = arr.filter((x) => x !== "" && x !== " ");
+  //   arr = arr.map((x) => {
+  //     if (x.includes("*")) {
+  //       x = x.replace("*", "(.*?)");
+  //     }
+  //     if (!(x === "(" || x === ")" || x === "AND" || x === "OR")) {
+  //       x = "(?=.*" + x + ")";
+  //     }
+  //     if (x === "AND") {
+  //       x = "";
+  //     }
+  //     if (x === "OR") {
+  //       x = "|";
+  //     }
+  //     return x;
+  //   });
+  //   newquery = arr.join("");
+  // }
+
   const books = await Book.findAll({
     include: [
       {
@@ -214,6 +222,19 @@ const getAdvanced = asyncHandler(async (req, res) => {
       if (x.length == 3) return { name: x[0], middlename: x[2], surname: x[1] };
       if (x.length > 3) return { name: x[0], middlename: "_", surname: "_" };
     });
+  const aGenres = genresArr.filter((y) => y != "_").join("|");
+  const aNames = authorsArr
+    .map((x) => x.name)
+    .filter((y) => y != "_")
+    .join("|");
+  const aSurnames = authorsArr
+    .map((x) => x.surname)
+    .filter((y) => y != "_")
+    .join("|");
+  const aMiddlenames = authorsArr
+    .map((x) => x.middlename)
+    .filter((y) => y != "_")
+    .join("|");
 
   let sortBy = sortParams[sort];
   if (!sortBy) {
@@ -227,16 +248,22 @@ const getAdvanced = asyncHandler(async (req, res) => {
         attributes: ["uuid", "name", "surname", "middlename"],
         through: { attributes: [] },
         where: {
-          name: { [Op.substring]: authorsArr.map((x) => x.name) },
-          surname: { [Op.substring]: authorsArr.map((x) => x.surname) },
-          middlename: { [Op.substring]: authorsArr.map((x) => x.middlename) },
+          name: {
+            [Op.regexp]: aNames ? aNames : "(.*?)",
+          },
+          surname: {
+            [Op.regexp]: aSurnames ? aSurnames : "(.*?)",
+          },
+          middlename: {
+            [Op.regexp]: aMiddlenames ? aMiddlenames : "(.*?)",
+          },
         },
       },
       {
         model: Genre,
         attributes: ["uuid", "genre"],
         through: { attributes: [] },
-        where: { genre: { [Op.substring]: genresArr } },
+        where: { genre: { [Op.regexp]: aGenres ? aGenres : "(.*?)" } },
       },
       {
         model: Publisher,
@@ -702,6 +729,35 @@ const getAllPublisher = asyncHandler(async (req, res) => {
 // @route   GET /api/book/similar
 // @access  Public
 const getSimilarBooks = asyncHandler(async (req, res) => {
+  const b = await Book.findByPk(req.query.uuid, {
+    include: [
+      {
+        model: Author,
+        attributes: ["name", "surname", "middlename"],
+        through: { attributes: [] },
+      },
+      {
+        model: Genre,
+        attributes: ["genre"],
+        through: { attributes: [] },
+      },
+      {
+        model: Publisher,
+        attributes: ["publisher"],
+      },
+    ],
+    attributes: [
+      "uuid",
+      "title",
+      "originalTitle",
+      "annotation",
+      "rate",
+      "createdAt",
+    ],
+  });
+
+  const genre_list = b.genres.map((x) => x.genre);
+
   const books = await Book.findAll({
     include: [
       {
@@ -713,24 +769,48 @@ const getSimilarBooks = asyncHandler(async (req, res) => {
         model: Genre,
         attributes: ["genre"],
         through: { attributes: [] },
-        where: { genre: req.body.genres },
+        where: { genre: genre_list },
+      },
+      {
+        model: Publisher,
+        attributes: ["publisher"],
       },
     ],
-    attributes: ["uuid", "title", "originalTitle", "annotation"],
-    order: rateDESC,
+    attributes: [
+      "uuid",
+      "title",
+      "originalTitle",
+      "annotation",
+      "rate",
+      "createdAt",
+    ],
+    order: sortParams.rateDESC,
     limit: 20,
     subQuery: true,
   });
 
-  const subject = JSON.stringify(req.body);
-  const similarities = books.map((x) => JSON.stringify(x));
+  const subject = `Title: ${b.title}\nOriginal title: ${
+    b.originalTitle
+  }\nAnnotation: ${b.annotation}\nAuthors: ${b.authors
+    .map((x) => x.name + " " + x.middlename + " " + x.surname)
+    .join(", ")}\nGenres: ${b.genres.map((x) => x.genre).join(", ")}\n`;
+  const similarities = books.map(
+    (y) =>
+      `Title: ${y.title}\nOriginal title: ${y.originalTitle}\nAnnotation: ${
+        y.annotation
+      }\nAuthors: ${y.authors
+        .map((x) => x.name + " " + x.middlename + " " + x.surname)
+        .join(", ")}\nGenres: ${y.genres.map((x) => x.genre).join(", ")}`
+  );
 
   const recommendations = await returnOrderedSimilarities(
     subject,
     similarities
   );
 
-  res.status(200).json(recommendations);
+  // first five with greater score
+  const resArr = recommendations.order.slice(0, 5).map((x) => books[x]);
+  res.status(200).json(resArr);
 });
 
 const sortParams = {

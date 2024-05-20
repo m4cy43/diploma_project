@@ -1,0 +1,57 @@
+@import "../../components/css/tags.css";
+
+.account-box {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-around;
+}
+
+.personal-data {
+  background-color: #688eb1;
+  padding: 10px;
+  width: auto;
+  margin: 0 auto;
+  border: 2px #17344f solid;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.personal-data h6 {
+  margin: 5px 0px 5px 0px;
+}
+
+.personal-data input {
+  padding: 5px;
+  width: auto;
+  margin: 5px;
+  background-color: #17344f;
+  border: 2px #d9d9d9 solid;
+  color: #e8f92e;
+}
+
+.personal-data input:hover {
+  background-color: #68b16f;
+  color: #e8f92e;
+}
+
+.personal-data span {
+  color: #e8f92e;
+}
+
+.debt-list {
+  width: 100%;
+}
+
+.personal-data-box {
+  width: 20%;
+}
+
+.debt-list-box {
+  width: 75%;
+}
+
+.account-box h5 {
+  margin: 5px;
+}

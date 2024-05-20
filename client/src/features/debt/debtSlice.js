@@ -1,96 +1,45 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import bookService from "./bookService";
+import debtService from "./debtService";
 
 const initialState = {
-  books: [
+  debts: [
     {
       uuid: "",
-      title: "",
-      originalTitle: "",
-      yearPublish: "",
-      yearAuthor: "",
-      number: 0,
-      rate: 0,
-      createdAt: "",
-      genres: [
+      email: "",
+      name: "",
+      surname: "",
+      phone: "",
+      membership: "",
+      books: [
         {
           uuid: "",
-          genre: "",
+          title: "",
+          originalTitle: "",
+          yearPublish: "",
+          yearAuthor: "",
+          userbook: {
+            uuid: "",
+            type: "",
+            deadline: "",
+            note: "",
+            updatedAt: "",
+          },
         },
       ],
-      authors: [
-        {
-          uuid: "",
-          name: "",
-          surname: "",
-          middlename: "",
-        },
-      ],
-      publisher: {
-        uuid: "",
-        publisher: "",
-      },
     },
   ],
-  book: {
-    uuid: "",
-    title: "",
-    originalTitle: "",
-    yearPublish: "",
-    yearAuthor: "",
-    bibliography: "",
-    annotation: "",
-    physicalDescription: "",
-    note: "",
-    udk: "",
-    bbk: "",
-    rate: 0,
-    number: 0,
-    debtedNumber: 0,
-    sectionUuid: "",
-    publisherUuid: "",
-    genres: [
-      {
-        uuid: "",
-        genre: "",
-      },
-    ],
-    authors: [
-      {
-        uuid: "",
-        name: "",
-        surname: "",
-        middlename: "",
-      },
-    ],
-    isbns: [
-      {
-        uuid: "",
-        isbn: "",
-        bookUuid: "",
-      },
-    ],
-    publisher: {
-      uuid: "",
-      publisher: "",
-    },
-    section: {
-      uuid: "",
-      section: "",
-    },
-  },
   isError: false,
   isSuccess: false,
   isLoading: false,
-  similarLoading: false,
   message: "",
 };
 
-export const getLatest = createAsyncThunk(
-  "books/getLatest",
-  async (query, thunkAPI) => {
+export const getAllDebts = createAsyncThunk(
+  "debts/getAllDebts",
+  async (_, thunkAPI) => {
     try {
-      return await bookService.getLatest(query);
+      const token = thunkAPI.getState().auth.user.token;
+      return await debtService.getAllDebts(token);
     } catch (error) {
       const message =
         (error.response &&
@@ -103,11 +52,12 @@ export const getLatest = createAsyncThunk(
   }
 );
 
-export const simpleFind = createAsyncThunk(
-  "books/simpleFind",
-  async (query, thunkAPI) => {
+export const getAllBookings = createAsyncThunk(
+  "debts/getAllBookings",
+  async (_, thunkAPI) => {
     try {
-      return await bookService.simpleFind(query);
+      const token = thunkAPI.getState().auth.user.token;
+      return await debtService.getAllBookings(token);
     } catch (error) {
       const message =
         (error.response &&
@@ -120,80 +70,12 @@ export const simpleFind = createAsyncThunk(
   }
 );
 
-export const advancedFind = createAsyncThunk(
-  "books/advancedFind",
-  async (query, thunkAPI) => {
-    try {
-      return await bookService.advancedFind(query);
-    } catch (error) {
-      const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString();
-      return thunkAPI.rejectWithValue(message);
-    }
-  }
-);
-
-export const oneBook = createAsyncThunk(
-  "books/oneBook",
-  async (query, thunkAPI) => {
-    try {
-      return await bookService.oneBook(query);
-    } catch (error) {
-      const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString();
-      return thunkAPI.rejectWithValue(message);
-    }
-  }
-);
-
-export const getByHeading = createAsyncThunk(
-  "books/getByHeading",
-  async (query, thunkAPI) => {
-    try {
-      return await bookService.getByHeading(query);
-    } catch (error) {
-      const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString();
-      return thunkAPI.rejectWithValue(message);
-    }
-  }
-);
-
-export const getSimilar = createAsyncThunk(
-  "books/getSimilar",
-  async (query, thunkAPI) => {
-    try {
-      return await bookService.similarBooks(query);
-    } catch (error) {
-      const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString();
-      return thunkAPI.rejectWithValue(message);
-    }
-  }
-);
-
-export const deleteBook = createAsyncThunk(
-  "books/deleteBook",
+export const oneBookDebt = createAsyncThunk(
+  "debts/oneBookDebt",
   async (query, thunkAPI) => {
     try {
       const token = thunkAPI.getState().auth.user.token;
-      return await bookService.deleteBook(query, token);
+      return await debtService.oneBookDebt(query, token);
     } catch (error) {
       const message =
         (error.response &&
@@ -206,30 +88,12 @@ export const deleteBook = createAsyncThunk(
   }
 );
 
-export const createBook = createAsyncThunk(
-  "books/createBook",
-  async (data, thunkAPI) => {
-    try {
-      const token = thunkAPI.getState().auth.user.token;
-      return await bookService.createBook(data, token);
-    } catch (error) {
-      const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString();
-      return thunkAPI.rejectWithValue(message);
-    }
-  }
-);
-
-export const incBookNum = createAsyncThunk(
-  "books/incBookNum",
+export const bookTheBook = createAsyncThunk(
+  "debts/bookTheBook",
   async (query, thunkAPI) => {
     try {
       const token = thunkAPI.getState().auth.user.token;
-      return await bookService.incBookNum(query, token);
+      return await debtService.bookTheBook(query, token);
     } catch (error) {
       const message =
         (error.response &&
@@ -242,12 +106,12 @@ export const incBookNum = createAsyncThunk(
   }
 );
 
-export const decBookNum = createAsyncThunk(
-  "books/decBookNum",
+export const unbookTheBook = createAsyncThunk(
+  "debts/unbookTheBook",
   async (query, thunkAPI) => {
     try {
       const token = thunkAPI.getState().auth.user.token;
-      return await bookService.decBookNum(query, token);
+      return await debtService.unbookTheBook(query, token);
     } catch (error) {
       const message =
         (error.response &&
@@ -260,139 +124,196 @@ export const decBookNum = createAsyncThunk(
   }
 );
 
-export const bookSlice = createSlice({
-  name: "books",
+export const getBoth = createAsyncThunk(
+  "debts/getBoth",
+  async (_, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await debtService.getBoth(token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const debtTheBook = createAsyncThunk(
+  "debts/debtTheBook",
+  async (query, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await debtService.debtTheBook(query, token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const deleteBookingAdm = createAsyncThunk(
+  "debts/deleteBookingAdm",
+  async (query, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await debtService.deleteBookingAdm(query, token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const deleteUserDebt = createAsyncThunk(
+  "debts/deleteUserDebt",
+  async (query, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await debtService.deleteUserDebt(query, token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const debtSlice = createSlice({
+  name: "debts",
   initialState,
   reducers: {
-    resetBooks: (state) => initialState,
+    resetDebts: (state) => initialState,
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getLatest.pending, (state) => {
+      .addCase(getAllDebts.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(getLatest.fulfilled, (state, action) => {
+      .addCase(getAllDebts.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.books = action.payload;
+        state.debts = action.payload;
       })
-      .addCase(getLatest.rejected, (state, action) => {
+      .addCase(getAllDebts.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
       })
-      .addCase(simpleFind.pending, (state) => {
+      .addCase(getAllBookings.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(simpleFind.fulfilled, (state, action) => {
+      .addCase(getAllBookings.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.books = action.payload;
+        state.debts = action.payload;
       })
-      .addCase(simpleFind.rejected, (state, action) => {
+      .addCase(getAllBookings.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
       })
-      .addCase(advancedFind.pending, (state) => {
+      .addCase(oneBookDebt.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(advancedFind.fulfilled, (state, action) => {
+      .addCase(oneBookDebt.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.books = action.payload;
+        state.debts = action.payload;
       })
-      .addCase(advancedFind.rejected, (state, action) => {
+      .addCase(oneBookDebt.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
       })
-      .addCase(oneBook.pending, (state) => {
+      .addCase(bookTheBook.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(oneBook.fulfilled, (state, action) => {
+      .addCase(bookTheBook.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.book = action.payload;
+        state.debts = action.payload;
       })
-      .addCase(oneBook.rejected, (state, action) => {
+      .addCase(bookTheBook.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
       })
-      .addCase(getByHeading.pending, (state) => {
+      .addCase(unbookTheBook.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(getByHeading.fulfilled, (state, action) => {
+      .addCase(unbookTheBook.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.books = action.payload;
+        state.debts = action.payload;
       })
-      .addCase(getByHeading.rejected, (state, action) => {
+      .addCase(unbookTheBook.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
       })
-      .addCase(getSimilar.pending, (state) => {
-        state.similarLoading = true;
-      })
-      .addCase(getSimilar.fulfilled, (state, action) => {
-        state.similarLoading = false;
-        state.isSuccess = true;
-        state.books = action.payload;
-      })
-      .addCase(getSimilar.rejected, (state, action) => {
-        state.similarLoading = false;
-        state.isError = true;
-        state.message = action.payload;
-      })
-      .addCase(deleteBook.pending, (state) => {
+      .addCase(getBoth.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(deleteBook.fulfilled, (state, action) => {
+      .addCase(getBoth.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.book = initialState.book;
+        state.debts = action.payload;
       })
-      .addCase(deleteBook.rejected, (state, action) => {
+      .addCase(getBoth.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
       })
-      .addCase(createBook.pending, (state) => {
+      .addCase(debtTheBook.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(createBook.fulfilled, (state, action) => {
+      .addCase(debtTheBook.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
       })
-      .addCase(createBook.rejected, (state, action) => {
+      .addCase(debtTheBook.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
       })
-      .addCase(incBookNum.pending, (state) => {
+      .addCase(deleteBookingAdm.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(incBookNum.fulfilled, (state, action) => {
+      .addCase(deleteBookingAdm.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.book = action.payload;
       })
-      .addCase(incBookNum.rejected, (state, action) => {
+      .addCase(deleteBookingAdm.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
       })
-      .addCase(decBookNum.pending, (state) => {
+      .addCase(deleteUserDebt.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(decBookNum.fulfilled, (state, action) => {
+      .addCase(deleteUserDebt.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.book = action.payload;
       })
-      .addCase(decBookNum.rejected, (state, action) => {
+      .addCase(deleteUserDebt.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
@@ -400,5 +321,5 @@ export const bookSlice = createSlice({
   },
 });
 
-export const { resetBooks } = bookSlice.actions;
-export default bookSlice.reducer;
+export const { resetDebts } = debtSlice.actions;
+export default debtSlice.reducer;

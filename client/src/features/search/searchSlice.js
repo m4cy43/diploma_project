@@ -20,7 +20,6 @@ const initialState = {
   page: 1,
   limit: 10,
   sort: "",
-  logic: "",
 };
 
 export const searchSlice = createSlice({

@@ -28,6 +28,19 @@ const getAuthUser = async (token) => {
   return res.data;
 };
 
+const changeCred = async (userData, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const res = await axios.put(URL + "", userData, config);
+  if (res.data) {
+    localStorage.setItem("user", JSON.stringify(res.data));
+  }
+  return res.data;
+};
+
 const logout = () => {
   localStorage.removeItem("user");
 };
@@ -37,6 +50,7 @@ const authService = {
   login,
   logout,
   getAuthUser,
+  changeCred,
 };
 
 export default authService;

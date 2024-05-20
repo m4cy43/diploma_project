@@ -54,9 +54,12 @@ function Header() {
   const { books, isError, message } = useSelector((state) => state.books);
 
   useEffect(() => {
-    if (user && roles.length === 0) {
+    if (user && user.token !== "" && roles.length === 0) {
       dispatch(getRoles());
     }
+    return () => {
+      dispatch(reset());
+    };
   }, [user, roles, dispatch]);
 
   const onLogout = () => {

@@ -1,7 +1,17 @@
 @import "../../components/css/tags.css";
 
-.table-box {
+.table-box,
+.similar {
   width: 95%;
+}
+
+.similar {
+  margin-top: 15px;
+}
+.similar button {
+  background-color: #17344f;
+  border: 2px #d9d9d9 solid;
+  color: #e8f92e;
 }
 
 .arrows {

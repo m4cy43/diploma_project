@@ -1,7 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
-const Role = require("../models/roleModel");
 const Userbook = require("../models/userBookModel");
+const Book = require("../models/bookModel");
 const { Op } = require("sequelize");
 
 // @desc    Get user debts
@@ -11,6 +11,7 @@ const getUserBookmarks = asyncHandler(async (req, res) => {
   const bookmarks = await User.findOne({
     include: {
       model: Book,
+      required: true,
       attributes: [
         "uuid",
         "title",
