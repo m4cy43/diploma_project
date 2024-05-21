@@ -1,8 +1,62 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import debtService from "./debtService";
+import reserveService from "./reserveService";
+import bookmarkService from "./bookmarkService";
 
 const initialState = {
   debts: [
+    {
+      uuid: "",
+      email: "",
+      name: "",
+      surname: "",
+      phone: "",
+      membership: "",
+      books: [
+        {
+          uuid: "",
+          title: "",
+          originalTitle: "",
+          yearPublish: "",
+          yearAuthor: "",
+          userbook: {
+            uuid: "",
+            type: "",
+            deadline: "",
+            note: "",
+            updatedAt: "",
+          },
+        },
+      ],
+    },
+  ],
+  reservings: [
+    {
+      uuid: "",
+      email: "",
+      name: "",
+      surname: "",
+      phone: "",
+      membership: "",
+      books: [
+        {
+          uuid: "",
+          title: "",
+          originalTitle: "",
+          yearPublish: "",
+          yearAuthor: "",
+          userbook: {
+            uuid: "",
+            type: "",
+            deadline: "",
+            note: "",
+            updatedAt: "",
+          },
+        },
+      ],
+    },
+  ],
+  bookmarks: [
     {
       uuid: "",
       email: "",
@@ -36,10 +90,28 @@ const initialState = {
 
 export const getAllDebts = createAsyncThunk(
   "debts/getAllDebts",
+  async (query, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await debtService.getAllDebts(query, token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const getDebtsAuth = createAsyncThunk(
+  "debts/getDebtsAuth",
   async (_, thunkAPI) => {
     try {
       const token = thunkAPI.getState().auth.user.token;
-      return await debtService.getAllDebts(token);
+      return await debtService.getDebtsAuth(token);
     } catch (error) {
       const message =
         (error.response &&
@@ -52,12 +124,102 @@ export const getAllDebts = createAsyncThunk(
   }
 );
 
-export const getAllBookings = createAsyncThunk(
-  "debts/getAllBookings",
+export const debtBook = createAsyncThunk(
+  "debts/debtBook",
+  async (data, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await debtService.debtBook(data, token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const reserveToDebt = createAsyncThunk(
+  "debts/reserveToDebt",
+  async (data, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await debtService.reserveToDebt(data, token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const deleteDebt = createAsyncThunk(
+  "debts/deleteDebt",
+  async (query, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await debtService.deleteDebt(query, token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const sendEmail = createAsyncThunk(
+  "debts/sendEmail",
+  async (query, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await debtService.sendEmail(query, token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const getAllReservings = createAsyncThunk(
+  "debts/getAllReservings",
+  async (query, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await reserveService.getAllReservings(query, token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const getReservingsAuth = createAsyncThunk(
+  "debts/getReservingsAuth",
   async (_, thunkAPI) => {
     try {
       const token = thunkAPI.getState().auth.user.token;
-      return await debtService.getAllBookings(token);
+      return await reserveService.getReservingsAuth(token);
     } catch (error) {
       const message =
         (error.response &&
@@ -70,12 +232,12 @@ export const getAllBookings = createAsyncThunk(
   }
 );
 
-export const oneBookDebt = createAsyncThunk(
-  "debts/oneBookDebt",
+export const reserveBook = createAsyncThunk(
+  "debts/reserveBook",
   async (query, thunkAPI) => {
     try {
       const token = thunkAPI.getState().auth.user.token;
-      return await debtService.oneBookDebt(query, token);
+      return await reserveService.reserveBook(query, token);
     } catch (error) {
       const message =
         (error.response &&
@@ -88,12 +250,12 @@ export const oneBookDebt = createAsyncThunk(
   }
 );
 
-export const bookTheBook = createAsyncThunk(
-  "debts/bookTheBook",
+export const deleteReserving = createAsyncThunk(
+  "debts/deleteReserving",
   async (query, thunkAPI) => {
     try {
       const token = thunkAPI.getState().auth.user.token;
-      return await debtService.bookTheBook(query, token);
+      return await reserveService.deleteReserving(query, token);
     } catch (error) {
       const message =
         (error.response &&
@@ -106,30 +268,12 @@ export const bookTheBook = createAsyncThunk(
   }
 );
 
-export const unbookTheBook = createAsyncThunk(
-  "debts/unbookTheBook",
-  async (query, thunkAPI) => {
-    try {
-      const token = thunkAPI.getState().auth.user.token;
-      return await debtService.unbookTheBook(query, token);
-    } catch (error) {
-      const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString();
-      return thunkAPI.rejectWithValue(message);
-    }
-  }
-);
-
-export const getBoth = createAsyncThunk(
-  "debts/getBoth",
+export const getBookmarksAuth = createAsyncThunk(
+  "debts/getBookmarksAuth",
   async (_, thunkAPI) => {
     try {
       const token = thunkAPI.getState().auth.user.token;
-      return await debtService.getBoth(token);
+      return await bookmarkService.getBookmarksAuth(token);
     } catch (error) {
       const message =
         (error.response &&
@@ -142,12 +286,12 @@ export const getBoth = createAsyncThunk(
   }
 );
 
-export const debtTheBook = createAsyncThunk(
-  "debts/debtTheBook",
+export const saveBook = createAsyncThunk(
+  "debts/saveBook",
   async (query, thunkAPI) => {
     try {
       const token = thunkAPI.getState().auth.user.token;
-      return await debtService.debtTheBook(query, token);
+      return await bookmarkService.saveBook(query, token);
     } catch (error) {
       const message =
         (error.response &&
@@ -160,30 +304,12 @@ export const debtTheBook = createAsyncThunk(
   }
 );
 
-export const deleteBookingAdm = createAsyncThunk(
-  "debts/deleteBookingAdm",
+export const deleteBookmark = createAsyncThunk(
+  "debts/deleteBookmark",
   async (query, thunkAPI) => {
     try {
       const token = thunkAPI.getState().auth.user.token;
-      return await debtService.deleteBookingAdm(query, token);
-    } catch (error) {
-      const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString();
-      return thunkAPI.rejectWithValue(message);
-    }
-  }
-);
-
-export const deleteUserDebt = createAsyncThunk(
-  "debts/deleteUserDebt",
-  async (query, thunkAPI) => {
-    try {
-      const token = thunkAPI.getState().auth.user.token;
-      return await debtService.deleteUserDebt(query, token);
+      return await bookmarkService.deleteBookmark(query, token);
     } catch (error) {
       const message =
         (error.response &&
@@ -217,103 +343,150 @@ export const debtSlice = createSlice({
         state.isError = true;
         state.message = action.payload;
       })
-      .addCase(getAllBookings.pending, (state) => {
+      .addCase(getDebtsAuth.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(getAllBookings.fulfilled, (state, action) => {
+      .addCase(getDebtsAuth.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
         state.debts = action.payload;
       })
-      .addCase(getAllBookings.rejected, (state, action) => {
+      .addCase(getDebtsAuth.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
       })
-      .addCase(oneBookDebt.pending, (state) => {
+      .addCase(debtBook.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(oneBookDebt.fulfilled, (state, action) => {
+      .addCase(debtBook.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.debts = action.payload;
+        // state.debts = action.payload;
       })
-      .addCase(oneBookDebt.rejected, (state, action) => {
+      .addCase(debtBook.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+      })
+      .addCase(reserveToDebt.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(reserveToDebt.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        // state.debts = action.payload;
+      })
+      .addCase(reserveToDebt.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+      })
+      .addCase(deleteDebt.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(deleteDebt.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+      })
+      .addCase(deleteDebt.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
       })
-      .addCase(bookTheBook.pending, (state) => {
+      .addCase(getAllReservings.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(bookTheBook.fulfilled, (state, action) => {
+      .addCase(getAllReservings.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.debts = action.payload;
+        state.reservings = action.payload;
       })
-      .addCase(bookTheBook.rejected, (state, action) => {
+      .addCase(getAllReservings.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
       })
-      .addCase(unbookTheBook.pending, (state) => {
+      .addCase(getReservingsAuth.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(unbookTheBook.fulfilled, (state, action) => {
+      .addCase(getReservingsAuth.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.debts = action.payload;
+        state.reservings = action.payload;
       })
-      .addCase(unbookTheBook.rejected, (state, action) => {
+      .addCase(getReservingsAuth.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
       })
-      .addCase(getBoth.pending, (state) => {
+      .addCase(reserveBook.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(getBoth.fulfilled, (state, action) => {
+      .addCase(reserveBook.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.debts = action.payload;
+        // state.reservings = action.payload;
       })
-      .addCase(getBoth.rejected, (state, action) => {
+      .addCase(reserveBook.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+      })
+      .addCase(deleteReserving.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(deleteReserving.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+      })
+      .addCase(deleteReserving.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
       })
-      .addCase(debtTheBook.pending, (state) => {
+      .addCase(getBookmarksAuth.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(debtTheBook.fulfilled, (state, action) => {
+      .addCase(getBookmarksAuth.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
+        state.bookmarks = action.payload;
       })
-      .addCase(debtTheBook.rejected, (state, action) => {
+      .addCase(getBookmarksAuth.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
       })
-      .addCase(deleteBookingAdm.pending, (state) => {
+      .addCase(saveBook.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(deleteBookingAdm.fulfilled, (state, action) => {
+      .addCase(saveBook.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        // state.bookmarks = action.payload;
+      })
+      .addCase(saveBook.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+      })
+      .addCase(deleteBookmark.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(deleteBookmark.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
       })
-      .addCase(deleteBookingAdm.rejected, (state, action) => {
+      .addCase(deleteBookmark.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
       })
-      .addCase(deleteUserDebt.pending, (state) => {
+      .addCase(sendEmail.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(deleteUserDebt.fulfilled, (state, action) => {
+      .addCase(sendEmail.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
       })
-      .addCase(deleteUserDebt.rejected, (state, action) => {
+      .addCase(sendEmail.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;

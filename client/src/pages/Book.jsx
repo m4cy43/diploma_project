@@ -2,22 +2,23 @@ import { useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import {
-  // deleteBook,
+  deleteBook,
   oneBook,
-  getByHeading,
   resetBooks,
   getSimilar,
-  // incBookNum,
-  // decBookNum,
 } from "../features/book/bookSlice";
 import Spinner from "../components/Spinner";
 import "./css/book.css";
-import // bookmark,
-// bookTheBook,
-// oneBookDebt,
-// resetDebts,
-// unbookTheBook,
-"../features/debt/debtSlice";
+import {
+  resetDebts,
+  getDebtsAuth,
+  getReservingsAuth,
+  getBookmarksAuth,
+  saveBook,
+  deleteBookmark,
+  reserveBook,
+  deleteReserving,
+} from "../features/debt/debtSlice";
 import {
   setPage,
   setSearchType,
@@ -34,42 +35,79 @@ function Book() {
   const dispatch = useDispatch();
 
   const { user, roles } = useSelector((state) => state.auth);
-  const { book, books, isLoading, similarLoading, isError, message } =
-    useSelector((state) => state.books);
-  // const { debts } = useSelector((state) => state.debts);
+  const {
+    book,
+    books,
+    isLoading,
+    similarLoading,
+    isError,
+    isSuccess,
+    message,
+  } = useSelector((state) => state.books);
+  const debtsState = useSelector((state) => state.debts);
+  const debts = debtsState.debts;
+  const reservings = debtsState.reservings;
+  const bookmarks = debtsState.bookmarks;
+
+  let [isDebted, isReserved, isBookmarked] = [false, false, false];
+  isDebted = debts[0].books.findIndex((x) => x.uuid === book.uuid) !== -1;
+  isReserved =
+    reservings[0].books.findIndex((x) => x.uuid === book.uuid) !== -1;
+  isBookmarked =
+    bookmarks[0].books.findIndex((x) => x.uuid === book.uuid) !== -1;
 
   useEffect(() => {
     if (isError) {
       console.log(message);
     }
 
-    // dispatch(oneBookDebt(uuid));
     dispatch(oneBook(uuid));
 
+    if (user && user.token !== "") {
+      if (debtsState.isError) {
+        console.log(debtsState.message);
+      }
+
+      dispatch(getDebtsAuth(uuid));
+      dispatch(getReservingsAuth(uuid));
+      dispatch(getBookmarksAuth(uuid));
+    }
+
     return () => {
-      // dispatch(resetDebts());
+      dispatch(resetDebts());
       dispatch(resetBooks());
     };
-  }, [isError, uuid, message, dispatch]);
+  }, [user, isError, message, dispatch]);
 
   if (isLoading) {
     return <Spinner />;
   }
 
-  // const delTheBook = async () => {
-  //   await dispatch(deleteBook(uuid));
-  //   await navigate("/");
-  //   return async () => {
-  //     await dispatch(resetBooks());
-  //   };
-  // };
+  const delTheBook = () => {
+    dispatch(deleteBook(uuid));
+    navigate("/");
+  };
 
-  // const takeBook = () => {
-  //   dispatch(bookTheBook(uuid));
-  //   return () => {
-  //     dispatch(resetDebts());
-  //   };
-  // };
+  const editTheBook = () => {
+    // dispatch(deleteBook(uuid));
+    // navigate("/");
+  };
+
+  const addBookmark = () => {
+    dispatch(saveBook(uuid));
+  };
+
+  const removeBookmark = () => {
+    dispatch(deleteBookmark(uuid));
+  };
+
+  const addReserve = () => {
+    dispatch(reserveBook(uuid));
+  };
+
+  const removeReserve = () => {
+    dispatch(deleteReserving(uuid));
+  };
 
   // const unBook = () => {
   //   dispatch(unbookTheBook(uuid));
@@ -195,11 +233,18 @@ function Book() {
           </div>
           <div className="book-bottom-panel">
             {user && roles.includes("admin") ? (
-              <input
-                type="submit"
-                value="Delete the book"
-                // onClick={delTheBook}
-              />
+              <>
+                <input
+                  type="submit"
+                  value="Delete the book"
+                  onClick={delTheBook}
+                />
+                <input
+                  type="submit"
+                  value="Edit the book"
+                  onClick={editTheBook}
+                />
+              </>
             ) : (
               <></>
             )}
@@ -219,11 +264,40 @@ function Book() {
                 <input type="submit" value="Take the book" onClick={takeBook} />
               ))
             :{}} */}
-            {/* {user && roles.includes("verified") ? (
-              <input type="submit" value="Bookmark" onClick={() => {}} />
+            {user && roles.includes("verified") ? (
+              <>
+                {isBookmarked ? (
+                  <input
+                    type="submit"
+                    value="Remove Bookmark"
+                    onClick={removeBookmark}
+                  />
+                ) : (
+                  <input
+                    type="submit"
+                    value="Add Bookmark"
+                    onClick={addBookmark}
+                  />
+                )}
+                {isReserved ? (
+                  <input
+                    type="submit"
+                    value="UnReserve"
+                    onClick={removeReserve}
+                  />
+                ) : isDebted ? (
+                  <input
+                    type="submit"
+                    value="Book is Debted"
+                    onClick={() => navigate("./me")}
+                  />
+                ) : (
+                  <input type="submit" value="Reserve" onClick={addReserve} />
+                )}
+              </>
             ) : (
-              {}
-            )} */}
+              <></>
+            )}
           </div>
           <div className="similar">
             {similarLoading ? (

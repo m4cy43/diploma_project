@@ -139,7 +139,7 @@ const reservationToDebt = asyncHandler(async (req, res) => {
     throw new Error("Action not alowed due to role");
   }
 
-  const book = await Book.findByPk(bookUuid);
+  const book = await Book.findByPk(debt.bookUuid);
   if (!book) {
     res.status(400);
     throw new Error("There is no such book");

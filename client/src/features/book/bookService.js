@@ -56,39 +56,39 @@ const deleteBook = async (query, token) => {
       Authorization: `Bearer ${token}`,
     },
   };
-  const res = await axios.delete(URL + `one/${query}`, config);
+  const res = await axios.delete(URL + `del/${query}`, config);
   return res.data;
 };
 
-const createBook = async (data, token) => {
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-  const res = await axios.post(URL, data, config);
-  return res.data;
-};
+// const createBook = async (data, token) => {
+//   const config = {
+//     headers: {
+//       Authorization: `Bearer ${token}`,
+//     },
+//   };
+//   const res = await axios.post(URL, data, config);
+//   return res.data;
+// };
 
-const incBookNum = async (query, token) => {
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-  const res = await axios.put(URL + `inc/${query}`, {}, config);
-  return res.data;
-};
+// const incBookNum = async (query, token) => {
+//   const config = {
+//     headers: {
+//       Authorization: `Bearer ${token}`,
+//     },
+//   };
+//   const res = await axios.put(URL + `inc/${query}`, {}, config);
+//   return res.data;
+// };
 
-const decBookNum = async (query, token) => {
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-  const res = await axios.put(URL + `dec/${query}`, {}, config);
-  return res.data;
-};
+// const decBookNum = async (query, token) => {
+//   const config = {
+//     headers: {
+//       Authorization: `Bearer ${token}`,
+//     },
+//   };
+//   const res = await axios.put(URL + `dec/${query}`, {}, config);
+//   return res.data;
+// };
 
 const bookService = {
   getLatest,
@@ -98,9 +98,9 @@ const bookService = {
   getByHeading,
   similarBooks,
   deleteBook,
-  createBook,
-  incBookNum,
-  decBookNum,
+  // createBook,
+  // incBookNum,
+  // decBookNum,
 };
 
 export default bookService;

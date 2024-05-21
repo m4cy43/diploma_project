@@ -9,6 +9,6 @@ export const store = configureStore({
     auth: authReducer,
     books: bookReducer,
     search: searchSlice,
-    debt: debtSlice,
+    debts: debtSlice,
   },
 });
