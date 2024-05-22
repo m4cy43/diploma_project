@@ -66,7 +66,18 @@ function ChangeCredentials() {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    if (password !== password2) {
+    if (phone !== null && phone !== "" && !phone.match(/^\+(380)[0-9]{9}$/)) {
+      toast.error("Wrong phone format", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    } else if (password !== password2) {
       toast.error("Passwords do not match", {
         position: "top-right",
         autoClose: 5000,
@@ -77,8 +88,11 @@ function ChangeCredentials() {
         progress: undefined,
         theme: "dark",
       });
-    } else if (!phone.match(/^\+(380)[0-9]{9}$/)) {
-      toast.error("Wrong phone formt", {
+    } else if (
+      email !== "" &&
+      !email.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)
+    ) {
+      toast.error("Wrong email format", {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,

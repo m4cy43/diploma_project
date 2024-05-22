@@ -4,6 +4,7 @@ const { performance } = require("perf_hooks");
 
 const returnOrderedSimilarities = async (subject, similarities) => {
   let scores = [];
+  let cords = [];
 
   // Load the model
   return use.loadQnA().then((model) => {
@@ -11,7 +12,7 @@ const returnOrderedSimilarities = async (subject, similarities) => {
 
     // Embed a dictionary of a query and responses
     const input = {
-      queries: [subject],
+      queries: subject,
       responses: similarities,
     };
 
@@ -24,6 +25,7 @@ const returnOrderedSimilarities = async (subject, similarities) => {
     for (let i = 0; i < input["queries"].length; i++) {
       for (let j = 0; j < input["responses"].length; j++) {
         scores.push(dotProduct(embed_query[i], embed_responses[j]));
+        cords.push({ q: i, r: j });
       }
     }
 
@@ -32,13 +34,18 @@ const returnOrderedSimilarities = async (subject, similarities) => {
     );
 
     const sortedScores = keys.map((i) => scores[i]);
-    const sortedSimilarities = keys.map((i) => similarities[i]);
+    const sortedCords = keys.map((i) => cords[i]);
+
+    const sortedSimilarities = [
+      ...new Set(sortedCords.map((x) => similarities[x.r])),
+    ];
+    const order = [...new Set(sortedCords.map((x) => x.r))];
 
     const timeEnd = performance.now();
     return {
       scores: sortedScores,
       similarities: sortedSimilarities,
-      order: keys,
+      order: order,
       analyseTime: timeEnd - timeStart,
     };
   });

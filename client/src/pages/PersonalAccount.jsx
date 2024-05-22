@@ -54,10 +54,6 @@ function PersonalAccount() {
     };
   }, [user]);
 
-  if (auth.isLoading) {
-    return <Spinner />;
-  }
-
   const changeCred = () => {
     dispatch(reset());
     navigate("/chngcred");
@@ -80,6 +76,10 @@ function PersonalAccount() {
       navigate("/");
     }
   };
+
+  if (auth.isLoading) {
+    return <Spinner />;
+  }
 
   return (
     <>

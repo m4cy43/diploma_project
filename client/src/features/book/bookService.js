@@ -60,6 +60,11 @@ const deleteBook = async (query, token) => {
   return res.data;
 };
 
+const getRecommended = async (query) => {
+  const res = await axios.get(URL + `recommended?uuid=${query}`);
+  return res.data;
+};
+
 // const createBook = async (data, token) => {
 //   const config = {
 //     headers: {
@@ -98,6 +103,7 @@ const bookService = {
   getByHeading,
   similarBooks,
   deleteBook,
+  getRecommended,
   // createBook,
   // incBookNum,
   // decBookNum,

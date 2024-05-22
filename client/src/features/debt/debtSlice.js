@@ -86,6 +86,9 @@ const initialState = {
   isSuccess: false,
   isLoading: false,
   message: "",
+  debtsAreLoaded: false,
+  reservingsAreLoaded: false,
+  bookmarksAreLoaded: false,
 };
 
 export const getAllDebts = createAsyncThunk(
@@ -404,6 +407,7 @@ export const debtSlice = createSlice({
         state.isLoading = false;
         state.isSuccess = true;
         state.debts = action.payload;
+        state.debtsAreLoaded = true;
       })
       .addCase(getDebtsAuth.rejected, (state, action) => {
         state.isLoading = false;
@@ -479,6 +483,7 @@ export const debtSlice = createSlice({
         state.isLoading = false;
         state.isSuccess = true;
         state.reservings = action.payload;
+        state.reservingsAreLoaded = true;
       })
       .addCase(getReservingsAuth.rejected, (state, action) => {
         state.isLoading = false;
@@ -529,6 +534,7 @@ export const debtSlice = createSlice({
         state.isLoading = false;
         state.isSuccess = true;
         state.bookmarks = action.payload;
+        state.bookmarksAreLoaded = true;
       })
       .addCase(getBookmarksAuth.rejected, (state, action) => {
         state.isLoading = false;

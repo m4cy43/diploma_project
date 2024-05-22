@@ -12,6 +12,7 @@ const {
   getAllGenre,
   getAllPublisher,
   getSimilarBooks,
+  getRecommended,
 } = require("../controllers/bookController");
 
 // Auth middleware
@@ -42,5 +43,7 @@ router.get("/heading/publisher", getAllPublisher);
 
 // GET /api/book/similar
 router.get("/similar", getSimilarBooks);
+// GET /api/book/recommended
+router.get("/recommended", getRecommended);
 
 module.exports = router;

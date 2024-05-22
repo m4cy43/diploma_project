@@ -6,8 +6,15 @@ import {
   simpleFind,
   advancedFind,
   getByHeading,
+  getRecommended,
   resetBooks,
 } from "../features/book/bookSlice";
+import {
+  getDebtsAuth,
+  getReservingsAuth,
+  getBookmarksAuth,
+  resetDebts,
+} from "../features/debt/debtSlice";
 import { setPage } from "../features/search/searchSlice";
 import Spinner from "../components/Spinner";
 import TableLine from "../components/TableLine";
@@ -18,9 +25,10 @@ function Shelf() {
   const dispatch = useDispatch();
 
   const { user } = useSelector((state) => state.auth);
-  const { books, isLoading, isError, message } = useSelector(
-    (state) => state.books
-  );
+  const { books, recommended, isLoading, isError, message, similarLoading } =
+    useSelector((state) => state.books);
+  const debtState = useSelector((state) => state.debts);
+  const { debts, reservings, bookmarks } = debtState;
   const {
     searchType,
     flexData,
@@ -31,6 +39,8 @@ function Shelf() {
     limit,
     sort,
   } = useSelector((state) => state.search);
+
+  const [recommedKeyPressed, setRecommendKey] = useState(false);
 
   useEffect(() => {
     let offset = (page - 1) * limit;
@@ -86,6 +96,44 @@ function Shelf() {
     message,
     dispatch,
   ]);
+
+  useEffect(() => {
+    if (
+      recommedKeyPressed &&
+      debtState.debtsAreLoaded &&
+      debtState.reservingsAreLoaded &&
+      debtState.bookmarksAreLoaded
+    ) {
+      const debtArr =
+        debts.length > 0 && debts[0].uuid !== ""
+          ? debts[0].books.map((x) => x.uuid)
+          : [];
+      const reservingsArr =
+        reservings.length > 0 && reservings[0].uuid !== ""
+          ? reservings[0].books.map((x) => x.uuid)
+          : [];
+      const bookmarksArr =
+        bookmarks.length > 0 && bookmarks[0].uuid !== ""
+          ? bookmarks[0].books.map((x) => x.uuid)
+          : [];
+
+      const JsonArray = JSON.stringify([
+        ...debtArr,
+        ...reservingsArr,
+        ...bookmarksArr,
+      ]);
+      setRecommendKey(false);
+      dispatch(getRecommended(JsonArray));
+      dispatch(resetDebts());
+    }
+  }, [debtState, recommedKeyPressed]);
+
+  const loadRecommendations = async () => {
+    setRecommendKey(true);
+    await dispatch(getDebtsAuth());
+    await dispatch(getReservingsAuth());
+    await dispatch(getBookmarksAuth());
+  };
 
   if (isLoading) {
     return <Spinner />;
@@ -150,6 +198,50 @@ function Shelf() {
             </tbody>
           </table>
         </div>
+        {user && user.token !== "" && (
+          <div className="similar">
+            {similarLoading ? (
+              <Spinner />
+            ) : (
+              <p>
+                *It may take 20-30 sec to generate. Please do not refresh the
+                page, or it will load longer.
+              </p>
+            )}
+            <button onClick={loadRecommendations}>Get recommendations</button>
+            <table>
+              <tbody>
+                <tr>
+                  <th>N</th>
+                  <th>Title</th>
+                  <th>Author</th>
+                  <th>Year</th>
+                  <th>Genres</th>
+                  <th>Publisher</th>
+                  <th>Rate</th>
+                </tr>
+                {recommended ? (
+                  recommended.map((book) => (
+                    <TableLine book={book} key={book.uuid} />
+                  ))
+                ) : (
+                  <TableLine
+                    book={{
+                      number: "",
+                      title: "",
+                      authors: [{ name: "", surname: "", middlename: "" }],
+                      year: "",
+                      genres: [{ genre: "" }],
+                      publisher: { publisher: "" },
+                      rate: "",
+                    }}
+                    key={""}
+                  />
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
       </main>
     </>
   );

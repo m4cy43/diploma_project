@@ -804,10 +804,102 @@ const getSimilarBooks = asyncHandler(async (req, res) => {
   );
 
   const recommendations = await returnOrderedSimilarities(
-    subject,
+    [subject],
     similarities
   );
 
+  // first five with greater score
+  const resArr = recommendations.order.slice(0, 5).map((x) => books[x]);
+  res.status(200).json(resArr);
+});
+
+const getRecommended = asyncHandler(async (req, res) => {
+  const uuidArr = JSON.parse(req.query.uuid);
+  const getGenres = await Book.findAll({
+    where: { uuid: uuidArr },
+    include: [
+      {
+        model: Author,
+        attributes: ["name", "surname", "middlename"],
+        through: { attributes: [] },
+      },
+      {
+        model: Genre,
+        attributes: ["genre"],
+        through: { attributes: [] },
+      },
+      {
+        model: Publisher,
+        attributes: ["publisher"],
+      },
+    ],
+    attributes: [
+      "uuid",
+      "title",
+      "originalTitle",
+      "annotation",
+      "rate",
+      "createdAt",
+    ],
+    order: sortParams.rateDESC,
+    limit: 5,
+    subQuery: true,
+  });
+  const genre_set = getGenres.map((x) => x.genres.map((y) => y.genre)).flat();
+  const genre_list = [...new Set(genre_set)];
+
+  const books = await Book.findAll({
+    include: [
+      {
+        model: Author,
+        attributes: ["name", "surname", "middlename"],
+        through: { attributes: [] },
+      },
+      {
+        model: Genre,
+        attributes: ["genre"],
+        through: { attributes: [] },
+        where: { genre: genre_list },
+      },
+      {
+        model: Publisher,
+        attributes: ["publisher"],
+      },
+    ],
+    attributes: [
+      "uuid",
+      "title",
+      "originalTitle",
+      "annotation",
+      "rate",
+      "createdAt",
+    ],
+    order: sortParams.rateDESC,
+    limit: 20,
+    subQuery: true,
+  });
+
+  const subject = getGenres.map(
+    (y) =>
+      `Title: ${y.title}\nOriginal title: ${y.originalTitle}\nAnnotation: ${
+        y.annotation
+      }\nAuthors: ${y.authors
+        .map((x) => x.name + " " + x.middlename + " " + x.surname)
+        .join(", ")}\nGenres: ${y.genres.map((x) => x.genre).join(", ")}\n`
+  );
+  const similarities = books.map(
+    (y) =>
+      `Title: ${y.title}\nOriginal title: ${y.originalTitle}\nAnnotation: ${
+        y.annotation
+      }\nAuthors: ${y.authors
+        .map((x) => x.name + " " + x.middlename + " " + x.surname)
+        .join(", ")}\nGenres: ${y.genres.map((x) => x.genre).join(", ")}`
+  );
+
+  const recommendations = await returnOrderedSimilarities(
+    subject,
+    similarities
+  );
   // first five with greater score
   const resArr = recommendations.order.slice(0, 5).map((x) => books[x]);
   res.status(200).json(resArr);
@@ -876,4 +968,5 @@ module.exports = {
   getAllGenre,
   getAllPublisher,
   getSimilarBooks,
+  getRecommended,
 };

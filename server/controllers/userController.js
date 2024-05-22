@@ -22,11 +22,20 @@ const createUser = asyncHandler(async (req, res) => {
     newPhone = null;
   }
 
-  // Check if user exists by email
+  // Check if user exists by email and phone
   const checkIfUserExists = await User.findOne({ where: { email } });
   if (checkIfUserExists) {
     res.status(400);
     throw new Error("The user already exists");
+  }
+
+  // Check if phone exists
+  if (newPhone) {
+    const phoneExists = await User.findOne({ where: { phone: newPhone } });
+    if (phoneExists) {
+      res.status(400);
+      throw new Error("User with such phone already exists");
+    }
   }
 
   // Encryption & hashing
@@ -236,6 +245,11 @@ const updateMe = asyncHandler(async (req, res) => {
     throw new Error("Required values are missing");
   }
 
+  let newPhone = phone;
+  if (phone === "") {
+    newPhone = null;
+  }
+
   // Check the user exists
   let user = await User.findByPk(req.user.uuid);
   if (!user) {
@@ -250,9 +264,9 @@ const updateMe = asyncHandler(async (req, res) => {
     throw new Error("User with such email already exists");
   }
   // Check if phone exists
-  if (phone) {
-    const phoneExists = await User.findOne({ where: { phone } });
-    if (phoneExists && user.phone !== phone) {
+  if (newPhone) {
+    const phoneExists = await User.findOne({ where: { phone: newPhone } });
+    if (phoneExists && user.phone !== newPhone) {
       res.status(400);
       throw new Error("User with such phone already exists");
     }
@@ -281,20 +295,20 @@ const updateMe = asyncHandler(async (req, res) => {
     name: name,
     surname: surname,
     middlename: middlename,
-    phone: phone,
+    phone: newPhone,
   });
 
   await user.save();
   await user.reload();
   if (user) {
     res.status(201).json({
-      uuid: user.uuid,
+      // uuid: user.uuid,
       email: user.email,
-      membership: user.membership,
-      name: user.name,
-      surname: user.surname,
-      middlename: user.middlename,
-      phone: user.phone,
+      // membership: user.membership,
+      // name: user.name,
+      // surname: user.surname,
+      // middlename: user.middlename,
+      // phone: user.phone,
       token: generateJWT(user.uuid),
     });
   } else {

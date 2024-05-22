@@ -32,7 +32,7 @@ const getAllReservations = asyncHandler(async (req, res) => {
     },
     attributes: ["uuid", "email", "name", "surname", "phone", "membership"],
     where: {
-      membership: { [Op.substring]: query },
+      membership: { [Op.substring]: query ? query : "_" },
     },
     order: [[Book, Userbook, "updatedAt", "DESC"]],
     limit: parseInt(limit) ? parseInt(limit) : 10,

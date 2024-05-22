@@ -35,8 +35,15 @@ function Book() {
   const dispatch = useDispatch();
 
   const { user, roles } = useSelector((state) => state.auth);
-  const { book, books, isLoading, similarLoading, isError, message } =
-    useSelector((state) => state.books);
+  const {
+    book,
+    books,
+    recommended,
+    isLoading,
+    similarLoading,
+    isError,
+    message,
+  } = useSelector((state) => state.books);
   const debtsState = useSelector((state) => state.debts);
   const { debts, reservings, bookmarks } = debtsState;
 
@@ -289,7 +296,7 @@ function Book() {
             ) : (
               <></>
             )}
-            {user && roles.includes("verified") ? (
+            {user ? ( // && roles.includes("verified")
               <>
                 {reservedFlag ? (
                   <input
@@ -313,7 +320,7 @@ function Book() {
                     onClick={removeBookmark}
                   />
                 ) : (
-                  !reservedFlag && (
+                  !(reservedFlag || debtedFlag) && (
                     <input
                       type="submit"
                       value="Add Bookmark"
@@ -359,8 +366,10 @@ function Book() {
                   <th>Publisher</th>
                   <th>Rate</th>
                 </tr>
-                {books ? (
-                  books.map((book) => <TableLine book={book} key={book.uuid} />)
+                {recommended ? (
+                  recommended.map((book) => (
+                    <TableLine book={book} key={book.uuid} />
+                  ))
                 ) : (
                   <TableLine
                     book={{

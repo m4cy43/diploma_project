@@ -79,6 +79,36 @@ const initialState = {
       section: "",
     },
   },
+  recommended: [
+    {
+      uuid: "",
+      title: "",
+      originalTitle: "",
+      yearPublish: "",
+      yearAuthor: "",
+      number: 0,
+      rate: 0,
+      createdAt: "",
+      genres: [
+        {
+          uuid: "",
+          genre: "",
+        },
+      ],
+      authors: [
+        {
+          uuid: "",
+          name: "",
+          surname: "",
+          middlename: "",
+        },
+      ],
+      publisher: {
+        uuid: "",
+        publisher: "",
+      },
+    },
+  ],
   isError: false,
   isSuccess: false,
   isLoading: false,
@@ -194,6 +224,23 @@ export const deleteBook = createAsyncThunk(
     try {
       const token = thunkAPI.getState().auth.user.token;
       return await bookService.deleteBook(query, token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const getRecommended = createAsyncThunk(
+  "books/getRecommended",
+  async (query, thunkAPI) => {
+    try {
+      return await bookService.getRecommended(query);
     } catch (error) {
       const message =
         (error.response &&
@@ -339,7 +386,7 @@ export const bookSlice = createSlice({
       .addCase(getSimilar.fulfilled, (state, action) => {
         state.similarLoading = false;
         state.isSuccess = true;
-        state.books = action.payload;
+        state.recommended = action.payload;
       })
       .addCase(getSimilar.rejected, (state, action) => {
         state.similarLoading = false;
@@ -356,6 +403,19 @@ export const bookSlice = createSlice({
       })
       .addCase(deleteBook.rejected, (state, action) => {
         state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
+      .addCase(getRecommended.pending, (state) => {
+        state.similarLoading = true;
+      })
+      .addCase(getRecommended.fulfilled, (state, action) => {
+        state.similarLoading = false;
+        state.isSuccess = true;
+        state.recommended = action.payload;
+      })
+      .addCase(getRecommended.rejected, (state, action) => {
+        state.similarLoading = false;
         state.isError = true;
         state.message = action.payload;
       });
