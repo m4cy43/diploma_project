@@ -12,13 +12,27 @@ const getBookmarksAuth = async (token) => {
   return res.data;
 };
 
+const isBookmarked = async (query, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const res = await axios.get(URL + `is/${query}`, config);
+  return res.data;
+};
+
 const saveBook = async (query, token) => {
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   };
-  const res = await axios.post(URL + `${query}`, {}, config);
+  const res = await axios.post(
+    URL + `?uuid=${query.uuid}&note=${query.note}`,
+    {},
+    config
+  );
   return res.data;
 };
 
@@ -34,6 +48,7 @@ const deleteBookmark = async (query, token) => {
 
 const bookmarkService = {
   getBookmarksAuth,
+  isBookmarked,
   saveBook,
   deleteBookmark,
 };

@@ -34,7 +34,7 @@ function Login() {
       });
     }
 
-    if (isSuccess || (user && user.uuid !== "")) {
+    if (isSuccess || (user && user.token !== "")) {
       navigate("/");
     }
 

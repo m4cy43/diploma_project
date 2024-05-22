@@ -26,13 +26,27 @@ const getReservingsAuth = async (token) => {
   return res.data;
 };
 
+const isReserved = async (query, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const res = await axios.get(URL + `is/${query}`, config);
+  return res.data;
+};
+
 const reserveBook = async (query, token) => {
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   };
-  const res = await axios.post(URL + `${query}`, {}, config);
+  const res = await axios.post(
+    URL + `?uuid=${query.uuid}&note=${query.note}`,
+    {},
+    config
+  );
   return res.data;
 };
 
@@ -49,6 +63,7 @@ const deleteReserving = async (query, token) => {
 const reserveService = {
   getAllReservings,
   getReservingsAuth,
+  isReserved,
   reserveBook,
   deleteReserving,
 };

@@ -47,5 +47,9 @@ router.get("/role", findByRole);
 
 // GET /api/user/me
 router.get("/me", authorization, getAuthUser);
+// GET /api/user/full
+router.get("/full", authorization, getAuthUser);
+// GET /api/user/roles
+router.get("/roles", authorization, getAuthUser);
 
 module.exports = router;

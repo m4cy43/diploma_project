@@ -46,7 +46,7 @@ const getAllReservations = asyncHandler(async (req, res) => {
 // @route   GET /api/reserve/auth
 // @access  Public
 const getUserReservations = asyncHandler(async (req, res) => {
-  const reserv = await User.findOne({
+  const reserv = await User.findAll({
     include: {
       model: Book,
       required: true,
@@ -69,8 +69,36 @@ const getUserReservations = asyncHandler(async (req, res) => {
   res.status(200).json(reserv);
 });
 
+// @desc    Check if user reserved the book
+// @route   GET /api/reserve/is/{uuid}
+// @access  Public
+const isReserved = asyncHandler(async (req, res) => {
+  const reserv = await User.findAll({
+    include: {
+      model: Book,
+      where: { uuid: req.params.uuid },
+      required: true,
+      attributes: [
+        "uuid",
+        "title",
+        "originalTitle",
+        "yearPublish",
+        "yearAuthor",
+      ],
+      through: {
+        attributes: ["uuid", "type", "deadline", "note", "updatedAt"],
+        where: { type: "reservation" },
+      },
+    },
+    where: { uuid: req.user.uuid },
+    attributes: ["uuid", "email", "membership"],
+    order: [[Book, Userbook, "updatedAt", "DESC"]],
+  });
+  res.status(200).json(reserv);
+});
+
 // @desc    Create new reservation
-// @route   POST /api/reserve/{uuid}
+// @route   POST /api/reserve?uuid=&note=
 // @access  Public
 const createReservation = asyncHandler(async (req, res) => {
   const user = await User.findByPk(req.user.uuid);
@@ -78,7 +106,7 @@ const createReservation = asyncHandler(async (req, res) => {
     res.status(401);
     throw new Error("Unauthorized");
   }
-  const book = await Book.findByPk(req.params.uuid);
+  const book = await Book.findByPk(req.query.uuid);
   if (!book) {
     res.status(400);
     throw new Error("There is no such book");
@@ -92,6 +120,7 @@ const createReservation = asyncHandler(async (req, res) => {
     },
   });
   reserv.type = "reservation";
+  reserv.note = req.query.note;
   await reserv.save();
   res.status(204).json();
 });
@@ -120,6 +149,7 @@ const deleteOld = asyncHandler(async (req, res) => {
 module.exports = {
   getAllReservations,
   getUserReservations,
+  isReserved,
   createReservation,
   deleteReservation,
 };

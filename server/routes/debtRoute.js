@@ -3,6 +3,7 @@ const router = express.Router();
 const {
   getAllDebts,
   getUserDebts,
+  isDebted,
   createDebt,
   reservationToDebt,
   deleteDebt,
@@ -16,6 +17,8 @@ const { authorization } = require("../middleware/authMiddleware");
 router.get("/all", authorization, getAllDebts);
 // GET /api/debt/auth
 router.get("/auth", authorization, getUserDebts);
+// GET /api/debt/auth
+router.get("/is/:uuid", authorization, isDebted);
 // POST /api/debt
 router.post("/", authorization, createDebt);
 // PUT /api/debt/restodebt

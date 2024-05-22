@@ -3,6 +3,7 @@ const router = express.Router();
 const {
   getAllReservations,
   getUserReservations,
+  isReserved,
   createReservation,
   deleteReservation,
 } = require("../controllers/reserveController");
@@ -15,8 +16,10 @@ const { authorization } = require("../middleware/authMiddleware");
 router.get("/all", authorization, getAllReservations);
 // GET /api/reserve/auth
 router.get("/auth", authorization, getUserReservations);
-// POST /api/reserve/{uuid}
-router.post("/:uuid", authorization, createReservation);
+// GET /api/reserve/auth
+router.get("/is/:uuid", authorization, isReserved);
+// POST /api/reserve?uuid=&note=
+router.post("/", authorization, createReservation);
 // POST /api/reserve/{uuid}
 router.delete("/:uuid", authorization, deleteReservation);
 

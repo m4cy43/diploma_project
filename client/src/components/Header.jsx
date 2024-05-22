@@ -60,7 +60,7 @@ function Header() {
     return () => {
       dispatch(reset());
     };
-  }, [user, roles, dispatch]);
+  }, [user, dispatch]);
 
   const onLogout = () => {
     dispatch(logout());
@@ -256,7 +256,7 @@ function Header() {
         </Link>
       </div>
       <div className="auth">
-        {user && user.uuid !== "" ? (
+        {user && user.token !== "" ? (
           <>
             <IconContext.Provider value={{ color: "#e8f92e", size: "1em" }}>
               <FaSignOutAlt />

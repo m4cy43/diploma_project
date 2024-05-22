@@ -1,22 +1,19 @@
 import { Link } from "react-router-dom";
 import "./css/tableline.css";
 
-function PersonalDebtLine({ debt }) {
+function PersonalDebtLine({ data }) {
   return (
     <tr>
+      {data.userbook.type !== "bookmark" ? (
+        <td>{data.userbook.deadline}</td>
+      ) : (
+        ""
+      )}
       <td>
-        {debt.debt.isDebted ? "Debted" : debt.debt.isBooked ? "Booked" : ""}
+        <Link to={`/book/${data.uuid}`}>{data.title}</Link>
       </td>
-      <td>{debt.debt.deadlineDate}</td>
-      <td>
-        <Link to={`/book/${debt.uuid}`}>{debt.title}</Link>
-      </td>
-      <td>
-        {debt.authors.map((el) => {
-          return `${el.name} ${el.middlename} ${el.surname} `;
-        })}
-      </td>
-      <td>{debt.year}</td>
+      <td>{data.yearPublish}</td>
+      <td>{data.userbook.note}</td>
     </tr>
   );
 }

@@ -46,13 +46,13 @@ const createUser = asyncHandler(async (req, res) => {
     await user.addRole(role[0]);
 
     res.status(201).json({
-      uuid: user.uuid,
+      // uuid: user.uuid,
       email: user.email,
-      membership: user.membership,
-      name: user.name,
-      surname: user.surname,
-      middlename: user.middlename,
-      phone: user.phone,
+      // membership: user.membership,
+      // name: user.name,
+      // surname: user.surname,
+      // middlename: user.middlename,
+      // phone: user.phone,
       // roles: [role[0].role],
       token: generateJWT(user.uuid),
     });
@@ -78,13 +78,13 @@ const loginUser = asyncHandler(async (req, res) => {
   });
   if (user && (await bcrypt.compare(password, user.password))) {
     res.json({
-      uuid: user.uuid,
+      // uuid: user.uuid,
       email: user.email,
-      membership: user.membership,
-      name: user.name,
-      surname: user.surname,
-      middlename: user.middlename,
-      phone: user.phone,
+      // membership: user.membership,
+      // name: user.name,
+      // surname: user.surname,
+      // middlename: user.middlename,
+      // phone: user.phone,
       // roles: user.roles.map((x) => x.role),
       token: generateJWT(user.uuid),
     });
@@ -99,6 +99,27 @@ const loginUser = asyncHandler(async (req, res) => {
 // @access  Private
 const getAuthUser = asyncHandler(async (req, res) => {
   res.status(200).json(req.user);
+});
+
+// @desc    Return full user data
+// @route   GET /api/user/full
+// @access  Private
+const getAuthFullData = asyncHandler(async (req, res) => {
+  res.status(200).json({
+    email: req.user.email,
+    membership: req.user.membership,
+    name: req.user.name,
+    surname: req.user.surname,
+    middlename: req.user.middlename,
+    phone: req.user.phone,
+  });
+});
+
+// @desc    Return auth user roles
+// @route   GET /api/user/roles
+// @access  Private
+const getAuthRoles = asyncHandler(async (req, res) => {
+  res.status(200).json(req.user.roles);
 });
 
 // @desc    Verify the user
@@ -436,6 +457,8 @@ module.exports = {
   createUser,
   loginUser,
   getAuthUser,
+  getAuthFullData,
+  getAuthRoles,
   verifyUser,
   setAdmin,
   setSuperAdmin,

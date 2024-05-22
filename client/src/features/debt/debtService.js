@@ -26,6 +26,16 @@ const getDebtsAuth = async (token) => {
   return res.data;
 };
 
+const isDebted = async (query, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const res = await axios.get(URL + `is/${query}`, config);
+  return res.data;
+};
+
 const debtBook = async (data, token) => {
   const config = {
     headers: {
@@ -69,6 +79,7 @@ const sendEmail = async (query, token) => {
 const debtService = {
   getAllDebts,
   getDebtsAuth,
+  isDebted,
   debtBook,
   reserveToDebt,
   deleteDebt,

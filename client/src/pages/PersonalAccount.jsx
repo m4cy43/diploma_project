@@ -1,8 +1,13 @@
 import { useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { getDebts, resetDebts } from "../features/debt/debtSlice";
-import { reset } from "../features/auth/authSlice";
+import {
+  getDebtsAuth,
+  getReservingsAuth,
+  getBookmarksAuth,
+  resetDebts,
+} from "../features/debt/debtSlice";
+import { reset, getAuthUser } from "../features/auth/authSlice";
 import Spinner from "../components/Spinner";
 import "./css/account.css";
 import PersonalDebtLine from "../components/PersonalDebtLine";
@@ -12,27 +17,35 @@ function PersonalAccount() {
   const dispatch = useDispatch();
 
   const auth = useSelector((state) => state.auth);
-  const { user, roles } = auth;
-  const { debts, isLoading, isError, message } = useSelector(
-    (state) => state.debts
-  );
+  const { user, full, roles } = auth;
+  const debtsState = useSelector((state) => state.debts);
+  const { debts, reservings, bookmarks } = debtsState;
 
   useEffect(() => {
     if (auth.isError) {
       console.log(auth.message);
     }
-    // if (isError) {
-    //   console.log(message);
-    // }
 
-    // dispatch(getBoth());
+    dispatch(getAuthUser());
 
     return () => {
       dispatch(reset());
-      // dispatch(resetDebts());
     };
-    // }, [auth, navigate, isError, message, dispatch]);
-  }, [auth, navigate, dispatch]);
+  }, [auth.isError, auth.message, navigate, dispatch]);
+
+  useEffect(() => {
+    if (debtsState.isError) {
+      console.log(debtsState.message);
+    }
+
+    dispatch(getDebtsAuth());
+    dispatch(getReservingsAuth());
+    dispatch(getBookmarksAuth());
+
+    return () => {
+      dispatch(resetDebts());
+    };
+  }, [user]);
 
   if (auth.isLoading) {
     return <Spinner />;
@@ -52,27 +65,27 @@ function PersonalAccount() {
             <div className="personal-data">
               <h6>
                 <span>Membership: </span>
-                {user.membership}
+                {full.membership}
               </h6>
               <h6>
                 <span>Email: </span>
-                {user.email}
+                {full.email}
               </h6>
               <h6>
                 <span>Name: </span>
-                {user.name}
+                {full.name}
               </h6>
               <h6>
                 <span>Middlename: </span>
-                {user.middlename}
+                {full.middlename}
               </h6>
               <h6>
                 <span>Surname: </span>
-                {user.surname}
+                {full.surname}
               </h6>
               <h6>
                 <span>Phone: </span>
-                {user.phone}
+                {full.phone}
               </h6>
               <h6>
                 <span>Roles: </span>
@@ -87,8 +100,10 @@ function PersonalAccount() {
           </div>
           <div className="debt-list-box">
             <h5>
-              {debts.user.length !== 0 ? debts.user[0].books.length : 0} books
-              in this list
+              {debts.length > 0 && debts[0].uuid !== ""
+                ? debts[0].books.length
+                : 0}{" "}
+              books in debt list
             </h5>
             <div className="debt-list">
               <table>
@@ -96,23 +111,96 @@ function PersonalAccount() {
                   <tr>
                     <th>Deadline</th>
                     <th>Title</th>
-                    <th>Author</th>
                     <th>Year</th>
+                    <th>Note</th>
                   </tr>
-                  {debts.user.length !== 0 ? (
-                    debts.user[0].books.map((debt) => (
-                      <PersonalDebtLine debt={debt} key={debt.uuid} />
+                  {debts.length > 0 ? (
+                    debts[0].books.map((data) => (
+                      <PersonalDebtLine data={data} key={data.uuid} />
                     ))
                   ) : (
                     <PersonalDebtLine
-                      debt={{
+                      data={{
                         title: "",
                         authors: [{ name: "", surname: "", middlename: "" }],
                         year: "",
-                        debt: {
-                          deadlineDate: "",
-                          isDebted: false,
-                          isBooked: false,
+                        note: "",
+                        userbook: {
+                          deadline: "",
+                          type: "",
+                        },
+                      }}
+                      key={""}
+                    />
+                  )}
+                </tbody>
+              </table>
+            </div>
+            <h5>
+              {reservings.length > 0 && reservings[0].uuid !== ""
+                ? reservings[0].books.length
+                : 0}{" "}
+              books in reserving list
+            </h5>
+            <div className="debt-list">
+              <table>
+                <tbody>
+                  <tr>
+                    <th>Deadline</th>
+                    <th>Title</th>
+                    <th>Year</th>
+                    <th>Note</th>
+                  </tr>
+                  {reservings.length > 0 ? (
+                    reservings[0].books.map((data) => (
+                      <PersonalDebtLine data={data} key={data.uuid} />
+                    ))
+                  ) : (
+                    <PersonalDebtLine
+                      data={{
+                        title: "",
+                        authors: [{ name: "", surname: "", middlename: "" }],
+                        year: "",
+                        note: "",
+                        userbook: {
+                          deadline: "",
+                          type: "",
+                        },
+                      }}
+                      key={""}
+                    />
+                  )}
+                </tbody>
+              </table>
+            </div>
+            <h5>
+              {bookmarks.length > 0 && bookmarks[0].uuid !== ""
+                ? bookmarks[0].books.length
+                : 0}{" "}
+              books in bookmarks list
+            </h5>
+            <div className="debt-list">
+              <table>
+                <tbody>
+                  <tr>
+                    <th>Title</th>
+                    <th>Year</th>
+                    <th>Note</th>
+                  </tr>
+                  {bookmarks.length > 0 ? (
+                    bookmarks[0].books.map((data) => (
+                      <PersonalDebtLine data={data} key={data.uuid} />
+                    ))
+                  ) : (
+                    <PersonalDebtLine
+                      data={{
+                        title: "",
+                        authors: [{ name: "", surname: "", middlename: "" }],
+                        year: "",
+                        note: "",
+                        userbook: {
+                          deadline: "",
+                          type: "",
                         },
                       }}
                       key={""}

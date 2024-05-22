@@ -47,9 +47,37 @@ const getAllDebts = asyncHandler(async (req, res) => {
 // @route   GET /api/debt/auth
 // @access  Public
 const getUserDebts = asyncHandler(async (req, res) => {
-  const debts = await User.findOne({
+  const debts = await User.findAll({
     include: {
       model: Book,
+      required: true,
+      attributes: [
+        "uuid",
+        "title",
+        "originalTitle",
+        "yearPublish",
+        "yearAuthor",
+      ],
+      through: {
+        attributes: ["uuid", "type", "deadline", "note", "updatedAt"],
+        where: { type: "debt" },
+      },
+    },
+    where: { uuid: req.user.uuid },
+    attributes: ["uuid", "email", "membership"],
+    order: [[Book, Userbook, "updatedAt", "DESC"]],
+  });
+  res.status(200).json(debts);
+});
+
+// @desc    Check if user debt the book
+// @route   GET /api/debt/is/{uuid}
+// @access  Public
+const isDebted = asyncHandler(async (req, res) => {
+  const debts = await User.findAll({
+    include: {
+      model: Book,
+      where: { uuid: req.params.uuid },
       required: true,
       attributes: [
         "uuid",
@@ -253,6 +281,7 @@ const sendEmail = asyncHandler(async (req, res) => {
 module.exports = {
   getAllDebts,
   getUserDebts,
+  isDebted,
   createDebt,
   reservationToDebt,
   deleteDebt,

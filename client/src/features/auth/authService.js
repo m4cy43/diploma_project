@@ -24,7 +24,17 @@ const getAuthUser = async (token) => {
       Authorization: `Bearer ${token}`,
     },
   };
-  const res = await axios.get(URL + "me", config);
+  const res = await axios.get(URL + "full", config);
+  return res.data;
+};
+
+const getRoles = async (token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const res = await axios.get(URL + "roles", config);
   return res.data;
 };
 
@@ -50,6 +60,7 @@ const authService = {
   login,
   logout,
   getAuthUser,
+  getRoles,
   changeCred,
 };
 

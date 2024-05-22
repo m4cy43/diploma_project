@@ -8,7 +8,7 @@ const { Op } = require("sequelize");
 // @route   GET /api/bookmark/auth
 // @access  Private
 const getUserBookmarks = asyncHandler(async (req, res) => {
-  const bookmarks = await User.findOne({
+  const bookmarks = await User.findAll({
     include: {
       model: Book,
       required: true,
@@ -31,8 +31,36 @@ const getUserBookmarks = asyncHandler(async (req, res) => {
   res.status(200).json(bookmarks);
 });
 
+// @desc    Check if user add the bookmark to the book
+// @route   GET /api/bookmark/is/{uuid}
+// @access  Private
+const isBookmarked = asyncHandler(async (req, res) => {
+  const bookmarks = await User.findAll({
+    include: {
+      model: Book,
+      where: { uuid: req.params.uuid },
+      required: true,
+      attributes: [
+        "uuid",
+        "title",
+        "originalTitle",
+        "yearPublish",
+        "yearAuthor",
+      ],
+      through: {
+        attributes: ["uuid", "type", "note", "updatedAt"],
+        where: { type: "bookmark" },
+      },
+    },
+    where: { uuid: req.user.uuid },
+    attributes: ["uuid", "email", "membership"],
+    order: [[Book, Userbook, "updatedAt", "DESC"]],
+  });
+  res.status(200).json(bookmarks);
+});
+
 // @desc    Create new debt
-// @route   POST /api/bookmark/{uuid}
+// @route   POST /api/bookmark?uuid=&note=
 // @access  Public
 const createBookmark = asyncHandler(async (req, res) => {
   const user = await User.findByPk(req.user.uuid);
@@ -40,7 +68,7 @@ const createBookmark = asyncHandler(async (req, res) => {
     res.status(401);
     throw new Error("Unauthorized");
   }
-  const book = await Book.findByPk(req.params.uuid);
+  const book = await Book.findByPk(req.query.uuid);
   if (!book) {
     res.status(400);
     throw new Error("There is no such book");
@@ -54,6 +82,7 @@ const createBookmark = asyncHandler(async (req, res) => {
     },
   });
   bookmark.type = "bookmark";
+  bookmark.note = req.query.note;
   await bookmark.save();
   res.status(204).json();
 });
@@ -74,6 +103,7 @@ const deleteBookmark = asyncHandler(async (req, res) => {
 
 module.exports = {
   getUserBookmarks,
+  isBookmarked,
   createBookmark,
   deleteBookmark,
 };

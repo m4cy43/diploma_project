@@ -124,6 +124,24 @@ export const getDebtsAuth = createAsyncThunk(
   }
 );
 
+export const isDebted = createAsyncThunk(
+  "debts/isDebted",
+  async (query, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await debtService.isDebted(query, token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 export const debtBook = createAsyncThunk(
   "debts/debtBook",
   async (data, thunkAPI) => {
@@ -232,6 +250,24 @@ export const getReservingsAuth = createAsyncThunk(
   }
 );
 
+export const isReserved = createAsyncThunk(
+  "debts/isReserved",
+  async (query, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await reserveService.isReserved(query, token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 export const reserveBook = createAsyncThunk(
   "debts/reserveBook",
   async (query, thunkAPI) => {
@@ -274,6 +310,24 @@ export const getBookmarksAuth = createAsyncThunk(
     try {
       const token = thunkAPI.getState().auth.user.token;
       return await bookmarkService.getBookmarksAuth(token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const isBookmarked = createAsyncThunk(
+  "debts/isBookmarked",
+  async (query, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await bookmarkService.isBookmarked(query, token);
     } catch (error) {
       const message =
         (error.response &&
@@ -356,6 +410,19 @@ export const debtSlice = createSlice({
         state.isError = true;
         state.message = action.payload;
       })
+      .addCase(isDebted.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(isDebted.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.debts = action.payload;
+      })
+      .addCase(isDebted.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
       .addCase(debtBook.pending, (state) => {
         state.isLoading = true;
       })
@@ -418,6 +485,19 @@ export const debtSlice = createSlice({
         state.isError = true;
         state.message = action.payload;
       })
+      .addCase(isReserved.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(isReserved.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.reservings = action.payload;
+      })
+      .addCase(isReserved.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
       .addCase(reserveBook.pending, (state) => {
         state.isLoading = true;
       })
@@ -451,6 +531,19 @@ export const debtSlice = createSlice({
         state.bookmarks = action.payload;
       })
       .addCase(getBookmarksAuth.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
+      .addCase(isBookmarked.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(isBookmarked.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.bookmarks = action.payload;
+      })
+      .addCase(isBookmarked.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -11,9 +11,9 @@ import Spinner from "../components/Spinner";
 import "./css/book.css";
 import {
   resetDebts,
-  getDebtsAuth,
-  getReservingsAuth,
-  getBookmarksAuth,
+  isReserved,
+  isDebted,
+  isBookmarked,
   saveBook,
   deleteBookmark,
   reserveBook,
@@ -35,26 +35,21 @@ function Book() {
   const dispatch = useDispatch();
 
   const { user, roles } = useSelector((state) => state.auth);
-  const {
-    book,
-    books,
-    isLoading,
-    similarLoading,
-    isError,
-    isSuccess,
-    message,
-  } = useSelector((state) => state.books);
+  const { book, books, isLoading, similarLoading, isError, message } =
+    useSelector((state) => state.books);
   const debtsState = useSelector((state) => state.debts);
-  const debts = debtsState.debts;
-  const reservings = debtsState.reservings;
-  const bookmarks = debtsState.bookmarks;
+  const { debts, reservings, bookmarks } = debtsState;
 
-  let [isDebted, isReserved, isBookmarked] = [false, false, false];
-  isDebted = debts[0].books.findIndex((x) => x.uuid === book.uuid) !== -1;
-  isReserved =
-    reservings[0].books.findIndex((x) => x.uuid === book.uuid) !== -1;
-  isBookmarked =
-    bookmarks[0].books.findIndex((x) => x.uuid === book.uuid) !== -1;
+  const [debtedFlag, setDebtedFlag] = useState(false);
+  const [reservedFlag, setReservedFlag] = useState(false);
+  const [bookmarkedFlag, setBookmarkedFlag] = useState(false);
+
+  const [reserveUuid, setReserveUuid] = useState("");
+  const [bookmarkUuid, setBookmarkUuid] = useState("");
+
+  const [reloadDebts, setReloadDebts] = useState(0);
+
+  const [note, setNote] = useState("");
 
   useEffect(() => {
     if (isError) {
@@ -63,28 +58,65 @@ function Book() {
 
     dispatch(oneBook(uuid));
 
+    return () => {
+      dispatch(resetBooks());
+    };
+  }, [isError, message, dispatch]);
+
+  useEffect(() => {
     if (user && user.token !== "") {
       if (debtsState.isError) {
         console.log(debtsState.message);
       }
 
-      dispatch(getDebtsAuth(uuid));
-      dispatch(getReservingsAuth(uuid));
-      dispatch(getBookmarksAuth(uuid));
+      dispatch(isDebted(uuid));
+      dispatch(isReserved(uuid));
+      dispatch(isBookmarked(uuid));
     }
 
     return () => {
       dispatch(resetDebts());
-      dispatch(resetBooks());
     };
-  }, [user, isError, message, dispatch]);
+  }, [user, reloadDebts]);
+
+  useEffect(() => {
+    if (
+      book.uuid !== "" &&
+      debts.length > 0 &&
+      debts[0].books[0].uuid === book.uuid
+    ) {
+      setDebtedFlag(true);
+    }
+  }, [debts, book]);
+
+  useEffect(() => {
+    if (
+      book.uuid !== "" &&
+      reservings.length > 0 &&
+      reservings[0].books[0].uuid === book.uuid
+    ) {
+      setReservedFlag(true);
+      setReserveUuid(reservings[0].books[0].userbook.uuid);
+    }
+  }, [reservings, book]);
+
+  useEffect(() => {
+    if (
+      book.uuid !== "" &&
+      bookmarks.length > 0 &&
+      bookmarks[0].books[0].uuid === book.uuid
+    ) {
+      setBookmarkedFlag(true);
+      setBookmarkUuid(bookmarks[0].books[0].userbook.uuid);
+    }
+  }, [bookmarks, book]);
 
   if (isLoading) {
     return <Spinner />;
   }
 
-  const delTheBook = () => {
-    dispatch(deleteBook(uuid));
+  const delTheBook = async () => {
+    await dispatch(deleteBook(uuid));
     navigate("/");
   };
 
@@ -93,28 +125,33 @@ function Book() {
     // navigate("/");
   };
 
-  const addBookmark = () => {
-    dispatch(saveBook(uuid));
+  const addBookmark = async () => {
+    await dispatch(saveBook({ uuid, note }));
+    document.getElementsByClassName("book-input-text").value = "";
+    setNote("");
+    setReloadDebts(reloadDebts + 1);
+    setBookmarkedFlag(true);
   };
 
-  const removeBookmark = () => {
-    dispatch(deleteBookmark(uuid));
+  const removeBookmark = async () => {
+    await dispatch(deleteBookmark(bookmarkUuid));
+    setReloadDebts(reloadDebts + 1);
+    setBookmarkedFlag(false);
   };
 
-  const addReserve = () => {
-    dispatch(reserveBook(uuid));
+  const addReserve = async () => {
+    await dispatch(reserveBook({ uuid, note }));
+    document.getElementsByClassName("book-input-text").value = "";
+    setNote("");
+    setReloadDebts(reloadDebts + 1);
+    setReservedFlag(true);
   };
 
-  const removeReserve = () => {
-    dispatch(deleteReserving(uuid));
+  const removeReserve = async () => {
+    await dispatch(deleteReserving(reserveUuid));
+    setReloadDebts(reloadDebts + 1);
+    setReservedFlag(false);
   };
-
-  // const unBook = () => {
-  //   dispatch(unbookTheBook(uuid));
-  //   return () => {
-  //     dispatch(resetDebts());
-  //   };
-  // };
 
   // const incNum = () => {
   //   dispatch(incBookNum(uuid));
@@ -248,25 +285,24 @@ function Book() {
             ) : (
               <></>
             )}
-            {/* {
-              user && roles.includes("verified") ? (
-              debts.user[0] ? (
-                debts.user[0].books[0].debt.isBooked ? (
-                  <input
-                    type="submit"
-                    value="The book is booked"
-                    onClick={unBook}
-                  />
-                ) : (
-                  <input type="submit" value="The book is debted" />
-                )
-              ) : (
-                <input type="submit" value="Take the book" onClick={takeBook} />
-              ))
-            :{}} */}
             {user && roles.includes("verified") ? (
               <>
-                {isBookmarked ? (
+                {reservedFlag ? (
+                  <input
+                    type="submit"
+                    value="UnReserve"
+                    onClick={removeReserve}
+                  />
+                ) : debtedFlag ? (
+                  <input
+                    type="submit"
+                    value="Book is Debted"
+                    onClick={() => navigate("/me")}
+                  />
+                ) : (
+                  <input type="submit" value="Reserve" onClick={addReserve} />
+                )}
+                {bookmarkedFlag ? (
                   <input
                     type="submit"
                     value="Remove Bookmark"
@@ -279,22 +315,17 @@ function Book() {
                     onClick={addBookmark}
                   />
                 )}
-                {isReserved ? (
-                  <input
-                    type="submit"
-                    value="UnReserve"
-                    onClick={removeReserve}
-                  />
-                ) : isDebted ? (
-                  <input
-                    type="submit"
-                    value="Book is Debted"
-                    onClick={() => navigate("./me")}
-                  />
-                ) : (
-                  <input type="submit" value="Reserve" onClick={addReserve} />
-                )}
               </>
+            ) : (
+              <></>
+            )}
+            {!bookmarkedFlag || !(reservedFlag || debtedFlag) ? (
+              <input
+                className="book-input-text"
+                placeholder="Your notes are here..."
+                onChange={(e) => setNote(e.target.value)}
+                maxLength={64}
+              />
             ) : (
               <></>
             )}

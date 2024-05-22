@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const {
   getUserBookmarks,
+  isBookmarked,
   createBookmark,
   deleteBookmark,
 } = require("../controllers/bookmarkController");
@@ -12,8 +13,10 @@ const { authorization } = require("../middleware/authMiddleware");
 
 // GET /api/bookmark/auth
 router.get("/auth", authorization, getUserBookmarks);
-// POST /api/bookmark/{uuid}
-router.post("/:uuid", authorization, createBookmark);
+// GET /api/bookmark/is/{uuid}
+router.get("/is/:uuid", authorization, isBookmarked);
+// POST /api/bookmark?uuid=&note=
+router.post("/", authorization, createBookmark);
 // POST /api/bookmark/{uuid}
 router.delete("/:uuid", authorization, deleteBookmark);
 
