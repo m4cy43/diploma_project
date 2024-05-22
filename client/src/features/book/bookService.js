@@ -65,15 +65,15 @@ const getRecommended = async (query) => {
   return res.data;
 };
 
-// const createBook = async (data, token) => {
-//   const config = {
-//     headers: {
-//       Authorization: `Bearer ${token}`,
-//     },
-//   };
-//   const res = await axios.post(URL, data, config);
-//   return res.data;
-// };
+const createBook = async (data, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const res = await axios.post(URL + "create", data, config);
+  return res.data;
+};
 
 // const incBookNum = async (query, token) => {
 //   const config = {
@@ -104,7 +104,7 @@ const bookService = {
   similarBooks,
   deleteBook,
   getRecommended,
-  // createBook,
+  createBook,
   // incBookNum,
   // decBookNum,
 };

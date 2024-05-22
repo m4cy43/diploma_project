@@ -139,7 +139,8 @@ const createDebt = asyncHandler(async (req, res) => {
   debt.note = note;
 
   let datetochange = new Date();
-  datetochange.setDate(datetochange.getDate() + deadline);
+  let newDate = datetochange.getDate() + parseInt(deadline);
+  datetochange.setDate(newDate);
   datetochange = datetochange.toISOString();
   debt.deadline = datetochange.split("T")[0];
 

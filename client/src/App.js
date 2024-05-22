@@ -5,7 +5,7 @@ import Register from "./pages/Register";
 import Shelf from "./pages/Shelf";
 import Book from "./pages/Book";
 // import Author from "./pages/Author";
-// import NewBookForm from "./pages/NewBookForm";
+import NewBookForm from "./pages/NewBookForm";
 // import VerifyList from "./pages/VerifyList";
 // import BookingList from "./pages/BookingList";
 // import DebtList from "./pages/DebtList";
@@ -46,9 +46,8 @@ function App() {
             <Route path="/book/:uuid" element={<Book />} />
             <Route path="/me" element={<PersonalAccount />} />
             <Route path="/chngcred" element={<ChangeCredentials />} />
-
-            {/* <Route path="/author/:uuid" element={<Author />} />
             <Route path="/newbook" element={<NewBookForm />} />
+            {/* <Route path="/author/:uuid" element={<Author />} />
             <Route path="/verifylist" element={<VerifyList />} />
             <Route path="/bookinglist" element={<BookingList />} />
             <Route path="/debtlist" element={<DebtList />} />

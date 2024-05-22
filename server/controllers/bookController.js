@@ -337,6 +337,7 @@ const createBook = asyncHandler(async (req, res) => {
     udk,
     bbk,
     number,
+    rate,
     genres,
     authors,
     section,
@@ -365,6 +366,7 @@ const createBook = asyncHandler(async (req, res) => {
     udk,
     bbk,
     number,
+    rate,
   });
 
   const genresArr = [];

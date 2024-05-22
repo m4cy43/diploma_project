@@ -1,0 +1,65 @@
+@import "./form.css";
+
+.first-row,
+.second-row,
+.third-row,
+.fourth-row {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.first-row input:first-child {
+  width: 85%;
+}
+
+.first-row input:last-child {
+  width: 15%;
+}
+
+.second-row * {
+  width: 100%;
+}
+
+.third-row input:nth-child(-n + 2) {
+  width: 25%;
+}
+.third-row *:nth-child(n + 3) {
+  width: 100%;
+}
+
+.form-box form input[type="submit"] {
+  background-color: #17344f;
+  border: 2px #d9d9d9 solid;
+  color: #e8f92e;
+  width: 50%;
+}
+
+.form-box form input[type="submit"]:hover {
+  background-color: #68b16f;
+}
+
+.react-select-container {
+  margin: 10px;
+  padding: 0px;
+}
+
+.react-select__control {
+  border: 2px #17344f solid !important;
+  border-radius: 0px;
+  padding: 0px;
+}
+
+.react-select__value-container,
+.react-select__indicators,
+.react-select__input {
+  border-width: 0px !important;
+  background-color: #d9d9d9;
+}
+
+.react-select__menu-list {
+  background-color: #d9d9d9;
+  border: 2px #17344f solid;
+  border-radius: 0px;
+}

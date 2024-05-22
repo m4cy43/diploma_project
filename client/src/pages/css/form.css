@@ -14,10 +14,10 @@
   padding: 5px;
   width: auto;
   padding: 20px 0px 10px 0px;
-  margin: 100px auto;
+  margin: 50px auto;
   border: 2px #17344f solid;
   position: relative;
-  max-width: 50%;
+  max-width: 70%;
 }
 
 .form-box form input {
@@ -50,4 +50,12 @@ textarea {
   border: 2px #17344f solid;
   width: 100%;
   background-color: #d9d9d9;
+}
+
+#create-book-box {
+  width: 100%;
+}
+
+#create-book-box form {
+  width: 90%;
 }

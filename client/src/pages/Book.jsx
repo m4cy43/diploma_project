@@ -202,7 +202,7 @@ function Book() {
           </div>
           <div className="book-info">
             <h6>
-              <span>Title:</span> {book.originalTitle}
+              <span>Title:</span> {book.title}
             </h6>
             <h6>
               <span>Original title:</span> {book.originalTitle}
