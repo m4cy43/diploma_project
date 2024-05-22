@@ -7,10 +7,16 @@ import {
   getBookmarksAuth,
   resetDebts,
 } from "../features/debt/debtSlice";
-import { reset, getAuthUser } from "../features/auth/authSlice";
+import {
+  reset,
+  getAuthUser,
+  getRoles,
+  deleteMe,
+} from "../features/auth/authSlice";
 import Spinner from "../components/Spinner";
 import "./css/account.css";
 import PersonalDebtLine from "../components/PersonalDebtLine";
+import { toast } from "react-toastify";
 
 function PersonalAccount() {
   const navigate = useNavigate();
@@ -27,11 +33,12 @@ function PersonalAccount() {
     }
 
     dispatch(getAuthUser());
+    dispatch(getRoles());
 
     return () => {
       dispatch(reset());
     };
-  }, [auth.isError, auth.message, navigate, dispatch]);
+  }, [auth.isError, auth.message, dispatch]);
 
   useEffect(() => {
     if (debtsState.isError) {
@@ -52,7 +59,26 @@ function PersonalAccount() {
   }
 
   const changeCred = () => {
+    dispatch(reset());
     navigate("/chngcred");
+  };
+
+  const deleteAcc = () => {
+    if (debts.length > 0 && debts[0].uuid !== "") {
+      toast.error("You have debts, so you cant delete your account", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    } else if (window.confirm("Do you really want to delete you account")) {
+      dispatch(deleteMe());
+      navigate("/");
+    }
   };
 
   return (
@@ -95,6 +121,12 @@ function PersonalAccount() {
                 type="button"
                 value="Change credentials"
                 onClick={changeCred}
+              />
+              <input
+                type="button"
+                value="Delete account"
+                id="delete-acc-butt"
+                onClick={deleteAcc}
               />
             </div>
           </div>

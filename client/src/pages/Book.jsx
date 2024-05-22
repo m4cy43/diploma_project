@@ -97,8 +97,10 @@ function Book() {
     ) {
       setReservedFlag(true);
       setReserveUuid(reservings[0].books[0].userbook.uuid);
+    } else {
+      setReservedFlag(false);
     }
-  }, [reservings, book]);
+  }, [reservings, bookmarks, book]);
 
   useEffect(() => {
     if (
@@ -108,8 +110,10 @@ function Book() {
     ) {
       setBookmarkedFlag(true);
       setBookmarkUuid(bookmarks[0].books[0].userbook.uuid);
+    } else {
+      setBookmarkedFlag(false);
     }
-  }, [bookmarks, book]);
+  }, [bookmarks, reservings, book]);
 
   if (isLoading) {
     return <Spinner />;
@@ -127,7 +131,7 @@ function Book() {
 
   const addBookmark = async () => {
     await dispatch(saveBook({ uuid, note }));
-    document.getElementsByClassName("book-input-text").value = "";
+    document.getElementsByClassName("book-input-text")[0].value = "";
     setNote("");
     setReloadDebts(reloadDebts + 1);
     setBookmarkedFlag(true);
@@ -141,7 +145,7 @@ function Book() {
 
   const addReserve = async () => {
     await dispatch(reserveBook({ uuid, note }));
-    document.getElementsByClassName("book-input-text").value = "";
+    document.getElementsByClassName("book-input-text")[0].value = "";
     setNote("");
     setReloadDebts(reloadDebts + 1);
     setReservedFlag(true);
@@ -309,17 +313,21 @@ function Book() {
                     onClick={removeBookmark}
                   />
                 ) : (
-                  <input
-                    type="submit"
-                    value="Add Bookmark"
-                    onClick={addBookmark}
-                  />
+                  !reservedFlag && (
+                    <input
+                      type="submit"
+                      value="Add Bookmark"
+                      onClick={addBookmark}
+                    />
+                  )
                 )}
               </>
             ) : (
               <></>
             )}
-            {!bookmarkedFlag || !(reservedFlag || debtedFlag) ? (
+            {user &&
+            roles.includes("verified") &&
+            (!bookmarkedFlag || !(reservedFlag || debtedFlag)) ? (
               <input
                 className="book-input-text"
                 placeholder="Your notes are here..."

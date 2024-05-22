@@ -51,6 +51,19 @@ const changeCred = async (userData, token) => {
   return res.data;
 };
 
+const deleteMe = async (token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const res = await axios.delete(URL + "", config);
+  if (res.data) {
+    localStorage.setItem("user", JSON.stringify(res.data));
+  }
+  return res.data;
+};
+
 const logout = () => {
   localStorage.removeItem("user");
 };
@@ -62,6 +75,7 @@ const authService = {
   getAuthUser,
   getRoles,
   changeCred,
+  deleteMe,
 };
 
 export default authService;

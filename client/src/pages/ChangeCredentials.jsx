@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { reset, changeCred } from "../features/auth/authSlice";
+import { reset, changeCred, getAuthUser } from "../features/auth/authSlice";
 import { toast } from "react-toastify";
 import "./css/form.css";
 
@@ -22,7 +22,7 @@ function ChangeCredentials() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { user, isError, isSuccess, message } = useSelector(
+  const { user, full, isError, isSuccess, message } = useSelector(
     (state) => state.auth
   );
 
@@ -39,13 +39,23 @@ function ChangeCredentials() {
         theme: "dark",
       });
     }
-
+    setFormData((previousState) => ({
+      ...previousState,
+      email: full.email,
+      name: full.name,
+      middlename: full.middlename,
+      surname: full.surname,
+      phone: full.phone,
+    }));
+    if (full.membership === "") {
+      dispatch(getAuthUser());
+    }
     if (isSuccess) {
       navigate("/me");
     }
 
     dispatch(reset());
-  }, [user, isError, isSuccess, message, navigate, dispatch]);
+  }, [full, isError, isSuccess, message, navigate, dispatch]);
 
   const onChange = (e) => {
     setFormData((previousState) => ({
@@ -58,6 +68,17 @@ function ChangeCredentials() {
     e.preventDefault();
     if (password !== password2) {
       toast.error("Passwords do not match", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    } else if (!phone.match(/^\+(380)[0-9]{9}$/)) {
+      toast.error("Wrong phone formt", {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -82,6 +103,10 @@ function ChangeCredentials() {
 
   return (
     <>
+      <p>
+        * When changing the name, surname and patronymic, you need to verify
+        yourseft again
+      </p>
       <main>
         <div className="form-box">
           <h4>Change Credentials</h4>
@@ -89,44 +114,49 @@ function ChangeCredentials() {
             <input
               type="email"
               name="email"
-              placeholder="Enter your email"
+              placeholder="Email@example.com"
               onChange={onChange}
+              defaultValue={full.email}
             />
             <input
               type="password"
               name="password"
-              placeholder="Enter your password"
+              placeholder="Password"
               onChange={onChange}
             />
             <input
               type="password"
               name="password2"
-              placeholder="Repeat your password"
+              placeholder="Repeat password"
               onChange={onChange}
             />
             <input
               type="text"
               name="name"
-              placeholder="Enter your name (optional)"
+              placeholder="Name (optional)"
               onChange={onChange}
+              defaultValue={full.name}
             />
             <input
               type="text"
               name="surname"
-              placeholder="Enter your surname (optional)"
+              placeholder="Surname (optional)"
               onChange={onChange}
+              defaultValue={full.surname}
             />
             <input
               type="text"
               name="middlename"
-              placeholder="Enter your surname (optional)"
+              placeholder="Middlename (optional)"
               onChange={onChange}
+              defaultValue={full.middlename}
             />
             <input
               type="text"
               name="phone"
-              placeholder="Enter phone number (optional)"
+              placeholder="+380987654321 (optional)"
               onChange={onChange}
+              defaultValue={full.phone}
             />
             <input type="submit" name="button" value="Enter" />
           </form>

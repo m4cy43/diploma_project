@@ -67,6 +67,17 @@ function Register() {
         progress: undefined,
         theme: "dark",
       });
+    } else if (phone !== "" && !phone.match(/^\+(380)[0-9]{9}$/)) {
+      toast.error("Wrong phone formt", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
     } else {
       const userData = {
         email,
@@ -89,43 +100,43 @@ function Register() {
             <input
               type="email"
               name="email"
-              placeholder="Enter your email"
+              placeholder="Email@example.com"
               onChange={onChange}
             />
             <input
               type="password"
               name="password"
-              placeholder="Enter your password"
+              placeholder="Password"
               onChange={onChange}
             />
             <input
               type="password"
               name="password2"
-              placeholder="Repeat your password"
+              placeholder="Repeat password"
               onChange={onChange}
             />
             <input
               type="text"
               name="name"
-              placeholder="Enter your name (optional)"
+              placeholder="Name (optional)"
               onChange={onChange}
             />
             <input
               type="text"
               name="surname"
-              placeholder="Enter your surname (optional)"
+              placeholder="Surname (optional)"
               onChange={onChange}
             />
             <input
               type="text"
               name="middlename"
-              placeholder="Enter your surname (optional)"
+              placeholder="Middlename (optional)"
               onChange={onChange}
             />
             <input
               type="text"
               name="phone"
-              placeholder="Enter phone number (optional)"
+              placeholder="+380987654321 (optional)"
               onChange={onChange}
             />
             <input type="submit" name="button" value="Enter" />

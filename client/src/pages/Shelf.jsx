@@ -77,6 +77,7 @@ function Shelf() {
     searchType,
     flexData,
     advancedData,
+    headingData,
     limit,
     page,
     sort,

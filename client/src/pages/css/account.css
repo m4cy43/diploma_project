@@ -55,3 +55,7 @@
 .account-box h5 {
   margin: 5px;
 }
+
+#delete-acc-butt:hover {
+  background-color: red;
+}

@@ -17,6 +17,11 @@ const createUser = asyncHandler(async (req, res) => {
     throw new Error("Required values are missing");
   }
 
+  let newPhone = phone;
+  if (phone === "") {
+    newPhone = null;
+  }
+
   // Check if user exists by email
   const checkIfUserExists = await User.findOne({ where: { email } });
   if (checkIfUserExists) {
@@ -38,7 +43,7 @@ const createUser = asyncHandler(async (req, res) => {
     name: name,
     surname: surname,
     middlename: middlename,
-    phone: phone,
+    phone: newPhone,
   });
   if (user) {
     // Add role to user
@@ -265,6 +270,8 @@ const updateMe = asyncHandler(async (req, res) => {
   ) {
     const roleToDel = await Role.findOne({ where: { role: "verified" } });
     if (roleToDel) await user.removeRole(roleToDel);
+    const newrole = await Role.findOrCreate({ where: { role: "unverified" } });
+    await user.addRole(newrole[0]);
   }
 
   user.set({
