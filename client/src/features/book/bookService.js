@@ -75,6 +75,16 @@ const createBook = async (data, token) => {
   return res.data;
 };
 
+const updBook = async (data, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const res = await axios.put(URL + `upd/${data.uuid}`, data.obj, config);
+  return res.data;
+};
+
 // const incBookNum = async (query, token) => {
 //   const config = {
 //     headers: {
@@ -105,6 +115,7 @@ const bookService = {
   deleteBook,
   getRecommended,
   createBook,
+  updBook,
   // incBookNum,
   // decBookNum,
 };

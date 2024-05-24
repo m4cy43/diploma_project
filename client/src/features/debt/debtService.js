@@ -42,7 +42,7 @@ const debtBook = async (data, token) => {
       Authorization: `Bearer ${token}`,
     },
   };
-  const res = await axios.put(URL, data, config);
+  const res = await axios.post(URL, data, config);
   return res.data;
 };
 

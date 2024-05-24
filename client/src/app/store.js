@@ -4,6 +4,7 @@ import bookReducer from "../features/book/bookSlice";
 import searchSlice from "../features/search/searchSlice";
 import debtSlice from "../features/debt/debtSlice";
 import headingSlice from "../features/headings/headingSlice";
+import userSlice from "../features/user/userSlice";
 
 export const store = configureStore({
   reducer: {
@@ -12,5 +13,6 @@ export const store = configureStore({
     search: searchSlice,
     debts: debtSlice,
     headings: headingSlice,
+    user: userSlice,
   },
 });

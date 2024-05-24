@@ -30,7 +30,7 @@ router.get("/advanced", getAdvanced);
 // GET /api/book/create
 router.post("/create", authorization, createBook);
 // GET /api/book/upd
-router.put("/upd", authorization, updateBook);
+router.put("/upd/:uuid", authorization, updateBook);
 // GET /api/book/del/:uuid
 router.delete("/del/:uuid", authorization, deleteBook);
 

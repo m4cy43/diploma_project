@@ -142,6 +142,11 @@ function Shelf() {
   return (
     <>
       <h2>Shelf</h2>
+      <p>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*You can use
+        search and advanced search located on header. Also some headings of the
+        book in the table and book page are interactable.
+      </p>
       <main>
         <div className="table-box">
           <h5>{books.length} results on page</h5>
@@ -204,8 +209,9 @@ function Shelf() {
               <Spinner />
             ) : (
               <p>
-                *It may take 20-30 sec to generate. Please do not refresh the
-                page, or it will load longer.
+                *It may take 15-30 sec to generate. Please do not refresh the
+                page, or it will load longer. For generation you need to have
+                one or more bookmarks, reservings, debts.
               </p>
             )}
             <button onClick={loadRecommendations}>Get recommendations</button>

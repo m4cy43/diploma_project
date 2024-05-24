@@ -121,6 +121,13 @@ const createReservation = asyncHandler(async (req, res) => {
   });
   reserv.type = "reservation";
   reserv.note = req.query.note;
+
+  let datetochange = new Date();
+  let newDate = datetochange.getDate() + 14;
+  datetochange.setDate(newDate);
+  datetochange = datetochange.toISOString();
+  reserv.deadline = datetochange.split("T")[0];
+
   await reserv.save();
   res.status(204).json();
 });

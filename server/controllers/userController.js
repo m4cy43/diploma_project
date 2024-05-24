@@ -164,7 +164,7 @@ const verifyUser = asyncHandler(async (req, res) => {
 // @route   PUT /api/user/setadmin/{uuid}
 // @access  Private
 const setAdmin = asyncHandler(async (req, res) => {
-  if (!req.user.roles.includes("super")) {
+  if (!req.user.roles.includes("main")) {
     res.status(401);
     throw new Error("Action not alowed due to role");
   }
@@ -178,6 +178,28 @@ const setAdmin = asyncHandler(async (req, res) => {
 
   const newrole = await Role.findOrCreate({ where: { role: "admin" } });
   await user.addRole(newrole[0]);
+
+  res.status(204).json();
+});
+
+// @desc    Delete admin rights
+// @route   DELETE /api/user/deladmin/{uuid}
+// @access  Private
+const delAdmin = asyncHandler(async (req, res) => {
+  if (!req.user.roles.includes("main")) {
+    res.status(401);
+    throw new Error("Action not alowed due to role");
+  }
+
+  let user = await User.findByPk(req.params.uuid);
+  // Check the user exists
+  if (!user) {
+    res.status(400);
+    throw new Error("There is no such user");
+  }
+
+  const roleToDel = await Role.findOne({ where: { role: "admin" } });
+  if (roleToDel) await user.removeRole(roleToDel);
 
   res.status(204).json();
 });
@@ -223,6 +245,11 @@ const deleteMe = asyncHandler(async (req, res) => {
 // @route   DELETE /api/user/{uuid}
 // @access  Public
 const deleteUser = asyncHandler(async (req, res) => {
+  if (!req.user.roles.includes("admin")) {
+    res.status(401);
+    throw new Error("Action not alowed due to role");
+  }
+
   let user = await User.findByPk(req.params.uuid);
   // Check the user exists
   if (!user) {
@@ -321,11 +348,20 @@ const updateMe = asyncHandler(async (req, res) => {
 // @route   PUT /api/user/{uuid}
 // @access  Public
 const updateUser = asyncHandler(async (req, res) => {
-  const { email, password, name, surname, middlename, phone } = req.body;
+  if (!req.user.roles.includes("admin")) {
+    res.status(401);
+    throw new Error("Action not alowed due to role");
+  }
+
+  const { name, surname, middlename, phone } = req.body;
   // Check the value
-  if (!email || !password) {
+  if (!name || !surname) {
     res.status(400);
     throw new Error("Required values are missing");
+  }
+  let newPhone = phone;
+  if (phone === "") {
+    newPhone = null;
   }
 
   // Check the user exists
@@ -334,30 +370,16 @@ const updateUser = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("There is no such user");
   }
-
-  // Check if user exists by email
-  const emailExists = await User.findOne({ where: { email } });
-  if (emailExists && user.email !== email) {
-    res.status(400);
-    throw new Error("User with such email already exists");
-  }
   // Check if phone exists
-  if (phone) {
-    const phoneExists = await User.findOne({ where: { phone } });
-    if (phoneExists && user.phone !== phone) {
+  if (newPhone) {
+    const phoneExists = await User.findOne({ where: { phone: newPhone } });
+    if (phoneExists && user.phone !== newPhone) {
       res.status(400);
       throw new Error("User with such phone already exists");
     }
   }
 
-  // Encryption & hashing
-  const salt = await bcrypt.genSalt(10);
-  const hash = await bcrypt.hash(password.toString(), salt);
-
   user.set({
-    email: email,
-    password: hash,
-    // membership: membership,
     name: name,
     surname: surname,
     middlename: middlename,
@@ -411,7 +433,7 @@ const findByUuid = asyncHandler(async (req, res) => {
 });
 
 // @desc    Find users by membership, supports pagination
-// @route   GET /api/user/q?query=&role=&limit=&offset=
+// @route   GET /api/user/q?query=&role=&neqRole=&limit=&offset=
 // @access  Public
 const findByMembershipAndRole = asyncHandler(async (req, res) => {
   const { query, role, limit, offset } = req.query;
@@ -423,7 +445,12 @@ const findByMembershipAndRole = asyncHandler(async (req, res) => {
   const users = await User.findAll({
     attributes: { exclude: ["password", "createdAt"] },
     include: [
-      { model: Role, through: { attributes: [] }, where: { role: role } },
+      {
+        model: Role,
+        attributes: ["role"],
+        through: { attributes: [] },
+        where: { role: role },
+      },
     ],
     where: { membership: { [Op.substring]: query } },
     order: [["updatedAt", "DESC"]],
@@ -435,11 +462,11 @@ const findByMembershipAndRole = asyncHandler(async (req, res) => {
 });
 
 // @desc    Find all users by role, supports pagination
-// @route   GET /api/user/role?role=&limit=&offset=
+// @route   GET /api/user/member?query=&limit=&offset=
 // @access  Public
-const findByRole = asyncHandler(async (req, res) => {
-  const { role, limit, offset } = req.query;
-  if (!role) {
+const findByMembership = asyncHandler(async (req, res) => {
+  const { query, limit, offset } = req.query;
+  if (!query) {
     res.status(400);
     throw new Error("Missing the query");
   }
@@ -447,8 +474,13 @@ const findByRole = asyncHandler(async (req, res) => {
   const users = await User.findAll({
     attributes: { exclude: ["password", "createdAt"] },
     include: [
-      { model: Role, through: { attributes: [] }, where: { role: role } },
+      {
+        model: Role,
+        attributes: ["role"],
+        through: { attributes: [] },
+      },
     ],
+    where: { membership: { [Op.substring]: query } },
     order: [["updatedAt", "DESC"]],
     limit: parseInt(limit) ? parseInt(limit) : 10,
     offset: parseInt(offset) ? parseInt(offset) : 0,
@@ -482,6 +514,7 @@ module.exports = {
   getAuthRoles,
   verifyUser,
   setAdmin,
+  delAdmin,
   setSuperAdmin,
   deleteMe,
   deleteUser,
@@ -489,5 +522,5 @@ module.exports = {
   updateUser,
   findByUuid,
   findByMembershipAndRole,
-  findByRole,
+  findByMembership,
 };

@@ -22,7 +22,7 @@ router.get("/is/:uuid", authorization, isDebted);
 // POST /api/debt
 router.post("/", authorization, createDebt);
 // PUT /api/debt/restodebt
-router.post("/", authorization, reservationToDebt);
+router.put("/restodebt", authorization, reservationToDebt);
 // POST /api/debt/{uuid}
 router.delete("/:uuid", authorization, deleteDebt);
 

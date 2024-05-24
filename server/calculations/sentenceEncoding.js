@@ -1,25 +1,49 @@
 require("@tensorflow/tfjs");
 const use = require("@tensorflow-models/universal-sentence-encoder");
 const { performance } = require("perf_hooks");
+const {
+  Worker,
+  isMainThread,
+  parentPort,
+  workerData,
+} = require("worker_threads");
 
-const returnOrderedSimilarities = async (subject, similarities) => {
-  let scores = [];
-  let cords = [];
+if (isMainThread) {
+  module.exports = async function returnOrderedSimilarities(
+    subject,
+    similarities
+  ) {
+    return await new Promise((resolve, reject) => {
+      const worker = new Worker(__filename, {
+        workerData: { subject, similarities },
+      });
+      worker.on("message", resolve);
+      worker.on("error", reject);
+      worker.on("exit", (code) => {
+        if (code !== 0)
+          reject(new Error(`Worker stopped with exit code ${code}`));
+      });
+    });
+  };
+} else {
+  (async () => {
+    const { subject, similarities } = workerData;
 
-  // Load the model
-  return use.loadQnA().then((model) => {
-    const timeStart = performance.now();
-
+    let scores = [];
+    let cords = [];
     // Embed a dictionary of a query and responses
     const input = {
       queries: subject,
       responses: similarities,
     };
 
-    const embeddings = model.embed(input);
+    const timeStart = performance.now();
 
-    const embed_query = embeddings["queryEmbedding"].arraySync();
-    const embed_responses = embeddings["responseEmbedding"].arraySync();
+    // Load the model
+    const model = await use.loadQnA();
+    const embeddings = await model.embed(input);
+    const embed_query = await embeddings["queryEmbedding"].array();
+    const embed_responses = await embeddings["responseEmbedding"].array();
 
     // compute the dotProduct of each query and response pair
     for (let i = 0; i < input["queries"].length; i++) {
@@ -42,14 +66,15 @@ const returnOrderedSimilarities = async (subject, similarities) => {
     const order = [...new Set(sortedCords.map((x) => x.r))];
 
     const timeEnd = performance.now();
-    return {
+    const returnObj = {
       scores: sortedScores,
       similarities: sortedSimilarities,
       order: order,
       analyseTime: timeEnd - timeStart,
     };
-  });
-};
+    parentPort.postMessage(returnObj);
+  })();
+}
 
 // Calculate the dot product of two vector arrays
 const dotProduct = (xs, ys) => {
@@ -66,4 +91,4 @@ const zipWith = (f, xs, ys) => {
   return (xs.length <= ny ? xs : xs.slice(0, ny)).map((x, i) => f(x, ys[i]));
 };
 
-module.exports = { returnOrderedSimilarities };
+// module.exports = { returnOrderedSimilarities };

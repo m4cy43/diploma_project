@@ -6,9 +6,7 @@ const Section = require("../models/sectionModel");
 const Publisher = require("../models/publisherModel");
 const Isbn = require("../models/isbnModel");
 const { Op } = require("sequelize");
-const {
-  returnOrderedSimilarities,
-} = require("../calculations/sentenceEncoding");
+const returnOrderedSimilarities = require("../calculations/sentenceEncoding");
 
 // @desc    Get book by uuid
 // @route   GET /api/book/one/{uuid}
@@ -443,9 +441,10 @@ const createBook = asyncHandler(async (req, res) => {
 });
 
 // @desc    Update the book
-// @route   UPDATE /api/book/upd
+// @route   UPDATE /api/book/upd/{uuid}
 // @access  Private
 const updateBook = asyncHandler(async (req, res) => {
+  const uuid = req.params.uuid;
   const {
     title,
     originalTitle,
@@ -474,7 +473,8 @@ const updateBook = asyncHandler(async (req, res) => {
     throw new Error("Action not alowed due to role");
   }
 
-  const book = await Book.set({
+  const book = await Book.findByPk(uuid);
+  await book.set({
     title,
     originalTitle,
     yearPublish,
@@ -551,11 +551,14 @@ const updateBook = asyncHandler(async (req, res) => {
   if (genresArr.length > 0) await book.setGenres(genresArr.map((x) => x[0]));
   if (authorsArr.length > 0) await book.setAuthors(authorsArr.map((x) => x[0]));
   if (isbnsArr.length > 0) await book.setIsbns(isbnsArr.map((x) => x[0]));
-  if (publisherFOC) await publisherFOC[0].setBooks(book);
-  if (sectionFOC) await sectionFOC[0].setBooks(book);
+  if (publisherFOC) await book.setPublisher(publisherFOC[0]);
+  if (sectionFOC) await book.setSection(sectionFOC[0]);
+
+  await book.save();
+  await book.reload();
 
   if (book) {
-    res.status(201).json({ uuid: book.uuid });
+    res.status(204).json();
   } else {
     res.status(400);
     throw new Error("Invalid data");

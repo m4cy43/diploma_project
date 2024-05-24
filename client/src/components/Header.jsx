@@ -287,23 +287,7 @@ function Header() {
                   <input
                     type="submit"
                     name="button"
-                    value="Verify list"
-                    onClick={() => {
-                      navigate("/verifylist");
-                    }}
-                  />
-                  <input
-                    type="submit"
-                    name="button"
-                    value="Booking list"
-                    onClick={() => {
-                      navigate("/bookinglist");
-                    }}
-                  />
-                  <input
-                    type="submit"
-                    name="button"
-                    value="Debt list"
+                    value="Debts"
                     onClick={() => {
                       navigate("/debtlist");
                     }}
@@ -311,35 +295,37 @@ function Header() {
                   <input
                     type="submit"
                     name="button"
-                    value="Set new admin"
+                    value="Reservings"
                     onClick={() => {
-                      navigate("/setadmin");
+                      navigate("/reservelist");
                     }}
                   />
                   <input
                     type="submit"
                     name="button"
-                    value="Authors"
+                    value="Headings"
                     onClick={() => {
-                      navigate("/authorslist");
+                      navigate("/headings");
                     }}
                   />
                   <input
                     type="submit"
                     name="button"
-                    value="Genres"
+                    value="Verify list"
                     onClick={() => {
-                      navigate("/genreslist");
+                      navigate("/verifylist");
                     }}
                   />
-                  <input
-                    type="submit"
-                    name="button"
-                    value="Sections"
-                    onClick={() => {
-                      navigate("/sectionslist");
-                    }}
-                  />
+                  {roles.includes("main") && (
+                    <input
+                      type="submit"
+                      name="button"
+                      value="Set new admin"
+                      onClick={() => {
+                        navigate("/setadmin");
+                      }}
+                    />
+                  )}
                 </div>
               </div>
             ) : (

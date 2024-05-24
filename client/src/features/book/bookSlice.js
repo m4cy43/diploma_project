@@ -271,6 +271,24 @@ export const createBook = createAsyncThunk(
   }
 );
 
+export const updBook = createAsyncThunk(
+  "books/updBook",
+  async (data, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await bookService.updBook(data, token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 // export const incBookNum = createAsyncThunk(
 //   "books/incBookNum",
 //   async (query, thunkAPI) => {
@@ -427,6 +445,18 @@ export const bookSlice = createSlice({
         state.isSuccess = true;
       })
       .addCase(createBook.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
+      .addCase(updBook.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updBook.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+      })
+      .addCase(updBook.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;

@@ -17,6 +17,7 @@ import {
   saveBook,
   deleteBookmark,
   reserveBook,
+  debtBook,
   deleteReserving,
 } from "../features/debt/debtSlice";
 import {
@@ -26,6 +27,8 @@ import {
   setHeadingType,
 } from "../features/search/searchSlice";
 import TableLine from "../components/TableLine";
+import { getByRoleAndMembership, resetUsers } from "../features/user/userSlice";
+import Select from "react-select";
 import "./css/tables.css";
 
 function Book() {
@@ -35,17 +38,12 @@ function Book() {
   const dispatch = useDispatch();
 
   const { user, roles } = useSelector((state) => state.auth);
-  const {
-    book,
-    books,
-    recommended,
-    isLoading,
-    similarLoading,
-    isError,
-    message,
-  } = useSelector((state) => state.books);
+  const { book, recommended, isLoading, similarLoading, isError, message } =
+    useSelector((state) => state.books);
   const debtsState = useSelector((state) => state.debts);
   const { debts, reservings, bookmarks } = debtsState;
+
+  const { users } = useSelector((state) => state.user);
 
   const [debtedFlag, setDebtedFlag] = useState(false);
   const [reservedFlag, setReservedFlag] = useState(false);
@@ -55,6 +53,10 @@ function Book() {
   const [bookmarkUuid, setBookmarkUuid] = useState("");
 
   const [reloadDebts, setReloadDebts] = useState(0);
+
+  const [newDebt, setNewDebt] = useState("");
+  const [deadline, setDeadline] = useState(14);
+  const [formReaload, setFormReload] = useState(0);
 
   const [note, setNote] = useState("");
 
@@ -68,7 +70,7 @@ function Book() {
     return () => {
       dispatch(resetBooks());
     };
-  }, [isError, message, dispatch]);
+  }, [formReaload, isError, message, dispatch]);
 
   useEffect(() => {
     if (user && user.token !== "") {
@@ -132,8 +134,7 @@ function Book() {
   };
 
   const editTheBook = () => {
-    // dispatch(deleteBook(uuid));
-    // navigate("/");
+    navigate(`/editbook/${uuid}`);
   };
 
   const addBookmark = async () => {
@@ -182,6 +183,13 @@ function Book() {
     dispatch(setHeadingType(type));
     dispatch(setHeadingData(uuid));
   };
+
+  let membershipOptions = users.map((el) => {
+    return {
+      value: el.uuid,
+      label: el.membership,
+    };
+  });
 
   return (
     <>
@@ -281,7 +289,7 @@ function Book() {
           </div>
           <div className="book-bottom-panel">
             {user && roles.includes("admin") ? (
-              <>
+              <div style={{ display: "flex" }}>
                 <input
                   type="submit"
                   value="Delete the book"
@@ -292,11 +300,80 @@ function Book() {
                   value="Edit the book"
                   onClick={editTheBook}
                 />
-              </>
+                {book.number !== 0 && (
+                  <>
+                    <input
+                      type="submit"
+                      value="Debt"
+                      onClick={() => {
+                        dispatch(
+                          debtBook({
+                            userUuid: newDebt,
+                            bookUuid: book.uuid,
+                            deadline: deadline,
+                            note: note,
+                          })
+                        );
+                        setFormReload(formReaload + 1);
+                      }}
+                    />
+                    <Select
+                      placeholder="Membership"
+                      options={membershipOptions}
+                      onChange={(data) => setNewDebt(data.value)}
+                      onMenuOpen={() =>
+                        dispatch(
+                          getByRoleAndMembership({
+                            query: "_",
+                            role: "verified",
+                            limit: 3000,
+                            offset: 0,
+                          })
+                        )
+                      }
+                      onMenuClose={() => dispatch(resetUsers())}
+                      id="react-select-container"
+                      classNamePrefix="react-select"
+                      theme={(theme) => ({
+                        ...theme,
+                        borderRadius: 2,
+                        colors: {
+                          ...theme.colors,
+                          primary25: "#68b16f",
+                          primary: "#d6d6d6",
+                        },
+                      })}
+                    />
+                    <input
+                      type="text"
+                      name="deadline"
+                      placeholder="deadline"
+                      style={{
+                        width: "50px",
+                        margin: "10px 0px 10px 10px",
+                        height: "30px",
+                      }}
+                      onChange={(e) => setDeadline(e.target.value)}
+                    />
+                  </>
+                )}
+              </div>
             ) : (
               <></>
             )}
-            {user ? ( // && roles.includes("verified")
+            {user &&
+            roles.includes("verified") &&
+            (!bookmarkedFlag || !(reservedFlag || debtedFlag)) ? (
+              <input
+                className="book-input-text"
+                placeholder="Your notes are here..."
+                onChange={(e) => setNote(e.target.value)}
+                maxLength={64}
+              />
+            ) : (
+              <></>
+            )}
+            {user && user.token !== "" ? ( // && roles.includes("verified")
               <>
                 {reservedFlag ? (
                   <input
@@ -332,25 +409,13 @@ function Book() {
             ) : (
               <></>
             )}
-            {user &&
-            roles.includes("verified") &&
-            (!bookmarkedFlag || !(reservedFlag || debtedFlag)) ? (
-              <input
-                className="book-input-text"
-                placeholder="Your notes are here..."
-                onChange={(e) => setNote(e.target.value)}
-                maxLength={64}
-              />
-            ) : (
-              <></>
-            )}
           </div>
           <div className="similar">
             {similarLoading ? (
               <Spinner />
             ) : (
               <p>
-                *It may take 20-30 sec to generate. Please do not refresh the
+                *It may take 15-30 sec to generate. Please do not refresh the
                 page, or it will load longer.
               </p>
             )}

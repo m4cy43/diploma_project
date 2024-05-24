@@ -4,14 +4,15 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Shelf from "./pages/Shelf";
 import Book from "./pages/Book";
-// import Author from "./pages/Author";
 import NewBookForm from "./pages/NewBookForm";
-// import VerifyList from "./pages/VerifyList";
-// import BookingList from "./pages/BookingList";
-// import DebtList from "./pages/DebtList";
-// import SetAdmin from "./pages/SetAdmin";
+import VerifyList from "./pages/VerifyList";
+import ReserveList from "./pages/ReserveList";
+import DebtList from "./pages/DebtList";
+import SetAdmin from "./pages/SetAdmin";
 import PersonalAccount from "./pages/PersonalAccount";
 import ChangeCredentials from "./pages/ChangeCredentials";
+import EditBook from "./pages/EditBook";
+
 // import AuthorsList from "./pages/AuthorsList";
 // import CreateNewAuthor from "./pages/CreateNewAuthor";
 // import GenresList from "./pages/GenresList";
@@ -47,11 +48,14 @@ function App() {
             <Route path="/me" element={<PersonalAccount />} />
             <Route path="/chngcred" element={<ChangeCredentials />} />
             <Route path="/newbook" element={<NewBookForm />} />
-            {/* <Route path="/author/:uuid" element={<Author />} />
-            <Route path="/verifylist" element={<VerifyList />} />
-            <Route path="/bookinglist" element={<BookingList />} />
             <Route path="/debtlist" element={<DebtList />} />
+            <Route path="/reservelist" element={<ReserveList />} />
+            <Route path="/verifylist" element={<VerifyList />} />
             <Route path="/setadmin" element={<SetAdmin />} />
+            <Route path="/editbook/:uuid" element={<EditBook />} />
+
+            {/*
+                       
             <Route path="/authorslist" element={<AuthorsList />} />
             <Route path="/createauthor" element={<CreateNewAuthor />} />
             <Route path="/genreslist" element={<GenresList />} />
