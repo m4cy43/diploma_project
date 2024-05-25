@@ -67,12 +67,13 @@ const deleteDebt = async (query, token) => {
 };
 
 const sendEmail = async (query, token) => {
+  console.log(query);
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   };
-  const res = await axios.delete(URL + `mail/${query}`, config);
+  const res = await axios.post(URL + `mail/${query}`, {}, config);
   return res.data;
 };
 

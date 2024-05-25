@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import "./css/tableline.css";
 
-function DebtsTableLine({ user, book, userbook, approve, decline }) {
+function DebtsTableLine({ user, book, userbook, approve, decline, mail }) {
   return (
     <tr>
       <td>
@@ -27,8 +27,24 @@ function DebtsTableLine({ user, book, userbook, approve, decline }) {
         ) : (
           <></>
         )}
+        {mail ? (
+          <input
+            type="submit"
+            value="M"
+            className="plusBut"
+            onClick={() => {
+              mail(user.uuid);
+            }}
+          />
+        ) : (
+          <></>
+        )}
       </td>
-      <td>{userbook.deadline}</td>
+      {Date.now() - Date.parse(userbook.deadline) > 0 ? (
+        <td style={{ color: "red" }}>{userbook.deadline}</td>
+      ) : (
+        <td>{userbook.deadline}</td>
+      )}
       <td>{userbook.note}</td>
       <td>{user.membership}</td>
       <td>

@@ -231,9 +231,10 @@ const sendEmail = asyncHandler(async (req, res) => {
     throw new Error("Action not alowed due to role");
   }
 
-  const user = User.findByPk(req.params.uuid, {
+  const user = await User.findByPk(req.params.uuid, {
     include: {
       model: Book,
+      required: true,
       attributes: ["uuid", "title"],
       through: {
         attributes: ["uuid", "type", "deadline", "updatedAt"],
@@ -255,16 +256,32 @@ const sendEmail = asyncHandler(async (req, res) => {
   const debts = user.books.filter(
     (book) => Date.now() - Date.parse(book.userbook.deadline) > 0
   );
-
-  let message = "Шановний читачу! Нагадуємо вам про заборгованості:\n";
-  debts.map(
-    (book) =>
-      (message += `Книга: ${book.title} - Дедлайн: ${book.userbook.deadline}\n`)
+  const otherDebts = user.books.filter(
+    (book) => Date.now() - Date.parse(book.userbook.deadline) < 0
   );
 
+  let message = "Шановний читачу! Нагадуємо вам про ваші заборгованості:\n";
+  if (debts.length > 0) {
+    message += "Книги, у яких сплив дедлайн:\n";
+    debts.map(
+      (book) =>
+        (message += `Книга: ${book.title} - Дедлайн: ${book.userbook.deadline}\n`)
+    );
+    message += "\n";
+  }
+  if (otherDebts.length > 0) {
+    message += `Книги у яких наближається дедлай:\n`;
+    otherDebts.map(
+      (book) =>
+        (message += `Книга: ${book.title} - Дедлайн: ${book.userbook.deadline}\n`)
+    );
+    message += "\n";
+  }
+  message += "З повагою, бібліотека EShelf!";
+
   const [mail, pass, host] = [
-    process.env.MAIL_USER,
-    process.env.MAIL_PASS,
+    process.env.MAIL_APP_USER,
+    process.env.MAIL_APP_PASS,
     process.env.MAIL_SERVICE,
   ];
 
@@ -277,14 +294,18 @@ const sendEmail = asyncHandler(async (req, res) => {
   });
 
   const mailOptions = {
-    from: user_mail,
-    to: user,
+    from: mail,
+    to: user.email,
     subject: "Нагадування про борг",
     text: message,
   };
 
-  let info = await transporter.sendMail(mailOptions);
-  res.status(200).json(info);
+  try {
+    let info = await transporter.sendMail(mailOptions);
+    res.status(200).json(info);
+  } catch (e) {
+    throw new Error(e);
+  }
 });
 
 module.exports = {

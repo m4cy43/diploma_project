@@ -7,6 +7,7 @@ const {
   createDebt,
   reservationToDebt,
   deleteDebt,
+  sendEmail,
 } = require("../controllers/debtController");
 
 // Auth middleware
@@ -23,7 +24,9 @@ router.get("/is/:uuid", authorization, isDebted);
 router.post("/", authorization, createDebt);
 // PUT /api/debt/restodebt
 router.put("/restodebt", authorization, reservationToDebt);
-// POST /api/debt/{uuid}
+// DELETE /api/debt/{uuid}
 router.delete("/:uuid", authorization, deleteDebt);
+// POST /api/debt/mail/{uuid}
+router.post("/mail/:uuid", authorization, sendEmail);
 
 module.exports = router;

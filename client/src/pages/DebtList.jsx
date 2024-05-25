@@ -4,17 +4,19 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   getAllDebts,
   deleteDebt,
+  sendEmail,
   resetDebts,
 } from "../features/debt/debtSlice";
 import { Link, redirect, useNavigate } from "react-router-dom";
 import Spinner from "../components/Spinner";
 import { setPage, setFlexData } from "../features/search/searchSlice";
+import { toast } from "react-toastify";
 
 function DebtList() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user, roles } = useSelector((state) => state.auth);
-  const { debts, isLoading, isError, message } = useSelector(
+  const { debts, isLoading, isSuccess, isError, message } = useSelector(
     (state) => state.debts
   );
   const { flexData, page, limit, sort } = useSelector((state) => state.search);
@@ -51,6 +53,23 @@ function DebtList() {
 
   const deletedebt = async (query) => {
     await dispatch(deleteDebt(query));
+    setKeyCounter(keyPressed + 1);
+  };
+
+  const sendemail = async (query) => {
+    await dispatch(sendEmail(query));
+    if (isSuccess) {
+      toast.error("Email is sent", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    }
     setKeyCounter(keyPressed + 1);
   };
 
@@ -104,6 +123,7 @@ function DebtList() {
                         user={usr}
                         book={bok}
                         userbook={bok.userbook}
+                        mail={sendemail}
                         approve={false}
                         decline={deletedebt}
                         key={bok.userbook.uuid}
