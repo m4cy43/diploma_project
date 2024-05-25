@@ -141,11 +141,16 @@ function Shelf() {
 
   return (
     <>
-      <h2>Shelf</h2>
+      {/* <h2>Shelf</h2> */}
+      <p style={{ marginTop: "5px" }}>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*Search
+        field supports "*" symbol for matching 0 or more symbols and OR-logic
+        using ";" symbol. Author and genre field in advanced search also
+        supports OR-logic.
+      </p>
       <p>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*You can use
-        search and advanced search located on header. Also some headings of the
-        book in the table and book page are interactable.
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**Some
+        headings of the book in the table and book page are interactable.
       </p>
       <main>
         <div className="table-box">

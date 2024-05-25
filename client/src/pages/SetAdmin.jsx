@@ -64,8 +64,10 @@ function SetAdmin() {
   };
 
   const deladm = async (query) => {
-    await dispatch(delAdmin(query));
-    setKeyCounter(keyPressed + 1);
+    if (window.confirm("Do you really want to remove admin rights?")) {
+      await dispatch(delAdmin(query));
+      setKeyCounter(keyPressed + 1);
+    }
   };
 
   return (
@@ -109,7 +111,9 @@ function SetAdmin() {
       </div>
       <main>
         <div className="table-box">
-          <h5>{users.length} users in list</h5>
+          <h5>
+            {users.length} {role} users in list
+          </h5>
           <div className="debt-list">
             <table>
               <tbody>

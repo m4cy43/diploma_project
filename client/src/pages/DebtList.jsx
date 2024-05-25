@@ -45,7 +45,7 @@ function DebtList() {
     return () => {
       dispatch(resetDebts());
     };
-  }, [keyPressed, page, flexData, isError, message, navigate, dispatch]);
+  }, [keyPressed, page, limit, flexData, isError, message, navigate, dispatch]);
 
   if (isLoading) {
     return <Spinner />;
@@ -101,7 +101,7 @@ function DebtList() {
           </div>
         </div>
         <div className="table-box">
-          <h5>{debts.length} users in list</h5>
+          <h5>{debts.length} debts in list</h5>
           <div className="debt-list">
             <table>
               <tbody>

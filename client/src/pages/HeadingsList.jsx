@@ -110,6 +110,7 @@ function HeadingsList() {
   }, [
     keyPressed,
     page,
+    limit,
     headingType,
     flexData,
     navigate,
@@ -130,25 +131,27 @@ function HeadingsList() {
   }
 
   const delHeading = async (query) => {
-    if (headingType === "author") {
-      await dispatch(deleteAuthor(query));
-      setKeyCounter(keyPressed + 1);
-    }
-    if (headingType === "genre") {
-      await dispatch(deleteGenre(query));
-      setKeyCounter(keyPressed + 1);
-    }
-    if (headingType === "section") {
-      await dispatch(deleteSection(query));
-      setKeyCounter(keyPressed + 1);
-    }
-    if (headingType === "publisher") {
-      await dispatch(deletePublisher(query));
-      setKeyCounter(keyPressed + 1);
-    }
-    if (headingType === "isbn") {
-      await dispatch(deleteIsbn(query));
-      setKeyCounter(keyPressed + 1);
+    if (window.confirm("Do you really want to delete this heading?")) {
+      if (headingType === "author") {
+        await dispatch(deleteAuthor(query));
+        setKeyCounter(keyPressed + 1);
+      }
+      if (headingType === "genre") {
+        await dispatch(deleteGenre(query));
+        setKeyCounter(keyPressed + 1);
+      }
+      if (headingType === "section") {
+        await dispatch(deleteSection(query));
+        setKeyCounter(keyPressed + 1);
+      }
+      if (headingType === "publisher") {
+        await dispatch(deletePublisher(query));
+        setKeyCounter(keyPressed + 1);
+      }
+      if (headingType === "isbn") {
+        await dispatch(deleteIsbn(query));
+        setKeyCounter(keyPressed + 1);
+      }
     }
   };
 
@@ -244,7 +247,9 @@ function HeadingsList() {
       </div>
       <main>
         <div className="table-box">
-          <h5>{loadedData.length} headings in list</h5>
+          <h5>
+            {loadedData.length} {headingType}s in list
+          </h5>
           <div className="debt-list">
             <table>
               <tbody>

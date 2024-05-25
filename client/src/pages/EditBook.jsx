@@ -348,8 +348,8 @@ function EditBook() {
                   options={publishersOptions}
                   onChange={onSelectChangePublisher}
                   defaultValue={{
-                    value: book.publisher.publisher,
-                    label: book.publisher.publisher,
+                    value: book.publisher ? book.publisher.publisher : "_",
+                    label: book.publisher ? book.publisher.publisher : "_",
                   }}
                   onMenuOpen={() =>
                     dispatch(
@@ -380,8 +380,8 @@ function EditBook() {
                   }
                   onMenuClose={() => dispatch(resetHeadings())}
                   defaultValue={{
-                    value: book.section.section,
-                    label: book.section.section,
+                    value: book.section ? book.section.section : "_",
+                    label: book.section ? book.section.section : "_",
                   }}
                   className="react-select-container"
                   classNamePrefix="react-select"

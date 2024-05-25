@@ -35,7 +35,7 @@ const getAllDebts = asyncHandler(async (req, res) => {
     where: {
       membership: { [Op.substring]: query ? query : "_" },
     },
-    order: [[Book, Userbook, "updatedAt", "DESC"]],
+    order: [[Book, Userbook, "deadline", "ASC"]],
     limit: parseInt(limit) ? parseInt(limit) : 10,
     offset: parseInt(offset) ? parseInt(offset) : 0,
     subQuery: false,
@@ -65,7 +65,7 @@ const getUserDebts = asyncHandler(async (req, res) => {
     },
     where: { uuid: req.user.uuid },
     attributes: ["uuid", "email", "membership"],
-    order: [[Book, Userbook, "updatedAt", "DESC"]],
+    order: [[Book, Userbook, "deadline", "ASC"]],
   });
   res.status(200).json(debts);
 });

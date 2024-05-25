@@ -70,7 +70,7 @@ function Book() {
     return () => {
       dispatch(resetBooks());
     };
-  }, [formReaload, isError, message, dispatch]);
+  }, [uuid, formReaload, isError, message, dispatch]);
 
   useEffect(() => {
     if (user && user.token !== "") {
@@ -129,8 +129,10 @@ function Book() {
   }
 
   const delTheBook = async () => {
-    await dispatch(deleteBook(uuid));
-    navigate("/");
+    if (window.confirm("Do you really want to delete this book?")) {
+      await dispatch(deleteBook(uuid));
+      navigate("/");
+    }
   };
 
   const editTheBook = () => {
@@ -165,14 +167,6 @@ function Book() {
     setReservedFlag(false);
   };
 
-  // const incNum = () => {
-  //   dispatch(incBookNum(uuid));
-  // };
-
-  // const decNum = () => {
-  //   dispatch(decBookNum(uuid));
-  // };
-
   const loadSimilar = () => {
     dispatch(getSimilar(uuid));
   };
@@ -196,17 +190,18 @@ function Book() {
       <main>
         <div className="book-box">
           <div className="add-info">
-            {user.roles && user.roles.includes("admin") ? (
-              <div className="number-buttons">
-                <h5>{book.number} books in stock</h5>
-                {/* <input type="submit" value="+" onClick={incNum} />
-                <input type="submit" value="-" onClick={decNum} /> */}
-              </div>
+            {book.section ? (
+              <h5>Section: {book.section.section}</h5>
             ) : (
-              <></>
+              <h5>Section: --</h5>
             )}
-            <h5>Section: {book.section.section}</h5>
-            <h5>Number: {book.number}</h5>
+            {user.token !== "" && roles.includes("admin") ? (
+              <h5>
+                Number: {book.number} Debted : {book.debtedNumber}
+              </h5>
+            ) : (
+              <h5>Number: {book.number}</h5>
+            )}
           </div>
           <div className="book-info">
             <h6>
@@ -217,13 +212,19 @@ function Book() {
             </h6>
             <h6>
               <span>Publisher:</span>{" "}
-              <Link
-                to={`../`}
-                key={book.publisher.uuid}
-                onClick={() => headingFinder(book.publisher.uuid, "publisher")}
-              >
-                {book.publisher.publisher}
-              </Link>
+              {book.publisher ? (
+                <Link
+                  to={`../`}
+                  key={book.publisher.uuid}
+                  onClick={() =>
+                    headingFinder(book.publisher.uuid, "publisher")
+                  }
+                >
+                  {book.publisher.publisher}
+                </Link>
+              ) : (
+                "--"
+              )}
             </h6>
             <h6>
               <span>Rate:</span> {book.rate}

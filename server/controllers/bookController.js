@@ -194,6 +194,7 @@ const getAdvanced = asyncHandler(async (req, res) => {
     offset,
     sort,
     title,
+    originalTitle,
     authors,
     genres,
     section,
@@ -208,6 +209,7 @@ const getAdvanced = asyncHandler(async (req, res) => {
   let setYearStart = yearStart == "_" ? 0 : yearStart;
   let setYearEnd = yearEnd == "_" ? 3000 : yearEnd;
   let genresArr = genres.split(";").map((x) => x.trim());
+  const aGenres = genresArr.filter((y) => y != "_").join("|");
   let authorsArr = authors
     .split(";")
     .map((x) => x.trim())
@@ -220,7 +222,6 @@ const getAdvanced = asyncHandler(async (req, res) => {
       if (x.length == 3) return { name: x[0], middlename: x[2], surname: x[1] };
       if (x.length > 3) return { name: x[0], middlename: "_", surname: "_" };
     });
-  const aGenres = genresArr.filter((y) => y != "_").join("|");
   const aNames = authorsArr
     .map((x) => x.name)
     .filter((y) => y != "_")
@@ -247,13 +248,13 @@ const getAdvanced = asyncHandler(async (req, res) => {
         through: { attributes: [] },
         where: {
           name: {
-            [Op.regexp]: aNames ? aNames : "(.*?)",
+            [Op.regexp]: aNames ? aNames : ".*",
           },
           surname: {
-            [Op.regexp]: aSurnames ? aSurnames : "(.*?)",
+            [Op.regexp]: aSurnames ? aSurnames : ".*",
           },
           middlename: {
-            [Op.regexp]: aMiddlenames ? aMiddlenames : "(.*?)",
+            [Op.regexp]: aMiddlenames ? aMiddlenames : ".*",
           },
         },
       },
@@ -261,7 +262,7 @@ const getAdvanced = asyncHandler(async (req, res) => {
         model: Genre,
         attributes: ["uuid", "genre"],
         through: { attributes: [] },
-        where: { genre: { [Op.regexp]: aGenres ? aGenres : "(.*?)" } },
+        where: { genre: { [Op.regexp]: aGenres ? aGenres : ".*" } },
       },
       {
         model: Publisher,
@@ -290,10 +291,8 @@ const getAdvanced = asyncHandler(async (req, res) => {
       "createdAt",
     ],
     where: {
-      [Op.or]: [
-        { title: { [Op.substring]: title } },
-        { originalTitle: { [Op.substring]: title } },
-      ],
+      title: { [Op.substring]: title },
+      originalTitle: { [Op.substring]: originalTitle },
       [Op.or]: [
         {
           yearAuthor: {

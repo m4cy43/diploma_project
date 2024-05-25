@@ -68,7 +68,17 @@ function VerifyList() {
     return () => {
       dispatch(resetUsers());
     };
-  }, [keyPressed, page, role, flexData, navigate, isError, message, dispatch]);
+  }, [
+    keyPressed,
+    page,
+    limit,
+    role,
+    flexData,
+    navigate,
+    isError,
+    message,
+    dispatch,
+  ]);
 
   if (isLoading) {
     return <Spinner />;
@@ -80,8 +90,10 @@ function VerifyList() {
   };
 
   const deluser = async (query) => {
-    await dispatch(delUser(query));
-    setKeyCounter(keyPressed + 1);
+    if (window.confirm("Do you really want to delete this user?")) {
+      await dispatch(delUser(query));
+      setKeyCounter(keyPressed + 1);
+    }
   };
 
   const upduser = async (uuid) => {
@@ -188,7 +200,9 @@ function VerifyList() {
       </div>
       <main>
         <div className="table-box">
-          <h5>{users.length} users in list</h5>
+          <h5>
+            {users.length} {role} users in list
+          </h5>
           <div className="debt-list">
             <table>
               <tbody>

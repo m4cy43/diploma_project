@@ -58,9 +58,7 @@ const deleteMe = async (token) => {
     },
   };
   const res = await axios.delete(URL + "", config);
-  if (res.data) {
-    localStorage.setItem("user", JSON.stringify(res.data));
-  }
+  localStorage.removeItem("user");
   return res.data;
 };
 

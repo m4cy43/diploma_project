@@ -22,12 +22,14 @@ const simpleFind = async (query) => {
 };
 
 const advancedFind = async (query) => {
-  const b = query.body;
+  let b = { ...query.body };
   const q = query.query;
+  console.log(b);
   for (let el in b) {
     if (b[el] === "") b[el] = "_";
   }
-  const longquery = `advanced?limit=${q.limit}&offset=${q.offset}&sort=${q.sort}&title=${b.title}&authors=${b.authors}&genres=${b.genres}&section=${b.section}&publisher=${b.publisher}&yearStart=${b.yearStart}&yearEnd=${b.yearEnd}&isbn=${b.isbn}&udk=${b.udk}&bbk=${b.bbk}`;
+
+  const longquery = `advanced?limit=${q.limit}&offset=${q.offset}&sort=${q.sort}&title=${b.title}&originalTitle=${b.originalTitle}&authors=${b.authors}&genres=${b.genres}&section=${b.section}&publisher=${b.publisher}&yearStart=${b.yearStart}&yearEnd=${b.yearEnd}&isbn=${b.isbn}&udk=${b.udk}&bbk=${b.bbk}`;
   const res = await axios.get(URL + longquery);
   return res.data;
 };
@@ -85,26 +87,6 @@ const updBook = async (data, token) => {
   return res.data;
 };
 
-// const incBookNum = async (query, token) => {
-//   const config = {
-//     headers: {
-//       Authorization: `Bearer ${token}`,
-//     },
-//   };
-//   const res = await axios.put(URL + `inc/${query}`, {}, config);
-//   return res.data;
-// };
-
-// const decBookNum = async (query, token) => {
-//   const config = {
-//     headers: {
-//       Authorization: `Bearer ${token}`,
-//     },
-//   };
-//   const res = await axios.put(URL + `dec/${query}`, {}, config);
-//   return res.data;
-// };
-
 const bookService = {
   getLatest,
   simpleFind,
@@ -116,8 +98,6 @@ const bookService = {
   getRecommended,
   createBook,
   updBook,
-  // incBookNum,
-  // decBookNum,
 };
 
 export default bookService;

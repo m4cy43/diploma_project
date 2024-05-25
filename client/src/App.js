@@ -13,13 +13,6 @@ import PersonalAccount from "./pages/PersonalAccount";
 import ChangeCredentials from "./pages/ChangeCredentials";
 import EditBook from "./pages/EditBook";
 import HeadingsList from "./pages/HeadingsList";
-
-// import AuthorsList from "./pages/AuthorsList";
-// import CreateNewAuthor from "./pages/CreateNewAuthor";
-// import GenresList from "./pages/GenresList";
-// import CreateNewGenre from "./pages/CreateNewGenre";
-// import SectionsList from "./pages/SectionsList";
-// import CreateNewSection from "./pages/CreateNewSection";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -55,15 +48,6 @@ function App() {
             <Route path="/setadmin" element={<SetAdmin />} />
             <Route path="/editbook/:uuid" element={<EditBook />} />
             <Route path="/headings" element={<HeadingsList />} />
-
-            {/*
-                       
-            <Route path="/authorslist" element={<AuthorsList />} />
-            <Route path="/createauthor" element={<CreateNewAuthor />} />
-            <Route path="/genreslist" element={<GenresList />} />
-            <Route path="/creategenre" element={<CreateNewGenre />} />
-            <Route path="/sectionslist" element={<SectionsList />} />
-            <Route path="/createsection" element={<CreateNewSection />} /> */}
           </Routes>
         </div>
       </Router>

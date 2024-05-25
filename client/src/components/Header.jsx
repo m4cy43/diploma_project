@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { FaSignInAlt, FaSignOutAlt, FaUser } from "react-icons/fa";
 import { HiMagnifyingGlass } from "react-icons/hi2";
 import { FiMenu } from "react-icons/fi";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { IconContext } from "react-icons";
 import { useSelector, useDispatch } from "react-redux";
 import { reset, getRoles, logout } from "../features/auth/authSlice";
@@ -17,12 +17,15 @@ import {
 import "./css/header.css";
 
 function Header() {
+  const loc = useLocation();
+
   const [searchData, setSearchData] = useState({
     search: "_",
     limit: 10,
     offset: 0,
     sort: "",
     title: "_",
+    originalTitle: "_",
     authors: "_",
     genres: "_",
     section: "_",
@@ -37,6 +40,7 @@ function Header() {
   const {
     search,
     title,
+    originalTitle,
     authors,
     genres,
     section,
@@ -82,6 +86,10 @@ function Header() {
 
     let inputEl = document.getElementById("search");
     inputEl.value = "";
+
+    if (loc.pathname.startsWith("/book")) {
+      navigate("/");
+    }
   };
 
   const advancedSearch = (e) => {
@@ -89,6 +97,7 @@ function Header() {
 
     const advancedSearchData = {
       title,
+      originalTitle,
       authors,
       genres,
       section,
@@ -110,6 +119,7 @@ function Header() {
     }
     setSearchData((previousState) => ({
       title: "_",
+      originalTitle: "_",
       authors: "_",
       genres: "_",
       section: "_",
@@ -135,6 +145,12 @@ function Header() {
               type="text"
               name="title"
               placeholder="Title..."
+              onChange={onChange}
+            />
+            <input
+              type="text"
+              name="originalTitle"
+              placeholder="Original title..."
               onChange={onChange}
             />
             <input

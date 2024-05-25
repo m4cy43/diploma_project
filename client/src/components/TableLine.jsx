@@ -54,13 +54,17 @@ function TableLine({ book }) {
         })}
       </td>
       <td>
-        <Link
-          to={`../`}
-          key={book.publisher.uuid}
-          onClick={() => headingFinder(book.publisher.uuid, "publisher")}
-        >
-          {book.publisher.publisher}
-        </Link>
+        {book.publisher ? (
+          <Link
+            to={`../`}
+            key={book.publisher.uuid}
+            onClick={() => headingFinder(book.publisher.uuid, "publisher")}
+          >
+            {book.publisher.publisher}
+          </Link>
+        ) : (
+          "--"
+        )}
       </td>
       <td>{book.rate}</td>
     </tr>
