@@ -56,7 +56,7 @@ function Register() {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    if (phone !== "" && !phone.match(/^\+(380)[0-9]{9}$/)) {
+    if (phone !== "" && !phone.match(/^(00|\+)?([0-9]{1,5})?([0-9]{10})$/)) {
       toast.error("Wrong phone format", {
         position: "top-right",
         autoClose: 5000,

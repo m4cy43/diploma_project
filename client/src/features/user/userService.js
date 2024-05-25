@@ -28,13 +28,13 @@ const verifyUser = async (query, token) => {
   return res.data;
 };
 
-const updUser = async (query, token) => {
+const updUser = async (data, token) => {
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   };
-  const res = await axios.put(URL + `${query}`, {}, config);
+  const res = await axios.put(URL + `${data.uuid}`, data.obj, config);
   return res.data;
 };
 

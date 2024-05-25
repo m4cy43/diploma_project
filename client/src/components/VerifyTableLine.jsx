@@ -1,6 +1,6 @@
 import "./css/tableline.css";
 
-function VerifyTableLine({ user, set, del, flag }) {
+function VerifyTableLine({ user, set, del, updname, flag }) {
   return (
     <tr>
       <td>
@@ -19,6 +19,18 @@ function VerifyTableLine({ user, set, del, flag }) {
               value="-"
               onClick={() => {
                 del(user.uuid);
+              }}
+            />
+          </>
+        )}
+        {flag === "unverified" && (
+          <>
+            &nbsp;
+            <input
+              type="submit"
+              value="set"
+              onClick={() => {
+                updname();
               }}
             />
           </>

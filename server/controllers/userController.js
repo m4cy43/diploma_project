@@ -383,7 +383,7 @@ const updateUser = asyncHandler(async (req, res) => {
     name: name,
     surname: surname,
     middlename: middlename,
-    phone: phone,
+    phone: newPhone,
   });
 
   await user.save();

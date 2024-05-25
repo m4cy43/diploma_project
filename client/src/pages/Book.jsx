@@ -305,8 +305,8 @@ function Book() {
                     <input
                       type="submit"
                       value="Debt"
-                      onClick={() => {
-                        dispatch(
+                      onClick={async () => {
+                        await dispatch(
                           debtBook({
                             userUuid: newDebt,
                             bookUuid: book.uuid,
@@ -388,7 +388,9 @@ function Book() {
                     onClick={() => navigate("/me")}
                   />
                 ) : (
-                  <input type="submit" value="Reserve" onClick={addReserve} />
+                  book.number !== 0 && (
+                    <input type="submit" value="Reserve" onClick={addReserve} />
+                  )
                 )}
                 {bookmarkedFlag ? (
                   <input

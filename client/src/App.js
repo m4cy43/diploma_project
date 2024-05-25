@@ -12,6 +12,7 @@ import SetAdmin from "./pages/SetAdmin";
 import PersonalAccount from "./pages/PersonalAccount";
 import ChangeCredentials from "./pages/ChangeCredentials";
 import EditBook from "./pages/EditBook";
+import HeadingsList from "./pages/HeadingsList";
 
 // import AuthorsList from "./pages/AuthorsList";
 // import CreateNewAuthor from "./pages/CreateNewAuthor";
@@ -53,6 +54,7 @@ function App() {
             <Route path="/verifylist" element={<VerifyList />} />
             <Route path="/setadmin" element={<SetAdmin />} />
             <Route path="/editbook/:uuid" element={<EditBook />} />
+            <Route path="/headings" element={<HeadingsList />} />
 
             {/*
                        

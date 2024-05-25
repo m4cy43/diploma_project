@@ -11,6 +11,7 @@ import {
 import { Link, redirect, useNavigate } from "react-router-dom";
 import Spinner from "../components/Spinner";
 import { setPage, setFlexData } from "../features/search/searchSlice";
+import { toast } from "react-toastify";
 
 function VerifyList() {
   const navigate = useNavigate();
@@ -23,6 +24,20 @@ function VerifyList() {
   const [keyPressed, setKeyCounter] = useState(0);
   const [firstLoad, setFirstLoad] = useState(true);
   const [role, setRole] = useState("unverified");
+
+  const [userUpdData, setUserUpdData] = useState({
+    name: "",
+    middlename: "",
+    surname: "",
+    phone: "",
+  });
+
+  const onChange = (e) => {
+    setUserUpdData((previousState) => ({
+      ...previousState,
+      [e.target.name]: e.target.value,
+    }));
+  };
 
   useEffect(() => {
     if (firstLoad) {
@@ -69,6 +84,33 @@ function VerifyList() {
     setKeyCounter(keyPressed + 1);
   };
 
+  const upduser = async (uuid) => {
+    if (
+      userUpdData.phone !== "" &&
+      !userUpdData.phone.match(/^(00|\+)?([0-9]{1,5})?([0-9]{10})$/)
+    ) {
+      toast.error("Wrong phone format", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    } else {
+      const userData = {
+        name: userUpdData.name,
+        surname: userUpdData.surname,
+        middlename: userUpdData.middlename,
+        phone: userUpdData.phone,
+      };
+      await dispatch(updUser({ uuid: uuid, obj: userData }));
+      setKeyCounter(keyPressed + 1);
+    }
+  };
+
   return (
     <>
       <h2>Verify list</h2>
@@ -107,6 +149,42 @@ function VerifyList() {
           <option value={"unverified"}>unverified</option>
           <option value={"verified"}>verified</option>
         </select>
+        &nbsp;&nbsp;&nbsp;
+        <input
+          type="text"
+          name="name"
+          placeholder="Name"
+          onChange={onChange}
+          maxLength={64}
+        />
+        <input
+          type="text"
+          name="middlename"
+          placeholder="Middlename"
+          onChange={onChange}
+          maxLength={64}
+        />
+        <input
+          type="text"
+          name="surname"
+          placeholder="Surname"
+          onChange={onChange}
+          maxLength={64}
+        />
+        <input
+          type="text"
+          name="phone"
+          placeholder="Phone"
+          onChange={onChange}
+          maxLength={17}
+        />
+        {/* <input
+          type="submit"
+          value={"Set"}
+          onClick={(e) => {
+            e.preventDefault();
+          }}
+        /> */}
       </div>
       <main>
         <div className="table-box">
@@ -128,6 +206,7 @@ function VerifyList() {
                       user={user}
                       set={verify}
                       del={deluser}
+                      updname={() => upduser(user.uuid)}
                       flag={role}
                       key={user.uuid}
                     />
@@ -143,6 +222,7 @@ function VerifyList() {
                     }}
                     set={false}
                     del={false}
+                    updname={false}
                     flag={role}
                     key={""}
                   />

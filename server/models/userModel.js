@@ -39,7 +39,7 @@ const User = db.define(
       type: DataTypes.STRING,
       unique: true,
       validate: {
-        is: /^\+(380)[0-9]{9}$/,
+        is: /^(00|\+)?([0-9]{1,5})?([0-9]{10})$/,
       },
     },
     createdAt: {

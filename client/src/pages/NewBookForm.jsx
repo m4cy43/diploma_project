@@ -187,7 +187,8 @@ function NewBookForm() {
           return { name: x[0], middlename: "_", surname: x[1] };
         if (x.length === 3)
           return { name: x[0], middlename: x[2], surname: x[1] };
-        if (x.length > 3) return { name: x[0], middlename: "_", surname: "_" };
+        if (x.length > 3)
+          return { name: x.join(" "), middlename: "_", surname: "_" };
       }
     });
     setFormData((previousState) => ({
