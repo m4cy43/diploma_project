@@ -92,6 +92,17 @@ function Register() {
         progress: undefined,
         theme: "dark",
       });
+    } else if (password.length < 6) {
+      toast.error("Password is too short", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
     } else {
       const userData = {
         email,
@@ -122,14 +133,14 @@ function Register() {
               type="password"
               name="password"
               placeholder="Password"
-              maxLength={100}
+              maxLength={64}
               onChange={onChange}
             />
             <input
               type="password"
               name="password2"
               placeholder="Repeat password"
-              maxLength={100}
+              maxLength={64}
               onChange={onChange}
             />
             <input

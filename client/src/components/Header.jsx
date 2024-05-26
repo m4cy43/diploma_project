@@ -218,7 +218,7 @@ function Header() {
         <input
           id="search"
           name="search"
-          type="text"
+          type="search"
           placeholder="Search..."
           onChange={onChange}
         />

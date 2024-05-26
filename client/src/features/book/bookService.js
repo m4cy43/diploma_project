@@ -24,7 +24,6 @@ const simpleFind = async (query) => {
 const advancedFind = async (query) => {
   let b = { ...query.body };
   const q = query.query;
-  console.log(b);
   for (let el in b) {
     if (b[el] === "") b[el] = "_";
   }

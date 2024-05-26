@@ -282,10 +282,12 @@ function NewBookForm() {
                 onChange={onChange}
               />
               <input
-                type="text"
+                type="number"
                 name="yearAuthor"
                 placeholder="Year by Author"
                 maxLength={4}
+                max={2100}
+                min={1000}
                 onChange={onChange}
               />
             </div>
@@ -302,6 +304,8 @@ function NewBookForm() {
                 name="yearPublish"
                 placeholder="Year by Publisher"
                 maxLength={4}
+                max={2100}
+                min={1000}
                 onChange={onChange}
               />
             </div>
@@ -433,17 +437,24 @@ function NewBookForm() {
             </div>
             <div className="third-row">
               <input
-                type="text"
+                type="number"
                 name="number"
                 placeholder="Number"
                 maxLength={2}
+                max={99}
+                min={0}
                 onChange={onChange}
               />
               <input
-                type="text"
+                type="number"
                 name="rate"
                 placeholder="Rate"
                 maxLength={3}
+                max={5}
+                min={0}
+                step="0.1"
+                pattern="\d\.\d"
+                title="Format: 2.5"
                 onChange={onChange}
               />
               <input

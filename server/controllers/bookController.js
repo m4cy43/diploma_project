@@ -456,6 +456,7 @@ const updateBook = asyncHandler(async (req, res) => {
     udk,
     bbk,
     number,
+    rate,
     genres,
     authors,
     section,
@@ -485,6 +486,7 @@ const updateBook = asyncHandler(async (req, res) => {
     udk,
     bbk,
     number,
+    rate,
   });
   await book.save();
 

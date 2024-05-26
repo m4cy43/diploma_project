@@ -347,9 +347,11 @@ function Book() {
                       })}
                     />
                     <input
-                      type="text"
+                      type="number"
                       name="deadline"
                       maxLength={2}
+                      max={60}
+                      min={-7}
                       placeholder="deadline"
                       style={{
                         width: "50px",
