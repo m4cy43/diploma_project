@@ -737,17 +737,17 @@ const getSimilarBooks = asyncHandler(async (req, res) => {
     include: [
       {
         model: Author,
-        attributes: ["name", "surname", "middlename"],
+        attributes: ["uuid", "name", "surname", "middlename"],
         through: { attributes: [] },
       },
       {
         model: Genre,
-        attributes: ["genre"],
+        attributes: ["uuid", "genre"],
         through: { attributes: [] },
       },
       {
         model: Publisher,
-        attributes: ["publisher"],
+        attributes: ["uuid", "publisher"],
       },
     ],
     attributes: [
@@ -766,18 +766,18 @@ const getSimilarBooks = asyncHandler(async (req, res) => {
     include: [
       {
         model: Author,
-        attributes: ["name", "surname", "middlename"],
+        attributes: ["uuid", "name", "surname", "middlename"],
         through: { attributes: [] },
       },
       {
         model: Genre,
-        attributes: ["genre"],
+        attributes: ["uuid", "genre"],
         through: { attributes: [] },
         where: { genre: genre_list },
       },
       {
         model: Publisher,
-        attributes: ["publisher"],
+        attributes: ["uuid", "publisher"],
       },
     ],
     attributes: [
@@ -824,17 +824,17 @@ const getRecommended = asyncHandler(async (req, res) => {
     include: [
       {
         model: Author,
-        attributes: ["name", "surname", "middlename"],
+        attributes: ["uuid", "name", "surname", "middlename"],
         through: { attributes: [] },
       },
       {
         model: Genre,
-        attributes: ["genre"],
+        attributes: ["uuid", "genre"],
         through: { attributes: [] },
       },
       {
         model: Publisher,
-        attributes: ["publisher"],
+        attributes: ["uuid", "publisher"],
       },
     ],
     attributes: [
@@ -856,18 +856,18 @@ const getRecommended = asyncHandler(async (req, res) => {
     include: [
       {
         model: Author,
-        attributes: ["name", "surname", "middlename"],
+        attributes: ["uuid", "name", "surname", "middlename"],
         through: { attributes: [] },
       },
       {
         model: Genre,
-        attributes: ["genre"],
+        attributes: ["uuid", "genre"],
         through: { attributes: [] },
         where: { genre: genre_list },
       },
       {
         model: Publisher,
-        attributes: ["publisher"],
+        attributes: ["uuid", "publisher"],
       },
     ],
     attributes: [

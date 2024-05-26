@@ -69,12 +69,14 @@ function Login() {
               type="email"
               name="email"
               placeholder="Enter your email"
+              maxLength={100}
               onChange={onChange}
             />
             <input
               type="password"
               name="password"
               placeholder="Enter your password"
+              maxLength={100}
               onChange={onChange}
             />
             <input type="submit" name="button" value="Enter" />

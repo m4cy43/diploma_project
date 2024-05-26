@@ -115,42 +115,49 @@ function Register() {
               type="email"
               name="email"
               placeholder="Email@example.com"
+              maxLength={100}
               onChange={onChange}
             />
             <input
               type="password"
               name="password"
               placeholder="Password"
+              maxLength={100}
               onChange={onChange}
             />
             <input
               type="password"
               name="password2"
               placeholder="Repeat password"
+              maxLength={100}
               onChange={onChange}
             />
             <input
               type="text"
               name="name"
               placeholder="Name (optional)"
+              maxLength={100}
               onChange={onChange}
             />
             <input
               type="text"
               name="surname"
               placeholder="Surname (optional)"
+              maxLength={100}
               onChange={onChange}
             />
             <input
               type="text"
               name="middlename"
               placeholder="Middlename (optional)"
+              maxLength={100}
               onChange={onChange}
             />
             <input
               type="text"
               name="phone"
               placeholder="+380987654321 (optional)"
+              maxLength={17}
               onChange={onChange}
             />
             <input type="submit" name="button" value="Enter" />

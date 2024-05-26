@@ -265,7 +265,8 @@ const deleteUser = asyncHandler(async (req, res) => {
 // @route   PUT /api/user/
 // @access  Private
 const updateMe = asyncHandler(async (req, res) => {
-  const { email, password, name, surname, middlename, phone } = req.body;
+  const { email, password, oldPassword, name, surname, middlename, phone } =
+    req.body;
   // Check the value
   if (!email || !password) {
     res.status(400);
@@ -282,6 +283,12 @@ const updateMe = asyncHandler(async (req, res) => {
   if (!user) {
     res.status(400);
     throw new Error("There is no such user");
+  }
+
+  const matchPass = await bcrypt.compare(oldPassword, user.password);
+  if (!matchPass) {
+    res.status(401);
+    throw new Error("Wrong old password");
   }
 
   // Check if user exists by email

@@ -322,6 +322,7 @@ function Book() {
                       placeholder="Membership"
                       options={membershipOptions}
                       onChange={(data) => setNewDebt(data.value)}
+                      maxLength={10}
                       onMenuOpen={() =>
                         dispatch(
                           getByRoleAndMembership({
@@ -348,6 +349,7 @@ function Book() {
                     <input
                       type="text"
                       name="deadline"
+                      maxLength={2}
                       placeholder="deadline"
                       style={{
                         width: "50px",
@@ -369,7 +371,7 @@ function Book() {
                 className="book-input-text"
                 placeholder="Your notes are here..."
                 onChange={(e) => setNote(e.target.value)}
-                maxLength={64}
+                maxLength={90}
               />
             ) : (
               <></>

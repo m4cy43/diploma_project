@@ -174,7 +174,8 @@ function EditBook() {
           return { name: x[0], middlename: "_", surname: x[1] };
         if (x.length === 3)
           return { name: x[0], middlename: x[2], surname: x[1] };
-        if (x.length > 3) return { name: x[0], middlename: "_", surname: "_" };
+        if (x.length > 3)
+          return { name: x.join(" "), middlename: "_", surname: "_" };
       }
     });
     setFormData((previousState) => ({
@@ -261,12 +262,14 @@ function EditBook() {
                   placeholder="Enter title"
                   defaultValue={book.title}
                   onChange={onChange}
+                  maxLength={250}
                 />
                 <input
                   type="text"
                   name="yearAuthor"
                   placeholder="Year by Author"
                   defaultValue={book.yearAuthor}
+                  maxLength={4}
                   onChange={onChange}
                 />
               </div>
@@ -276,6 +279,7 @@ function EditBook() {
                   name="originalTitle"
                   placeholder="Enter original title"
                   defaultValue={book.originalTitle}
+                  maxLength={250}
                   onChange={onChange}
                 />
                 <input
@@ -283,6 +287,7 @@ function EditBook() {
                   name="yearPublish"
                   placeholder="Year by Publisher"
                   defaultValue={book.yearPublish}
+                  maxLength={4}
                   onChange={onChange}
                 />
               </div>
@@ -306,6 +311,7 @@ function EditBook() {
                   }))}
                   className="react-select-container"
                   classNamePrefix="react-select"
+                  maxLength={200}
                   theme={(theme) => ({
                     ...theme,
                     borderRadius: 2,
@@ -327,6 +333,7 @@ function EditBook() {
                   onMenuClose={() => resetHeadings()}
                   className="react-select-container"
                   classNamePrefix="react-select"
+                  maxLength={200}
                   defaultValue={book.genres.map((x) => ({
                     value: x.genre,
                     label: x.genre,
@@ -359,6 +366,7 @@ function EditBook() {
                   onMenuClose={() => dispatch(resetHeadings())}
                   className="react-select-container"
                   classNamePrefix="react-select"
+                  maxLength={200}
                   theme={(theme) => ({
                     ...theme,
                     borderRadius: 2,
@@ -385,6 +393,7 @@ function EditBook() {
                   }}
                   className="react-select-container"
                   classNamePrefix="react-select"
+                  maxLength={200}
                   theme={(theme) => ({
                     ...theme,
                     borderRadius: 2,
@@ -402,6 +411,7 @@ function EditBook() {
                   name="bbk"
                   placeholder="BBK"
                   onChange={onChange}
+                  maxLength={100}
                   defaultValue={book.bbk}
                 />
                 <input
@@ -409,6 +419,7 @@ function EditBook() {
                   name="udk"
                   placeholder="UDK"
                   onChange={onChange}
+                  maxLength={100}
                   defaultValue={book.udk}
                 />
                 <CreatableSelect
@@ -420,6 +431,7 @@ function EditBook() {
                     value: x.isbn,
                     label: x.isbn,
                   }))}
+                  maxLength={13}
                   className="react-select-container"
                   classNamePrefix="react-select"
                   theme={(theme) => ({
@@ -439,6 +451,7 @@ function EditBook() {
                   name="number"
                   placeholder="Number"
                   onChange={onChange}
+                  maxLength={2}
                   defaultValue={book.number}
                 />
                 <input
@@ -446,6 +459,7 @@ function EditBook() {
                   name="rate"
                   placeholder="Rate"
                   onChange={onChange}
+                  maxLength={3}
                   defaultValue={book.rate}
                 />
                 <input
@@ -453,6 +467,7 @@ function EditBook() {
                   name="physicalDescription"
                   placeholder="Physical description"
                   onChange={onChange}
+                  maxLength={200}
                   defaultValue={book.physicalDescription}
                 />
                 <input
@@ -460,6 +475,7 @@ function EditBook() {
                   name="note"
                   placeholder="Note"
                   onChange={onChange}
+                  maxLength={200}
                   defaultValue={book.note}
                 />
               </div>

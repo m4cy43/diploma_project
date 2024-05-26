@@ -142,17 +142,24 @@ function Shelf() {
   return (
     <>
       {/* <h2>Shelf</h2> */}
-      <p style={{ marginTop: "5px" }}>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*Search
-        field supports "*" symbol for matching 0 or more symbols and OR-logic
-        using ";" symbol. Author and genre field in advanced search also
-        supports OR-logic.
-      </p>
-      <p>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**Some
-        headings of the book in the table and book page are interactable.
-      </p>
       <main>
+        <div className="tooltip" style={{ marginTop: "5px" }}>
+          &nbsp;(?)
+          <div className="tooltipcontent">
+            <p style={{ marginLeft: "5px", fontSize: "14px" }}>
+              Search field supports "*" symbol for matching 0 or more symbols
+              and OR-logic using ";" symbol. Author and genre field in advanced
+              search also supports OR-logic.
+              <br />
+              When searching in Author field, the query will be recognized as
+              "name surname middlename". You can use "_" symbol to replace
+              missing part of that query.
+              <br />
+              Some headings of the book in the table and book page are
+              interactable. They create search on the specific heading.
+            </p>
+          </div>
+        </div>
         <div className="table-box">
           <h5>{books.length} results on page</h5>
           <div className="arrows">

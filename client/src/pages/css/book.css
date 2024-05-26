@@ -92,3 +92,22 @@ h6 a {
   height: 10px;
   width: 150px;
 }
+
+.tooltip {
+  align-self: flex-start;
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltipcontent {
+  visibility: hidden;
+  position: absolute;
+  width: 950px;
+  z-index: 1;
+  background-color: white;
+}
+
+.tooltip:hover .tooltipcontent {
+  visibility: visible;
+  position: absolute;
+}

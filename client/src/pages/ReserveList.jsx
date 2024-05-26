@@ -93,6 +93,7 @@ function DebtList() {
           type="text"
           name="deadline"
           placeholder="deadline"
+          maxLength={2}
           style={{ width: "50px" }}
           onChange={(e) => setDeadline(e.target.value)}
         />
@@ -102,7 +103,7 @@ function DebtList() {
           name="note"
           placeholder="note"
           style={{ width: "250px" }}
-          maxLength={64}
+          maxLength={90}
           onChange={(e) => setNote(e.target.value)}
         />
       </div>

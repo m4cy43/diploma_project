@@ -278,12 +278,14 @@ function NewBookForm() {
                 type="text"
                 name="title"
                 placeholder="Enter title"
+                maxLength={250}
                 onChange={onChange}
               />
               <input
                 type="text"
                 name="yearAuthor"
                 placeholder="Year by Author"
+                maxLength={4}
                 onChange={onChange}
               />
             </div>
@@ -292,12 +294,14 @@ function NewBookForm() {
                 type="text"
                 name="originalTitle"
                 placeholder="Enter original title"
+                maxLength={250}
                 onChange={onChange}
               />
               <input
                 type="text"
                 name="yearPublish"
                 placeholder="Year by Publisher"
+                maxLength={4}
                 onChange={onChange}
               />
             </div>
@@ -313,6 +317,7 @@ function NewBookForm() {
                 onMenuClose={() => dispatch(resetHeadings())}
                 className="react-select-container"
                 classNamePrefix="react-select"
+                maxLength={200}
                 theme={(theme) => ({
                   ...theme,
                   borderRadius: 2,
@@ -334,6 +339,7 @@ function NewBookForm() {
                 onMenuClose={() => resetHeadings()}
                 className="react-select-container"
                 classNamePrefix="react-select"
+                maxLength={200}
                 theme={(theme) => ({
                   ...theme,
                   borderRadius: 2,
@@ -358,6 +364,7 @@ function NewBookForm() {
                 onMenuClose={() => dispatch(resetHeadings())}
                 className="react-select-container"
                 classNamePrefix="react-select"
+                maxLength={200}
                 theme={(theme) => ({
                   ...theme,
                   borderRadius: 2,
@@ -378,6 +385,7 @@ function NewBookForm() {
                 onMenuClose={() => dispatch(resetHeadings())}
                 className="react-select-container"
                 classNamePrefix="react-select"
+                maxLength={200}
                 theme={(theme) => ({
                   ...theme,
                   borderRadius: 2,
@@ -394,12 +402,14 @@ function NewBookForm() {
                 type="text"
                 name="bbk"
                 placeholder="BBK"
+                maxLength={100}
                 onChange={onChange}
               />
               <input
                 type="text"
                 name="udk"
                 placeholder="UDK"
+                maxLength={100}
                 onChange={onChange}
               />
               <CreatableSelect
@@ -409,6 +419,7 @@ function NewBookForm() {
                 onChange={onSelectChangeIsbns}
                 className="react-select-container"
                 classNamePrefix="react-select"
+                maxLength={13}
                 theme={(theme) => ({
                   ...theme,
                   borderRadius: 2,
@@ -425,24 +436,28 @@ function NewBookForm() {
                 type="text"
                 name="number"
                 placeholder="Number"
+                maxLength={2}
                 onChange={onChange}
               />
               <input
                 type="text"
                 name="rate"
                 placeholder="Rate"
+                maxLength={3}
                 onChange={onChange}
               />
               <input
                 type="text"
                 name="physicalDescription"
                 placeholder="Physical description"
+                maxLength={200}
                 onChange={onChange}
               />
               <input
                 type="text"
                 name="note"
                 placeholder="Note"
+                maxLength={200}
                 onChange={onChange}
               />
             </div>

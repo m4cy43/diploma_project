@@ -8,6 +8,7 @@ import "./css/form.css";
 function ChangeCredentials() {
   const [formData, setFormData] = useState({
     email: "",
+    oldPassword: "",
     password: "",
     password2: "",
     name: "",
@@ -16,8 +17,16 @@ function ChangeCredentials() {
     phone: "",
   });
 
-  const { email, password, password2, name, surname, middlename, phone } =
-    formData;
+  const {
+    email,
+    oldPassword,
+    password,
+    password2,
+    name,
+    surname,
+    middlename,
+    phone,
+  } = formData;
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -109,6 +118,7 @@ function ChangeCredentials() {
     } else {
       const userData = {
         email,
+        oldPassword,
         password,
         name,
         surname,
@@ -135,6 +145,12 @@ function ChangeCredentials() {
               placeholder="Email@example.com"
               onChange={onChange}
               defaultValue={full.email}
+            />
+            <input
+              type="password"
+              name="oldPassword"
+              placeholder="Old password"
+              onChange={onChange}
             />
             <input
               type="password"

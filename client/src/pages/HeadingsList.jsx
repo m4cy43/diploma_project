@@ -234,7 +234,7 @@ function HeadingsList() {
           placeholder="Heading"
           style={{ width: "300px" }}
           onChange={(e) => setHeadingData(e.target.value)}
-          maxLength={90}
+          maxLength={120}
         />
         <input
           type="button"
