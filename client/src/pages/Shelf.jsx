@@ -42,12 +42,16 @@ function Shelf() {
 
   const [recommedKeyPressed, setRecommendKey] = useState(false);
 
+  const [notifyData, setNotifyData] = useState("");
+
   useEffect(() => {
     let offset = (page - 1) * limit;
 
     if (isError) {
       console.log(message);
     }
+
+    dispatch(getDebtsAuth());
 
     if (searchType === "latest") {
       dispatch(getLatest({ limit: limit, offset: offset, sort: sort }));
@@ -128,6 +132,17 @@ function Shelf() {
     }
   }, [debtState, recommedKeyPressed]);
 
+  useEffect(() => {
+    if (debts[0].books.length > 0 && debts[0].books[0].uuid !== "") {
+      let mes = "";
+      let arr = debts[0].books
+        .filter((x) => Date.now() - Date.parse(x.userbook.deadline) > 0)
+        .map((x) => x.title);
+      mes = arr.join(" / ");
+      setNotifyData(mes);
+    }
+  }, [debts]);
+
   const loadRecommendations = async () => {
     setRecommendKey(true);
     await dispatch(getDebtsAuth());
@@ -141,6 +156,13 @@ function Shelf() {
 
   return (
     <>
+      {notifyData !== "" ? (
+        <p style={{ color: "red", margin: "5px 0px 0px 10px" }}>
+          У вас пройшов дедлайн боргів: {notifyData}
+        </p>
+      ) : (
+        <></>
+      )}
       {/* <h2>Shelf</h2> */}
       <main>
         <div className="tooltip" style={{ marginTop: "5px" }}>

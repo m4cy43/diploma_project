@@ -368,7 +368,7 @@ function Book() {
             )}
             {user &&
             roles.includes("verified") &&
-            (!bookmarkedFlag || !(reservedFlag || debtedFlag)) ? (
+            !(reservedFlag || debtedFlag) ? (
               <input
                 className="book-input-text"
                 placeholder="Your notes are here..."

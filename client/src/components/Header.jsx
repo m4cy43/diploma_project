@@ -87,7 +87,7 @@ function Header() {
     let inputEl = document.getElementById("search");
     inputEl.value = "";
 
-    if (loc.pathname.startsWith("/book")) {
+    if (loc.pathname.startsWith("/book") || loc.pathname.startsWith("/me")) {
       navigate("/");
     }
   };
