@@ -133,7 +133,11 @@ function Shelf() {
   }, [debtState, recommedKeyPressed]);
 
   useEffect(() => {
-    if (debts[0].books.length > 0 && debts[0].books[0].uuid !== "") {
+    if (
+      debts.length > 0 &&
+      debts[0].books.length > 0 &&
+      debts[0].books[0].uuid !== ""
+    ) {
       let mes = "";
       let arr = debts[0].books
         .filter((x) => Date.now() - Date.parse(x.userbook.deadline) > 0)
