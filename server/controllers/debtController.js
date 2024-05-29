@@ -2,7 +2,7 @@ const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const Userbook = require("../models/userBookModel");
 const Book = require("../models/bookModel");
-const { Op, where } = require("sequelize");
+const { Op } = require("sequelize");
 const nodemailer = require("nodemailer");
 
 // @desc    Get all debts

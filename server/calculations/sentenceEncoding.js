@@ -8,6 +8,7 @@ const {
   workerData,
 } = require("worker_threads");
 
+// Worker threads
 if (isMainThread) {
   module.exports = async function returnOrderedSimilarities(
     subject,
@@ -53,6 +54,7 @@ if (isMainThread) {
       }
     }
 
+    // Sorting results to get the order of sorting recommended books
     const keys = Array.from(scores.keys()).sort(
       (a, b) => scores[b] - scores[a]
     );
@@ -76,6 +78,7 @@ if (isMainThread) {
   })();
 }
 
+// Examples of dotProduct and zipWith functions from documentations on NPM
 // Calculate the dot product of two vector arrays
 const dotProduct = (xs, ys) => {
   const sum = (xs) => (xs ? xs.reduce((a, b) => a + b, 0) : undefined);

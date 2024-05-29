@@ -188,7 +188,7 @@ function HeadingsList() {
 
   return (
     <>
-      <h2>Verify list</h2>
+      <h2>Hedings</h2>
       <div className="arrows">
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <div

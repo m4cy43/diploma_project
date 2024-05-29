@@ -1,4 +1,4 @@
-const { Sequelize, DataTypes, where } = require("sequelize");
+const { Sequelize } = require("sequelize");
 
 const [database, user, password, host, port, dialect] = [
   process.env.DB_NAME,
@@ -74,6 +74,7 @@ const syncAllTables = async () => {
       throw err;
     });
 
+  // First load of test data, to create first sql-dumps
   // const fs = require("fs").promises;
   // const { loadUserDataset, loadBookDataset } = require("./loadDataset");
   // await fs
