@@ -27,6 +27,7 @@ function DebtList() {
   useEffect(() => {
     if (firstLoad) {
       setFirstLoad(false);
+      dispatch(setPage(1));
       dispatch(setFlexData("_"));
     }
     let offset = (page - 1) * limit;
@@ -41,7 +42,7 @@ function DebtList() {
       console.log(message);
     }
 
-    dispatch(getAllReservings({ query: "_", limit: 10, offset: 0 }));
+    dispatch(getAllReservings({ query: "_", limit: 10, offset: offset }));
 
     return () => {
       dispatch(resetDebts());
@@ -90,9 +91,11 @@ function DebtList() {
         </div>
         &nbsp;&nbsp;&nbsp;
         <input
-          type="text"
+          type="number"
           name="deadline"
           placeholder="deadline"
+          max={60}
+          min={-7}
           maxLength={2}
           style={{ width: "50px" }}
           onChange={(e) => setDeadline(e.target.value)}

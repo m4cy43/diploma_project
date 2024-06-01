@@ -26,6 +26,7 @@ function DebtList() {
   useEffect(() => {
     if (firstLoad) {
       setFirstLoad(false);
+      dispatch(setPage(1));
       dispatch(setFlexData("_"));
     }
     let offset = (page - 1) * limit;
@@ -76,30 +77,31 @@ function DebtList() {
   return (
     <>
       <h2>Debts</h2>
-      <main>
-        <div className="arrows">
-          <div
-            className="arrow"
-            onClick={() => {
-              if (page > 1) {
-                dispatch(setPage(page - 1));
-              }
-            }}
-          >
-            ⬅
-          </div>
-          <div>{page}</div>
-          <div
-            className="arrow"
-            onClick={() => {
-              if (debts.length == limit) {
-                dispatch(setPage(page + 1));
-              }
-            }}
-          >
-            ➡
-          </div>
+      <div className="arrows">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <div
+          className="arrow"
+          onClick={() => {
+            if (page > 1) {
+              dispatch(setPage(page - 1));
+            }
+          }}
+        >
+          ⬅
         </div>
+        <div>{page}</div>
+        <div
+          className="arrow"
+          onClick={() => {
+            if (debts.length == limit) {
+              dispatch(setPage(page + 1));
+            }
+          }}
+        >
+          ➡
+        </div>
+      </div>
+      <main>
         <div className="table-box">
           <h5>{debts.length} debts in list</h5>
           <div className="debt-list">

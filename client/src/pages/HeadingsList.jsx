@@ -49,6 +49,7 @@ function HeadingsList() {
   useEffect(() => {
     if (firstLoad) {
       setFirstLoad(false);
+      dispatch(setPage(1));
       dispatch(setFlexData("_"));
     }
     let offset = (page - 1) * limit;

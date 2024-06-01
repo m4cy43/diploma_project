@@ -28,6 +28,8 @@ function ChangeCredentials() {
     phone,
   } = formData;
 
+  const [firstLoad, setFirstLoad] = useState(true);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -48,14 +50,17 @@ function ChangeCredentials() {
         theme: "dark",
       });
     }
-    setFormData((previousState) => ({
-      ...previousState,
-      email: full.email,
-      name: full.name,
-      middlename: full.middlename,
-      surname: full.surname,
-      phone: full.phone,
-    }));
+    if (firstLoad && full.membership !== "") {
+      setFirstLoad(false);
+      setFormData((previousState) => ({
+        ...previousState,
+        email: full.email,
+        name: full.name,
+        middlename: full.middlename,
+        surname: full.surname,
+        phone: full.phone,
+      }));
+    }
     if (full.membership === "") {
       dispatch(getAuthUser());
     }
@@ -106,6 +111,17 @@ function ChangeCredentials() {
       !email.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)
     ) {
       toast.error("Wrong email format", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    } else if (password.length < 6) {
+      toast.error("Password is too short", {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,

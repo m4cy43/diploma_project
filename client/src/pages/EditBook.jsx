@@ -248,7 +248,7 @@ function EditBook() {
       {bookState.isSuccess && (
         <main>
           <div className="form-box" id="create-book-box">
-            <h4>Create new Book</h4>
+            <h4>Edit the Book</h4>
             <form
               onSubmit={(e) => e.preventDefault()}
               onKeyDown={(e) => {

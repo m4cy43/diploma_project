@@ -19,6 +19,7 @@ import { setPage } from "../features/search/searchSlice";
 import Spinner from "../components/Spinner";
 import TableLine from "../components/TableLine";
 import "./css/tables.css";
+import { toast } from "react-toastify";
 
 function Shelf() {
   const navigate = useNavigate();
@@ -51,7 +52,9 @@ function Shelf() {
       console.log(message);
     }
 
-    dispatch(getDebtsAuth());
+    if (user && user.token !== "") {
+      dispatch(getDebtsAuth());
+    }
 
     if (searchType === "latest") {
       dispatch(getLatest({ limit: limit, offset: offset, sort: sort }));
@@ -146,6 +149,24 @@ function Shelf() {
       setNotifyData(mes);
     }
   }, [debts]);
+
+  useEffect(() => {
+    if (recommended.length === 0) {
+      toast.error(
+        "You need to have one or more books to generate recommendations",
+        {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        }
+      );
+    }
+  }, [recommended]);
 
   const loadRecommendations = async () => {
     setRecommendKey(true);
