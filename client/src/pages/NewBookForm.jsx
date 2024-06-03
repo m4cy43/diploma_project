@@ -14,6 +14,7 @@ import {
   resetHeadings,
 } from "../features/headings/headingSlice";
 import { createBook } from "../features/book/bookSlice";
+import { toast } from "react-toastify";
 
 function NewBookForm() {
   const [formData, setFormData] = useState({
@@ -83,12 +84,13 @@ function NewBookForm() {
     publishers,
     sections,
     isbns,
-    isLoading,
-    isError,
-    isSuccess,
+    // isLoading,
+    // isError,
+    // isSuccess,
     message,
   } = useSelector((state) => state.headings);
   const { user, roles } = useSelector((state) => state.auth);
+  const { isSuccess, isError, isLoading } = useSelector((state) => state.books);
 
   useEffect(() => {
     if (!user || user.token === "") {
@@ -257,9 +259,48 @@ function NewBookForm() {
       publisher,
       isbns: isbn,
     };
-    await dispatch(resetHeadings());
-    await dispatch(createBook(bookData));
-    await navigate("/");
+
+    const isValid = await validateForm();
+    if (isValid === "Ok") {
+      await dispatch(resetHeadings());
+      await dispatch(createBook(bookData));
+      await navigate("/");
+    } else {
+      toast.error(`There is an error in ${isValid}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    }
+  };
+
+  const validateForm = (obj) => {
+    const authorValid = author.filter(
+      (x) =>
+        x.name.length > 200 ||
+        x.surname.length > 200 ||
+        x.middlename.length > 200
+    );
+    const genreValid = genre.filter((x) => x.genre.length > 200);
+    const isbnValid = isbn.filter((x) => x.isbn.length > 13);
+    const sectionValid = section.section.length > 200;
+    const publisherValid = publisher.publisher.length > 200;
+    const rateMatch = rate.toString().match(/^(\d(\.|,)\d)$|^(\d)$/);
+    if (yearPublish < 1000 || yearPublish > 2100) return "Year by Publiser";
+    if (yearAuthor < 1000 || yearAuthor > 2100) return "Year by Author";
+    if (number < 0 || number > 100) return "Number";
+    if (!rateMatch || rate < 0 || rate > 5) return "Rate";
+    if (authorValid.length > 0) return "Authors";
+    if (genreValid.length > 0) return "Genres";
+    if (isbnValid.length > 0) return "ISBN";
+    if (sectionValid) return "Section";
+    if (publisherValid) return "Publisher";
+    return "Ok";
   };
 
   return (
@@ -300,7 +341,7 @@ function NewBookForm() {
                 onChange={onChange}
               />
               <input
-                type="text"
+                type="number"
                 name="yearPublish"
                 placeholder="Year by Publisher"
                 maxLength={4}

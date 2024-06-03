@@ -203,7 +203,7 @@ export const authSlice = createSlice({
       .addCase(changeCred.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.full = action.payload;
+        state.user = action.payload;
       })
       .addCase(changeCred.rejected, (state, action) => {
         state.isLoading = false;
