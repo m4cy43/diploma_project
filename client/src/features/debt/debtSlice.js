@@ -438,6 +438,7 @@ export const debtSlice = createSlice({
       .addCase(debtBook.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
+        state.message = action.payload;
       })
       .addCase(reserveToDebt.pending, (state) => {
         state.isLoading = true;
@@ -450,6 +451,7 @@ export const debtSlice = createSlice({
       .addCase(reserveToDebt.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
+        state.message = action.payload;
       })
       .addCase(deleteDebt.pending, (state) => {
         state.isLoading = true;
@@ -514,6 +516,7 @@ export const debtSlice = createSlice({
       .addCase(reserveBook.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
+        state.message = action.payload;
       })
       .addCase(deleteReserving.pending, (state) => {
         state.isLoading = true;
@@ -565,6 +568,7 @@ export const debtSlice = createSlice({
       .addCase(saveBook.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
+        state.message = action.payload;
       })
       .addCase(deleteBookmark.pending, (state) => {
         state.isLoading = true;

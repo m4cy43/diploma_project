@@ -137,9 +137,12 @@ function Shelf() {
 
   useEffect(() => {
     if (
+      user &&
+      user.email &&
       debts.length > 0 &&
       debts[0].books.length > 0 &&
-      debts[0].books[0].uuid !== ""
+      debts[0].books[0].uuid !== "" &&
+      debts[0].email === user.email
     ) {
       let mes = "";
       let arr = debts[0].books

@@ -30,6 +30,7 @@ import TableLine from "../components/TableLine";
 import { getByRoleAndMembership, resetUsers } from "../features/user/userSlice";
 import Select from "react-select";
 import "./css/tables.css";
+import { toast } from "react-toastify";
 
 function Book() {
   const { uuid } = useParams();
@@ -87,6 +88,24 @@ function Book() {
       dispatch(resetDebts());
     };
   }, [user, reloadDebts]);
+
+  useEffect(() => {
+    if (debtsState.isError) {
+      toast.error(debtsState.message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    }
+    return () => {
+      dispatch(resetDebts());
+    };
+  }, [debtsState.isError]);
 
   useEffect(() => {
     if (
