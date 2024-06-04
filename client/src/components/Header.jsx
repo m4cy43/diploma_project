@@ -87,6 +87,11 @@ function Header() {
     let inputEl = document.getElementById("search");
     inputEl.value = "";
 
+    setSearchData((previousState) => ({
+      ...previousState,
+      search: "_",
+    }));
+
     if (loc.pathname.startsWith("/book") || loc.pathname.startsWith("/me")) {
       navigate("/");
     }
@@ -118,6 +123,7 @@ function Header() {
       el.value = "";
     }
     setSearchData((previousState) => ({
+      ...previousState,
       title: "_",
       originalTitle: "_",
       authors: "_",

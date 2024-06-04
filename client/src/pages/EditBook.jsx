@@ -220,27 +220,9 @@ function EditBook() {
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    const bookData = {
-      title,
-      originalTitle,
-      yearPublish,
-      yearAuthor,
-      bibliography,
-      annotation,
-      physicalDescription,
-      note,
-      udk,
-      bbk,
-      number,
-      rate,
-      authors: author,
-      genres: genre,
-      section,
-      publisher,
-      isbns: isbn,
-    };
+    const bookData = await replaceEmpty();
 
-    const isValid = await validateForm();
+    const isValid = await validateForm(bookData);
     if (isValid === "Ok") {
       await dispatch(resetHeadings());
       await dispatch(updBook({ uuid: uuid, obj: bookData }));
@@ -259,7 +241,27 @@ function EditBook() {
     }
   };
 
-  const validateForm = (obj) => {
+  const validateForm = async (obj) => {
+    const {
+      title,
+      originalTitle,
+      yearPublish,
+      yearAuthor,
+      bibliography,
+      annotation,
+      physicalDescription,
+      note,
+      udk,
+      bbk,
+      number,
+      rate,
+      authors: author,
+      genres: genre,
+      section,
+      publisher,
+      isbns: isbn,
+    } = obj;
+
     const authorValid = author.filter(
       (x) =>
         x.name.length > 200 ||
@@ -281,6 +283,76 @@ function EditBook() {
     if (sectionValid) return "Section";
     if (publisherValid) return "Publisher";
     return "Ok";
+  };
+
+  const replaceEmpty = async () => {
+    const newtitle = title || "_";
+    const neworiginalTitle = originalTitle || "_";
+    const newyearPublish = yearPublish || "_";
+    const newyearAuthor = yearAuthor || "_";
+    const newbibliography = bibliography || "_";
+    const newannotation = annotation || "_";
+    const newphysicalDescription = physicalDescription || "_";
+    const newnote = note || "_";
+    const newudk = udk || "_";
+    const newbbk = bbk || "_";
+    const newnumber = number || 1;
+    const newrate = rate || 0;
+    const newgenre =
+      genre.length > 0
+        ? genre
+        : [
+            {
+              genre: "_",
+            },
+          ];
+    const newauthor =
+      author.length > 0
+        ? author
+        : [
+            {
+              name: "_",
+              surname: "_",
+              middlename: "_",
+            },
+          ];
+    const newsection = section.section
+      ? section
+      : {
+          section: "_",
+        };
+    const newpublisher = publisher.publisher
+      ? publisher
+      : {
+          publisher: "_",
+        };
+    const newisbn =
+      isbn.length > 0
+        ? isbn
+        : [
+            {
+              isbn: "_",
+            },
+          ];
+    return {
+      title: newtitle,
+      originalTitle: neworiginalTitle,
+      yearPublish: newyearPublish,
+      yearAuthor: newyearAuthor,
+      bibliography: newbibliography,
+      annotation: newannotation,
+      physicalDescription: newphysicalDescription,
+      note: newnote,
+      udk: newudk,
+      bbk: newbbk,
+      number: newnumber,
+      rate: newrate,
+      authors: newauthor,
+      genres: newgenre,
+      section: newsection,
+      publisher: newpublisher,
+      isbns: newisbn,
+    };
   };
 
   return (
