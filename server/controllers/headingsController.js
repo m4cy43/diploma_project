@@ -97,14 +97,16 @@ const createGenre = asyncHandler(async (req, res) => {
   }
 
   // Create the genre
-  const genre = await Genre.create({
-    genre: req.body.genre,
+  const [genre, flag] = await Genre.findOrCreate({
+    where: {
+      genre: req.body.genre,
+    },
   });
-  if (genre) {
+  if (flag) {
     res.status(201).json(genre);
   } else {
     res.status(400);
-    throw new Error("Could not add the heading");
+    throw new Error("This genre already exist");
   }
 });
 
@@ -124,16 +126,18 @@ const createAuthor = asyncHandler(async (req, res) => {
   }
 
   // Create the genre
-  const author = await Author.create({
-    name: req.body.name,
-    surname: req.body.surname,
-    middlename: req.body.middlename,
+  const [author, flag] = await Author.findOrCreate({
+    where: {
+      name: req.body.name,
+      surname: req.body.surname,
+      middlename: req.body.middlename,
+    },
   });
-  if (author) {
+  if (flag) {
     res.status(201).json(author);
   } else {
     res.status(400);
-    throw new Error("Could not add the heading");
+    throw new Error("This author already exist");
   }
 });
 
@@ -153,14 +157,16 @@ const createSection = asyncHandler(async (req, res) => {
   }
 
   // Create the genre
-  const section = await Section.create({
-    section: req.body.section,
+  const [section, flag] = await Section.findOrCreate({
+    where: {
+      section: req.body.section,
+    },
   });
-  if (section) {
+  if (flag) {
     res.status(201).json(section);
   } else {
     res.status(400);
-    throw new Error("Could not add the heading");
+    throw new Error("This section already exist");
   }
 });
 
@@ -180,14 +186,16 @@ const createPublisher = asyncHandler(async (req, res) => {
   }
 
   // Create the genre
-  const publisher = await Publisher.create({
-    publisher: req.body.publisher,
+  const [publisher, flag] = await Publisher.findOrCreate({
+    where: {
+      publisher: req.body.publisher,
+    },
   });
-  if (publisher) {
+  if (flag) {
     res.status(201).json(publisher);
   } else {
     res.status(400);
-    throw new Error("Could not add the heading");
+    throw new Error("This publisher already exist");
   }
 });
 
@@ -207,14 +215,16 @@ const createIsbn = asyncHandler(async (req, res) => {
   }
 
   // Create the genre
-  const isbn = await Isbn.create({
-    isbn: req.body.isbn,
+  const [isbn, flag] = await Isbn.findOrCreate({
+    where: {
+      isbn: req.body.isbn,
+    },
   });
-  if (isbn) {
+  if (flag) {
     res.status(201).json(isbn);
   } else {
     res.status(400);
-    throw new Error("Could not add the heading");
+    throw new Error("This isbn already exist");
   }
 });
 

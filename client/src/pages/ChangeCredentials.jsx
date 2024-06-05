@@ -159,6 +159,7 @@ function ChangeCredentials() {
               type="email"
               name="email"
               placeholder="Email@example.com"
+              maxLength={100}
               onChange={onChange}
               defaultValue={full.email}
             />
@@ -166,24 +167,28 @@ function ChangeCredentials() {
               type="password"
               name="oldPassword"
               placeholder="Old password"
+              maxLength={64}
               onChange={onChange}
             />
             <input
               type="password"
               name="password"
               placeholder="Password"
+              maxLength={64}
               onChange={onChange}
             />
             <input
               type="password"
               name="password2"
               placeholder="Repeat password"
+              maxLength={64}
               onChange={onChange}
             />
             <input
               type="text"
               name="name"
               placeholder="Name (optional)"
+              maxLength={100}
               onChange={onChange}
               defaultValue={full.name}
             />
@@ -191,6 +196,7 @@ function ChangeCredentials() {
               type="text"
               name="surname"
               placeholder="Surname (optional)"
+              maxLength={100}
               onChange={onChange}
               defaultValue={full.surname}
             />
@@ -198,6 +204,7 @@ function ChangeCredentials() {
               type="text"
               name="middlename"
               placeholder="Middlename (optional)"
+              maxLength={100}
               onChange={onChange}
               defaultValue={full.middlename}
             />
@@ -205,6 +212,7 @@ function ChangeCredentials() {
               type="text"
               name="phone"
               placeholder="+380987654321 (optional)"
+              maxLength={17}
               onChange={onChange}
               defaultValue={full.phone}
             />

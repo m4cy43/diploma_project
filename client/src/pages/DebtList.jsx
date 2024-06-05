@@ -22,6 +22,7 @@ function DebtList() {
   const { flexData, page, limit, sort } = useSelector((state) => state.search);
   const [keyPressed, setKeyCounter] = useState(0);
   const [firstLoad, setFirstLoad] = useState(true);
+  const [itemsCount, setItemsCount] = useState(0);
 
   useEffect(() => {
     if (firstLoad) {
@@ -47,6 +48,14 @@ function DebtList() {
       dispatch(resetDebts());
     };
   }, [keyPressed, page, limit, flexData, isError, message, navigate, dispatch]);
+
+  useEffect(() => {
+    if (debts.length > 0 && debts[0].uuid !== "") {
+      let counter = 0;
+      debts.map((u) => u.books.map((b) => counter++));
+      setItemsCount(counter);
+    }
+  }, [debts]);
 
   if (isLoading) {
     return <Spinner />;
@@ -93,7 +102,7 @@ function DebtList() {
         <div
           className="arrow"
           onClick={() => {
-            if (debts.length == limit) {
+            if (itemsCount == limit) {
               dispatch(setPage(page + 1));
             }
           }}
@@ -103,7 +112,9 @@ function DebtList() {
       </div>
       <main>
         <div className="table-box">
-          <h5>{debts.length} debts in list</h5>
+          <h5>
+            {debts.length} users with {itemsCount} debts in list
+          </h5>
           <div className="debt-list">
             <table>
               <tbody>

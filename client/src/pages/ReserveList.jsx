@@ -23,6 +23,7 @@ function DebtList() {
   const [firstLoad, setFirstLoad] = useState(true);
   const [deadlineVal, setDeadline] = useState(14);
   const [noteVal, setNote] = useState("");
+  const [itemsCount, setItemsCount] = useState(0);
 
   useEffect(() => {
     if (firstLoad) {
@@ -42,12 +43,22 @@ function DebtList() {
       console.log(message);
     }
 
-    dispatch(getAllReservings({ query: "_", limit: 10, offset: offset }));
+    dispatch(
+      getAllReservings({ query: flexData, limit: limit, offset: offset })
+    );
 
     return () => {
       dispatch(resetDebts());
     };
   }, [keyPressed, page, limit, flexData, isError, message, navigate, dispatch]);
+
+  useEffect(() => {
+    if (reservings.length > 0 && reservings[0].uuid !== "") {
+      let counter = 0;
+      reservings.map((u) => u.books.map((b) => counter++));
+      setItemsCount(counter);
+    }
+  }, [reservings]);
 
   if (isLoading) {
     return <Spinner />;
@@ -82,7 +93,7 @@ function DebtList() {
         <div
           className="arrow"
           onClick={() => {
-            if (reservings.length == limit) {
+            if (itemsCount == limit) {
               dispatch(setPage(page + 1));
             }
           }}
@@ -112,7 +123,9 @@ function DebtList() {
       </div>
       <main>
         <div className="table-box">
-          <h5>{reservings.length} reservings in list</h5>
+          <h5>
+            {reservings.length} users with {itemsCount} reservings in list
+          </h5>
           <div className="debt-list">
             <table>
               <tbody>
@@ -137,7 +150,13 @@ function DebtList() {
                         approve={() =>
                           restodebt({
                             uuid: bok.userbook.uuid,
-                            deadline: deadlineVal,
+                            deadline: !(
+                              deadlineVal < -7 ||
+                              deadlineVal > 60 ||
+                              deadlineVal === ""
+                            )
+                              ? deadlineVal
+                              : 14,
                             note: noteVal,
                           })
                         }

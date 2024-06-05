@@ -330,7 +330,13 @@ function Book() {
                           debtBook({
                             userUuid: newDebt,
                             bookUuid: book.uuid,
-                            deadline: deadline,
+                            deadline: !(
+                              deadline < -7 ||
+                              deadline > 60 ||
+                              deadline === ""
+                            )
+                              ? deadline
+                              : 14,
                             note: note,
                           })
                         );
