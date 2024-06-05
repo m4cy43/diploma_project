@@ -4,14 +4,24 @@ function VerifyTableLine({ user, set, del, updname, flag }) {
   return (
     <tr>
       <td>
+        {flag === "unverified" && (
+          <input
+            type="submit"
+            value="+"
+            onClick={() => {
+              set(user.uuid);
+            }}
+          />
+        )}
+        &nbsp;
         <input
           type="submit"
-          value="+"
+          value="-"
           onClick={() => {
-            set(user.uuid);
+            del(user.uuid);
           }}
         />
-        {(flag === "unverified" || flag === "admin") && (
+        {/* {(flag === "unverified" || flag === "admin") && (
           <>
             &nbsp;
             <input
@@ -22,7 +32,7 @@ function VerifyTableLine({ user, set, del, updname, flag }) {
               }}
             />
           </>
-        )}
+        )} */}
         {flag === "unverified" && (
           <>
             &nbsp;

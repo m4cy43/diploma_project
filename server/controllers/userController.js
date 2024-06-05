@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const Role = require("../models/roleModel");
+const Userbook = require("../models/userBookModel");
 const { Op } = require("sequelize");
 
 // @desc    Create new user
@@ -255,6 +256,20 @@ const deleteUser = asyncHandler(async (req, res) => {
   if (!user) {
     res.status(400);
     throw new Error("There is no such user");
+  }
+
+  let userIsAdmin = await user.getRoles();
+  if (userIsAdmin.filter((x) => x.role == "admin").length > 0) {
+    res.status(400);
+    throw new Error("User have admin rights");
+  }
+
+  let debtArr = await Userbook.findAll({
+    where: { userUuid: req.params.uuid, type: "debt" },
+  });
+  if (debtArr.length > 0) {
+    res.status(400);
+    throw new Error("User have debts");
   }
 
   await user.destroy();

@@ -54,6 +54,8 @@ function DebtList() {
       let counter = 0;
       debts.map((u) => u.books.map((b) => counter++));
       setItemsCount(counter);
+    } else {
+      setItemsCount(0);
     }
   }, [debts]);
 

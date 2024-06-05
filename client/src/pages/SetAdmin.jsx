@@ -1,4 +1,4 @@
-import VerifyTableLine from "../components/VerifyTableLine";
+import AdminListTableLine from "../components/AdminListTableLine";
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -127,7 +127,7 @@ function SetAdmin() {
                 </tr>
                 {users ? (
                   users.map((user) => (
-                    <VerifyTableLine
+                    <AdminListTableLine
                       user={user}
                       set={setadm}
                       del={deladm}
@@ -136,7 +136,7 @@ function SetAdmin() {
                     />
                   ))
                 ) : (
-                  <VerifyTableLine
+                  <AdminListTableLine
                     user={{
                       updatedAt: "",
                       name: "",
