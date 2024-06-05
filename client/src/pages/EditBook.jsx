@@ -272,7 +272,7 @@ function EditBook() {
     const isbnValid = isbn.filter((x) => x.isbn.length > 13);
     const sectionValid = section.section.length > 200;
     const publisherValid = publisher.publisher.length > 200;
-    const rateMatch = rate.toString().match(/^(\d(\.|,)\d)$|^(\d)$/);
+    const rateMatch = rate.toString().match(/^(\d(\.|,)\d{1,2})$|^(\d)$/);
     if (yearPublish < 1000 || yearPublish > 2100) return "Year by Publiser";
     if (yearAuthor < 1000 || yearAuthor > 2100) return "Year by Author";
     if (number < 0 || number > 100) return "Number";

@@ -153,7 +153,10 @@ export const authSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
-        state.user = null;
+        state.user = {
+          email: "",
+          token: "",
+        };
       })
       .addCase(login.pending, (state) => {
         state.isLoading = true;
@@ -167,7 +170,10 @@ export const authSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
-        state.user = null;
+        state.user = {
+          email: "",
+          token: "",
+        };
       })
       .addCase(getRoles.pending, (state) => {
         state.isLoading = true;
@@ -195,7 +201,14 @@ export const authSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
-        state.full = null;
+        state.full = {
+          email: "",
+          membership: "",
+          name: "",
+          surname: "",
+          middlename: "",
+          phone: "",
+        };
       })
       .addCase(changeCred.pending, (state) => {
         state.isLoading = true;

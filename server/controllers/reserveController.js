@@ -34,7 +34,10 @@ const getAllReservations = asyncHandler(async (req, res) => {
     where: {
       membership: { [Op.substring]: query ? query : "_" },
     },
-    order: [[Book, Userbook, "deadline", "ASC"]],
+    order: [
+      [Book, Userbook, "deadline", "ASC"],
+      [Book, Userbook, "updatedAt", "ASC"],
+    ],
     limit: parseInt(limit) ? parseInt(limit) : 10,
     offset: parseInt(offset) ? parseInt(offset) : 0,
     subQuery: false,
@@ -111,8 +114,27 @@ const createReservation = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("There is no such book");
   }
+  if (book.number == 0) {
+    res.status(400);
+    throw new Error("There is no available books");
+  }
+
+  const isMoreThanFive = await Userbook.findAll({
+    where: {
+      userUuid: req.user.uuid,
+      type: { [Op.or]: ["reservation", "debt"] },
+    },
+  });
+  if (isMoreThanFive.length >= 5) {
+    res.status(400);
+    throw new Error("User have more than 5 reservations or debts");
+  }
 
   await user.addBook(book);
+
+  book.number--;
+  book.debtedNumber++;
+  await book.save();
 
   let reserv = await Userbook.findOne({
     where: {
@@ -141,6 +163,11 @@ const deleteReservation = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("There is no such reservation");
   }
+
+  const book = await Book.findByPk(reserv.bookUuid);
+  book.number++;
+  book.debtedNumber--;
+  await book.save();
 
   await reserv.destroy();
   res.status(204).json();

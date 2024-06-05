@@ -35,7 +35,10 @@ const getAllDebts = asyncHandler(async (req, res) => {
     where: {
       membership: { [Op.substring]: query ? query : "_" },
     },
-    order: [[Book, Userbook, "deadline", "ASC"]],
+    order: [
+      [Book, Userbook, "deadline", "ASC"],
+      [Book, Userbook, "updatedAt", "ASC"],
+    ],
     limit: parseInt(limit) ? parseInt(limit) : 10,
     offset: parseInt(offset) ? parseInt(offset) : 0,
     subQuery: false,
@@ -123,12 +126,27 @@ const createDebt = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("There is no such book");
   }
+  if (book.number == 0) {
+    res.status(400);
+    throw new Error("There is no available books");
+  }
   const debtIsExist = await Userbook.findOne({
     where: { bookUuid: bookUuid, userUuid: userUuid, type: "debt" },
   });
   if (debtIsExist) {
     res.status(400);
     throw new Error("Debt is already exist");
+  }
+
+  const isMoreThanFive = await Userbook.findAll({
+    where: {
+      userUuid: userUuid,
+      type: "debt",
+    },
+  });
+  if (isMoreThanFive.length >= 5) {
+    res.status(400);
+    throw new Error("User have more than 5 debts");
   }
 
   await user.addBook(book);
@@ -180,9 +198,24 @@ const reservationToDebt = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("There is no such book");
   }
-  book.number--;
-  book.debtedNumber++;
-  await book.save();
+  if (book.number == 0) {
+    res.status(400);
+    throw new Error("There is no available books");
+  }
+
+  const isMoreThanFive = await Userbook.findAll({
+    where: {
+      userUuid: debt.userUuid,
+      type: "debt",
+    },
+  });
+  if (isMoreThanFive.length >= 5) {
+    res.status(400);
+    throw new Error("User have more than 5 debts");
+  }
+  // book.number--;
+  // book.debtedNumber++;
+  // await book.save();
 
   debt.type = "debt";
   debt.note = note;

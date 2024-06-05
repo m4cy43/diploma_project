@@ -22,7 +22,7 @@ function Login() {
 
   useEffect(() => {
     if (isError) {
-      toast.error("Wrong email or password", {
+      toast.error(message, {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,

@@ -28,6 +28,10 @@ function PersonalAccount() {
   const { debts, reservings, bookmarks } = debtsState;
 
   useEffect(() => {
+    if (!user || user.token === "") {
+      navigate("/login");
+    }
+
     if (auth.isError) {
       console.log(auth.message);
     }
@@ -60,17 +64,23 @@ function PersonalAccount() {
   };
 
   const deleteAcc = () => {
-    if (debts.length > 0 && debts[0].uuid !== "") {
-      toast.error("You have debts, so you cant delete your account", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
+    if (
+      (debts.length > 0 && debts[0].uuid !== "") ||
+      (reservings.length > 0 && reservings[0].uuid !== "")
+    ) {
+      toast.error(
+        "You have debts or reservations, so you cant delete your account",
+        {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        }
+      );
     } else if (window.confirm("Do you really want to delete you account")) {
       dispatch(deleteMe());
       navigate("/");

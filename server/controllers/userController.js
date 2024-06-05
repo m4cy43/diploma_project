@@ -238,6 +238,17 @@ const deleteMe = asyncHandler(async (req, res) => {
     throw new Error("There is no such user");
   }
 
+  let debtArr = await Userbook.findAll({
+    where: {
+      userUuid: req.user.uuid,
+      type: { [Op.or]: ["reservation", "debt"] },
+    },
+  });
+  if (debtArr.length > 0) {
+    res.status(400);
+    throw new Error("User have debts or reservations");
+  }
+
   await user.destroy();
   res.status(204).json();
 });
@@ -265,11 +276,14 @@ const deleteUser = asyncHandler(async (req, res) => {
   }
 
   let debtArr = await Userbook.findAll({
-    where: { userUuid: req.params.uuid, type: "debt" },
+    where: {
+      userUuid: req.params.uuid,
+      type: { [Op.or]: ["reservation", "debt"] },
+    },
   });
   if (debtArr.length > 0) {
     res.status(400);
-    throw new Error("User have debts");
+    throw new Error("User have debts or reservations");
   }
 
   await user.destroy();

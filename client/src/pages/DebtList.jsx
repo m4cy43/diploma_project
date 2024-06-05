@@ -71,7 +71,7 @@ function DebtList() {
   const sendemail = async (query) => {
     await dispatch(sendEmail(query));
     if (isSuccess) {
-      toast.error("Email is sent", {
+      toast.info("Email is sent", {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,

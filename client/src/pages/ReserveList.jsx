@@ -10,6 +10,7 @@ import {
 import { Link, redirect, useNavigate } from "react-router-dom";
 import Spinner from "../components/Spinner";
 import { setPage, setFlexData } from "../features/search/searchSlice";
+import { toast } from "react-toastify";
 
 function DebtList() {
   const navigate = useNavigate();
@@ -40,7 +41,16 @@ function DebtList() {
       navigate("/");
     }
     if (isError) {
-      console.log(message);
+      toast.error(message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
     }
 
     dispatch(

@@ -178,12 +178,14 @@ function Book() {
     setNote("");
     setReloadDebts(reloadDebts + 1);
     setReservedFlag(true);
+    setFormReload(formReaload + 1);
   };
 
   const removeReserve = async () => {
     await dispatch(deleteReserving(reserveUuid));
     setReloadDebts(reloadDebts + 1);
     setReservedFlag(false);
+    setFormReload(formReaload + 1);
   };
 
   const loadSimilar = () => {
