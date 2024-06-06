@@ -88,6 +88,7 @@ function Shelf() {
 
     return () => {
       dispatch(resetBooks());
+      dispatch(resetDebts()); // optional
     };
   }, [
     user,

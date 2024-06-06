@@ -198,10 +198,10 @@ const reservationToDebt = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("There is no such book");
   }
-  if (book.number == 0) {
-    res.status(400);
-    throw new Error("There is no available books");
-  }
+  // if (book.number == 0) {
+  //   res.status(400);
+  //   throw new Error("There is no available books");
+  // }
 
   const isMoreThanFive = await Userbook.findAll({
     where: {

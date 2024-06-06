@@ -145,7 +145,7 @@ const createReservation = asyncHandler(async (req, res) => {
   reserv.note = req.query.note;
 
   let datetochange = new Date();
-  let newDate = datetochange.getDate() + 14;
+  let newDate = datetochange.getDate() + 7;
   datetochange.setDate(newDate);
   datetochange = datetochange.toISOString();
   reserv.deadline = datetochange.split("T")[0];
