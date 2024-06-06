@@ -131,11 +131,15 @@ const createDebt = asyncHandler(async (req, res) => {
     throw new Error("There is no available books");
   }
   const debtIsExist = await Userbook.findOne({
-    where: { bookUuid: bookUuid, userUuid: userUuid, type: "debt" },
+    where: {
+      bookUuid: bookUuid,
+      userUuid: userUuid,
+      type: { [Op.or]: ["reservation", "debt"] },
+    },
   });
   if (debtIsExist) {
     res.status(400);
-    throw new Error("Debt is already exist");
+    throw new Error("Debt or reservation is already exist");
   }
 
   const isMoreThanFive = await Userbook.findAll({

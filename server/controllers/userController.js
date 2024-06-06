@@ -341,9 +341,12 @@ const updateMe = asyncHandler(async (req, res) => {
 
   // Remove verified role if name/surname/middlename is changed
   if (
-    (name && user.name !== name) ||
-    (surname && user.surname !== surname) ||
-    (middlename && user.middlename !== middlename)
+    // (name && user.name !== name) ||
+    // (surname && user.surname !== surname) ||
+    // (middlename && user.middlename !== middlename)
+    user.name !== name ||
+    user.surname !== surname ||
+    user.middlename !== middlename
   ) {
     const roleToDel = await Role.findOne({ where: { role: "verified" } });
     if (roleToDel) await user.removeRole(roleToDel);
