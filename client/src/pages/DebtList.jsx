@@ -11,6 +11,7 @@ import { Link, redirect, useNavigate } from "react-router-dom";
 import Spinner from "../components/Spinner";
 import { setPage, setFlexData } from "../features/search/searchSlice";
 import { toast } from "react-toastify";
+import "./css/tables.css";
 
 function DebtList() {
   const navigate = useNavigate();
@@ -100,7 +101,7 @@ function DebtList() {
         >
           ⬅
         </div>
-        <div>{page}</div>
+        <div className="pageNum">{page}</div>
         <div
           className="arrow"
           onClick={() => {

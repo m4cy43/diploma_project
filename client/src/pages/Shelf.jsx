@@ -224,7 +224,7 @@ function Shelf() {
             >
               ⬅
             </div>
-            <div>{page}</div>
+            <div className="pageNum">{page}</div>
             <div
               className="arrow"
               onClick={() => {

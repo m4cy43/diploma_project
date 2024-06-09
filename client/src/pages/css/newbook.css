@@ -49,6 +49,7 @@
   border: 2px #17344f solid !important;
   border-radius: 0px;
   padding: 0px;
+  background-color: #d9d9d9 !important;
 }
 
 .react-select__value-container,

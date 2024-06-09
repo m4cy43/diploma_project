@@ -188,7 +188,7 @@ function NewBookForm() {
         if (x.length === 2)
           return { name: x[0], middlename: "_", surname: x[1] };
         if (x.length === 3)
-          return { name: x[0], middlename: x[2], surname: x[1] };
+          return { name: x[0], middlename: x[1], surname: x[2] };
         if (x.length > 3)
           return { name: x.join(" "), middlename: "_", surname: "_" };
       }

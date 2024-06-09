@@ -11,6 +11,7 @@ import { Link, redirect, useNavigate } from "react-router-dom";
 import Spinner from "../components/Spinner";
 import { setPage, setFlexData } from "../features/search/searchSlice";
 import { toast } from "react-toastify";
+import "./css/tables.css";
 
 function DebtList() {
   const navigate = useNavigate();
@@ -84,6 +85,8 @@ function DebtList() {
   const restodebt = async (data) => {
     await dispatch(reserveToDebt(data));
     setKeyCounter(keyPressed + 1);
+    setDeadline(14);
+    setNote("");
   };
 
   return (
@@ -101,7 +104,7 @@ function DebtList() {
         >
           ⬅
         </div>
-        <div>{page}</div>
+        <div className="pageNum">{page}</div>
         <div
           className="arrow"
           onClick={() => {
@@ -112,7 +115,7 @@ function DebtList() {
         >
           ➡
         </div>
-        &nbsp;&nbsp;&nbsp;
+        &nbsp;
         <input
           type="number"
           name="deadline"
@@ -120,10 +123,10 @@ function DebtList() {
           max={60}
           min={-7}
           maxLength={2}
-          style={{ width: "50px" }}
+          style={{ width: "70px" }}
           onChange={(e) => setDeadline(e.target.value)}
         />
-        &nbsp;&nbsp;&nbsp;
+        &nbsp;
         <input
           type="text"
           name="note"

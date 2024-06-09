@@ -248,8 +248,8 @@ function Header() {
           onChange={(e) => dispatch(setSort(e.target.value))}
         >
           <option value={"createdAtDESC"}>sort option</option>
-          <option value={"createdAtDESC"}>created ⬇</option>
-          <option value={"createdAtASC"}>created ⬆</option>
+          <option value={"createdAtDESC"}>uploaded ⬇</option>
+          <option value={"createdAtASC"}>uploaded ⬆</option>
           <option value={"titleDESC"}>title ⬇</option>
           <option value={"titleASC"}>title ⬆</option>
           <option value={"yearDESC"}>year ⬇</option>

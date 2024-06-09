@@ -7,6 +7,7 @@ function HeadingTableLine({ heading, del, type }) {
         <input
           type="submit"
           value="-"
+          className="minusBut"
           onClick={() => {
             del(heading.uuid);
           }}

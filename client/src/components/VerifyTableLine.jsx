@@ -8,15 +8,16 @@ function VerifyTableLine({ user, set, del, updname, flag }) {
           <input
             type="submit"
             value="+"
+            className="plusBut"
             onClick={() => {
               set(user.uuid);
             }}
           />
         )}
-        &nbsp;
         <input
           type="submit"
           value="-"
+          className="minusBut"
           onClick={() => {
             del(user.uuid);
           }}
@@ -35,10 +36,10 @@ function VerifyTableLine({ user, set, del, updname, flag }) {
         )} */}
         {flag === "unverified" && (
           <>
-            &nbsp;
             <input
               type="submit"
               value="set"
+              className="setBut"
               onClick={() => {
                 updname();
               }}

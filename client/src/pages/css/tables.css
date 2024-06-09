@@ -17,13 +17,24 @@
 .arrows {
   display: flex;
   flex-direction: row;
+  align-items: center;
 }
 
 .arrow {
   font-weight: bold;
-  font-size: 24;
-  margin: 0px 10px;
+  font-size: 20px;
+  margin: 0px 5px;
 }
 .arrow:hover {
   cursor: pointer;
+}
+.pageNum {
+  font-weight: bold;
+  border: 2px solid darkslategrey;
+  padding: 2px 5px;
+  background-color: #d9d9d9;
+}
+.dropdown {
+  background-color: #d9d9d9;
+  border: 2px solid darkslategrey;
 }

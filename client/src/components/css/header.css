@@ -89,3 +89,8 @@
 .admin-panel-box {
   right: 0px;
 }
+
+#limit,
+#sort {
+  background-color: #d9d9d9;
+}

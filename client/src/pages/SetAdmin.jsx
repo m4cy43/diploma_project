@@ -10,6 +10,7 @@ import {
 import { Link, redirect, useNavigate } from "react-router-dom";
 import Spinner from "../components/Spinner";
 import { setPage, setFlexData } from "../features/search/searchSlice";
+import "./css/tables.css";
 
 function SetAdmin() {
   const navigate = useNavigate();
@@ -85,7 +86,7 @@ function SetAdmin() {
         >
           ⬅
         </div>
-        <div>{page}</div>
+        <div className="pageNum">{page}</div>
         <div
           className="arrow"
           onClick={() => {
@@ -96,8 +97,9 @@ function SetAdmin() {
         >
           ➡
         </div>
-        &nbsp;&nbsp;&nbsp;
+        &nbsp;
         <select
+          className="dropdown"
           onChange={(e) => {
             setRole(e.target.value);
             dispatch(setPage(1));

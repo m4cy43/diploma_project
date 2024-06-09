@@ -8,6 +8,7 @@ function AdminListTableLine({ user, set, del, updname, flag }) {
           <input
             type="submit"
             value="+"
+            className="plusBut"
             onClick={() => {
               set(user.uuid);
             }}
@@ -18,6 +19,7 @@ function AdminListTableLine({ user, set, del, updname, flag }) {
           <input
             type="submit"
             value="-"
+            className="minusBut"
             onClick={() => {
               del(user.uuid);
             }}

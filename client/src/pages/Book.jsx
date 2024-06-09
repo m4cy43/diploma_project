@@ -31,6 +31,7 @@ import { getByRoleAndMembership, resetUsers } from "../features/user/userSlice";
 import Select from "react-select";
 import "./css/tables.css";
 import { toast } from "react-toastify";
+import "./css/newbook.css";
 
 function Book() {
   const { uuid } = useParams();
@@ -381,8 +382,8 @@ function Book() {
                       min={-7}
                       placeholder="deadline"
                       style={{
-                        width: "50px",
-                        margin: "10px 0px 10px 10px",
+                        width: "70px",
+                        margin: "10px 0px 10px 5px",
                         height: "30px",
                       }}
                       onChange={(e) => setDeadline(e.target.value)}
@@ -399,6 +400,7 @@ function Book() {
                 placeholder="Your notes are here..."
                 onChange={(e) => setNote(e.target.value)}
                 maxLength={90}
+                style={{ margin: "10px 5px 10px 5px" }}
               />
             ) : (
               <></>

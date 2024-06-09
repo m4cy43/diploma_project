@@ -31,7 +31,7 @@ function DebtsTableLine({ user, book, userbook, approve, decline, mail }) {
           <input
             type="submit"
             value="M"
-            className="plusBut"
+            className="setBut"
             onClick={() => {
               mail(user.uuid);
             }}

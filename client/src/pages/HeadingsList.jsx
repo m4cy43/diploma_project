@@ -23,6 +23,8 @@ import {
   resetHeadings,
 } from "../features/headings/headingSlice";
 import { toast } from "react-toastify";
+import "./../components/css/tableline.css";
+import "./css/tables.css";
 
 function HeadingsList() {
   const navigate = useNavigate();
@@ -173,7 +175,7 @@ function HeadingsList() {
       if (x.length === 0) d = { name: "_", middlename: "_", surname: "_" };
       if (x.length === 1) d = { name: x[0], middlename: "_", surname: "_" };
       if (x.length === 2) d = { name: x[0], middlename: "_", surname: x[1] };
-      if (x.length === 3) d = { name: x[0], middlename: x[2], surname: x[1] };
+      if (x.length === 3) d = { name: x[0], middlename: x[1], surname: x[2] };
       if (x.length > 3)
         d = { name: x.join(" "), middlename: "_", surname: "_" };
       await dispatch(createAuthor(d));
@@ -195,6 +197,7 @@ function HeadingsList() {
       await dispatch(createIsbn({ isbn: headingData }));
       setKeyCounter(keyPressed + 1);
     }
+    setHeadingData("");
   };
 
   return (
@@ -212,7 +215,7 @@ function HeadingsList() {
         >
           ⬅
         </div>
-        <div>{page}</div>
+        <div className="pageNum">{page}</div>
         <div
           className="arrow"
           onClick={() => {
@@ -223,8 +226,9 @@ function HeadingsList() {
         >
           ➡
         </div>
-        &nbsp;&nbsp;&nbsp;
+        &nbsp;
         <select
+          className="dropdown"
           onChange={(e) => {
             setHeadingType(e.target.value);
             dispatch(setPage(1));
@@ -238,7 +242,7 @@ function HeadingsList() {
           <option value={"section"}>section</option>
           <option value={"isbn"}>isbn</option>
         </select>
-        &nbsp;&nbsp;&nbsp;
+        &nbsp;
         <input
           type="text"
           name="heading"
@@ -250,6 +254,7 @@ function HeadingsList() {
         <input
           type="button"
           value="Add"
+          className="setBut"
           onClick={(e) => {
             e.preventDefault();
             addHeading();

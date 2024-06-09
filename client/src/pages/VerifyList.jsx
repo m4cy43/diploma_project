@@ -12,6 +12,7 @@ import { Link, redirect, useNavigate } from "react-router-dom";
 import Spinner from "../components/Spinner";
 import { setPage, setFlexData } from "../features/search/searchSlice";
 import { toast } from "react-toastify";
+import "./css/tables.css";
 
 function VerifyList() {
   const navigate = useNavigate();
@@ -130,6 +131,12 @@ function VerifyList() {
       };
       await dispatch(updUser({ uuid: uuid, obj: userData }));
       setKeyCounter(keyPressed + 1);
+      setUserUpdData({
+        name: "",
+        middlename: "",
+        surname: "",
+        phone: "",
+      });
     }
   };
 
@@ -148,7 +155,7 @@ function VerifyList() {
         >
           ⬅
         </div>
-        <div>{page}</div>
+        <div className="pageNum">{page}</div>
         <div
           className="arrow"
           onClick={() => {
@@ -159,8 +166,9 @@ function VerifyList() {
         >
           ➡
         </div>
-        &nbsp;&nbsp;&nbsp;
+        &nbsp;
         <select
+          className="dropdown"
           onChange={(e) => {
             setRole(e.target.value);
             dispatch(setPage(1));
@@ -171,7 +179,7 @@ function VerifyList() {
           <option value={"unverified"}>unverified</option>
           <option value={"verified"}>verified</option>
         </select>
-        &nbsp;&nbsp;&nbsp;
+        &nbsp;
         <input
           type="text"
           name="name"
@@ -179,6 +187,7 @@ function VerifyList() {
           onChange={onChange}
           maxLength={64}
         />
+        &nbsp;
         <input
           type="text"
           name="middlename"
@@ -186,6 +195,7 @@ function VerifyList() {
           onChange={onChange}
           maxLength={64}
         />
+        &nbsp;
         <input
           type="text"
           name="surname"
@@ -193,6 +203,7 @@ function VerifyList() {
           onChange={onChange}
           maxLength={64}
         />
+        &nbsp;
         <input
           type="text"
           name="phone"
