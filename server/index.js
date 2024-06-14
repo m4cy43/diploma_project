@@ -24,6 +24,18 @@ app.use("/api/debt", require("./routes/debtRoute"));
 app.use("/api/reserve", require("./routes/reserveRoute"));
 app.use("/api/bookmark", require("./routes/bookmarkRoute"));
 
+// Static frontend
+const path = require("path");
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../client/build")));
+
+  app.get("*", (req, res) =>
+    res.sendFile(
+      path.resolve(__dirname, "../", "client", "build", "index.html")
+    )
+  );
+}
+
 // END OF MIDDLEWARE
 app.use(errorHandler);
 
